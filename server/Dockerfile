@@ -9,13 +9,13 @@ WORKDIR /app
 # docker caches layers. by copying these first, docker will only re-run the time-consuming 'npm install' step if you actually add a new dependency.
 COPY package*.json ./
 
-# install dependencies. 
-# we use 'npm ci' (clean install) instead of 'npm install' to strictly follow package-lock.json to not accidentally upgrade packages in production.
-RUN npm ci --only=production
-
 # copy the rest of the server's source code into the container.
 COPY . .
 
+# install dependencies.
+# we use 'npm ci' (clean install) instead of 'npm install' to strictly follow package-lock.json to not accidentally upgrade packages in production.
+# remove any node_modules that may have been copied from the host to avoid overriding the clean install.
+RUN rm -rf node_modules && npm ci --only=production
 # expose the port the Express server runs on (default is 5000). 
 EXPOSE 5000
 
