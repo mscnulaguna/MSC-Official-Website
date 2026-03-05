@@ -3,10 +3,10 @@ services:
     build: 
       context: ./server
       dockerfile: Dockerfile
-    ports:
-      - "5000:5000"
     environment:
       - NODE_ENV=production
+    networks:
+      - internal
     
   client:
     build: 
@@ -16,3 +16,9 @@ services:
       - "80:80"
     depends_on:
       - server
+    networks:
+      - internal
+
+networks:
+  internal:
+    driver: bridge
