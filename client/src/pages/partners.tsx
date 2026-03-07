@@ -1,13 +1,13 @@
 import { Button } from "../components/ui/button";
 import { Card, CardContent } from "../components/ui/card";
 import { CheckCheck, Copy, AlertCircle } from "lucide-react";
-import { useEffect, useState, type JSX } from "react";
+import { useEffect, useState, type JSX, type ChangeEvent, type CSSProperties } from "react";
 import mscLogo from "../assets/Favicon.png";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 const MSC_EMAIL = "msc@nu-laguna.edu.ph";
 
-const gradientStyle: React.CSSProperties = {
+const gradientStyle: CSSProperties = {
     background: "linear-gradient(to right, #00A2ED 0%, #6AAC0E 33%, #FFBB00 66%, #F04E1F 100%)",
     WebkitBackgroundClip: "text",
     WebkitTextFillColor: "transparent",
@@ -50,7 +50,7 @@ const PartnerLogo = ({ partner }: { partner: Partner }): JSX.Element => (
 );
 
 // Star icon 
-const StarIcon = ({ style }: { style?: React.CSSProperties }): JSX.Element => (
+const StarIcon = ({ style }: { style?: CSSProperties }): JSX.Element => (
     <svg viewBox="0 0 512 512" className="w-7 h-7 sm:w-8 sm:h-8" style={style} fill="currentColor">
         <path d="M 208 0 L 304 0 L 304 173 L 454 86 L 502 170 L 352 256 L 502 342 L 454 426 L 304 339 L 304 512 L 208 512 L 208 339 L 58 426 L 10 343 L 160 256 L 10 170 L 58 87 L 208 173 Z" />
     </svg>
@@ -114,7 +114,7 @@ const ContactForm = (): JSX.Element => {
     const [sending, setSending] = useState(false);
     const [sent, setSent] = useState(false);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
