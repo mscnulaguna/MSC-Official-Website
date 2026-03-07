@@ -1,13 +1,13 @@
 import { Button } from "../components/ui/button";
 import { Card, CardContent } from "../components/ui/card";
 import { CheckCheck, Copy, AlertCircle } from "lucide-react";
-import { useEffect, useState, type JSX } from "react";
+import { useEffect, useState, type JSX, type ChangeEvent, type CSSProperties } from "react";
 import mscLogo from "../assets/Favicon.png";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 const MSC_EMAIL = "msc@nu-laguna.edu.ph";
 
-const gradientStyle: React.CSSProperties = {
+const gradientStyle: CSSProperties = {
     background: "linear-gradient(to right, #00A2ED 0%, #6AAC0E 33%, #FFBB00 66%, #F04E1F 100%)",
     WebkitBackgroundClip: "text",
     WebkitTextFillColor: "transparent",
@@ -50,7 +50,7 @@ const PartnerLogo = ({ partner }: { partner: Partner }): JSX.Element => (
 );
 
 // Star icon 
-const StarIcon = ({ style }: { style?: React.CSSProperties }): JSX.Element => (
+const StarIcon = ({ style }: { style?: CSSProperties }): JSX.Element => (
     <svg viewBox="0 0 512 512" className="w-7 h-7 sm:w-8 sm:h-8" style={style} fill="currentColor">
         <path d="M 208 0 L 304 0 L 304 173 L 454 86 L 502 170 L 352 256 L 502 342 L 454 426 L 304 339 L 304 512 L 208 512 L 208 339 L 58 426 L 10 343 L 160 256 L 10 170 L 58 87 L 208 173 Z" />
     </svg>
@@ -114,7 +114,7 @@ const ContactForm = (): JSX.Element => {
     const [sending, setSending] = useState(false);
     const [sent, setSent] = useState(false);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
@@ -177,7 +177,7 @@ const ContactForm = (): JSX.Element => {
                 style={{ borderColor: "#CBD5E1" }}
             >
                 <h3 className="text-lg sm:text-xl font-bold" style={{ color: "#00A2ED" }}>Reach Out Directly</h3>
-                <p className="text-sm text-black-500">
+                <p className="text-sm text-black">
                     Prefer to reach out directly? Send us an email and we'll get back to you as soon as possible.
                 </p>
                 <div
@@ -234,11 +234,11 @@ export default function PartnersPage(): JSX.Element {
 
             {/* ── Section 1: Our Partners ── */}
             <section className="py-32 sm:py-40 text-center">
-                <div className="w-full max-w-4/5 mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="w-4/5 mx-auto px-4 sm:px-6 lg:px-8">
                     <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold inline-block" style={gradientStyle}>
                         OUR PARTNERS
                     </h1>
-                    <p className="mt-3 text-black-500 text-sm sm:text-sm     lg:text-lg max-w-4xl mx-auto">
+                    <p className="mt-3 text-black text-sm sm:text-sm     lg:text-lg max-w-4xl mx-auto">
                         We collaborate with tech companies and organizations to bring exclusive
                         benefits to our community members.
                     </p>
@@ -268,11 +268,11 @@ export default function PartnersPage(): JSX.Element {
 
             {/* ── Section 2: Why Partner With Us ── */}
             <section className="py-32 sm:py-40 text-center" style={{ backgroundColor: "#F5F5F5" }}>
-                <div className="w-full max-w-4/5 mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="w-4/5 mx-auto px-4 sm:px-6 lg:px-8">
                     <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold inline-block" style={gradientStyle}>
                         WHY PARTNER WITH US
                     </h2>
-                    <p className="mt-2 text-black-500 text-sm sm:text-sm lg:text-lg max-w-4xl mx-auto">
+                    <p className="mt-2 text-black text-sm sm:text-sm lg:text-lg max-w-4xl mx-auto">
                         From certifications to career connections, being part of MSC opens
                         doors you didn't know existed.
                     </p>
@@ -295,14 +295,14 @@ export default function PartnersPage(): JSX.Element {
 
             {/* ── Section 3: Become a Partner ── */}
             <section className="py-32 sm:py-40">
-                <div className="w-full max-w-4/5 mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="w-4/5 mx-auto px-4 sm:px-6 lg:px-8">
                     <Card className="rounded-none shadow-sm" style={{ border: "1px solid #CBD5E1" }}>
                         <CardContent className="p-6 sm:p-10 lg:p-12">
                             <div className="text-center mb-6 sm:mb-8">
                                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold inline-block" style={gradientStyle}>
                                     BECOME A PARTNER
                                 </h2>
-                                <p className="mt-2 text-black-500 text-sm sm:text-sm lg:text-lg max-w-4xl mx-auto">
+                                <p className="mt-2 text-black text-sm sm:text-sm lg:text-lg max-w-4xl mx-auto">
                                     Interested in partnering with MSC NU Laguna? Fill out the form
                                     below and we'll get back to you shortly.
                                 </p>
