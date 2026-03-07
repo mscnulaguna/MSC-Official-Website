@@ -1,9 +1,12 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Asterisk } from "lucide-react"
 import { useState } from "react"
 import bulbBg from "@/assets/about-bg-bulb.svg"
 import targetBg from "@/assets/about-bg-target.svg"
+import missionIcon from "@/assets/missionIcon.svg"
+import visionIcon from "@/assets/visionIcon.svg"
+import pfpPhoto from "@/assets/pfp.jpg"
+import samplePhoto from "@/assets/sample.jpg"
 import WWD1 from "@/assets/wwd1.svg"
 import WWD2 from "@/assets/wwd2.svg"
 import WWD3 from "@/assets/wwd3.svg"
@@ -12,10 +15,17 @@ import WWD5 from "@/assets/wwd5.svg"
 import WWD6 from "@/assets/wwd6.svg"
 import WWD7 from "@/assets/wwd7.svg"
 
+// gradient classnames
+const BRAND_GRADIENT_TEXT =
+  "text-transparent bg-clip-text bg-[linear-gradient(90deg,#00A2ED_0%,#6AAC0E_33%,#FEA60F_66%,#F04E1F_100%)]"
+const WHITE_GRADIENT_TEXT =
+  "text-transparent bg-clip-text bg-[linear-gradient(90deg,#9CA3AF_0%,#FFFFFF_100%)]"
+
 // team data types
 type TeamMember = {
   name: string
   role: string
+  photoSrc?: string
 }
 
 // props for the member card
@@ -30,7 +40,7 @@ type WhatWeDoItem = {
   align: "left" | "right"
 }
 
-// static content for sec 2
+// Section 2 (What We Do) card content
 const WHAT_WE_DO: WhatWeDoItem[] = [
   {
     title: "Events that actually teach you something",
@@ -117,43 +127,30 @@ function WhatWeDoCard({
   )
 
   const text = (
-    <div className={`space-y-2 ${isRightAligned ? "flex-1 text-right" : ""}`}>
+    <div className={`flex-1 space-y-2 ${isRightAligned ? "text-right" : "text-left"}`}>
       <h2 className="text-lg font-bold leading-snug">{item.title}</h2>
-      <p className="text-sm leading-relaxed text-gray-600">
-        {item.description}
-      </p>
+      <p className="text-sm leading-relaxed text-gray-600">{item.description}</p>
     </div>
   )
 
   return (
     <Card className="rounded-none border border-slate-300 bg-white shadow-none">
-      <CardContent className="p-6">
-        <div className="flex w-full items-center gap-4 sm:gap-6">
-          {isRightAligned ? (
-            <>
-              {text}
-              {icon}
-              {badge}
-            </>
-          ) : (
-            <>
-              {badge}
-              {icon}
-              <div className="flex-1 space-y-2">
-                <h2 className="text-lg font-bold leading-snug">{item.title}</h2>
-                <p className="text-sm leading-relaxed text-gray-600">
-                  {item.description}
-                </p>
-              </div>
-            </>
-          )}
+      <CardContent className="p-3">
+        <div
+          className={`flex w-full items-center gap-4 sm:gap-6 ${
+            isRightAligned ? "flex-row-reverse" : ""
+          }`}
+        >
+          {badge}
+          {icon}
+          {text}
         </div>
       </CardContent>
     </Card>
   )
 }
 
-// team data grouped by department
+// Section 3 (Meet the Team) data grouped by department
 const TEAMS: Record<
   string,
   {
@@ -167,14 +164,22 @@ const TEAMS: Record<
     description:
       "The Executive team oversees the organization’s direction, planning, and overall coordination of MSC – NU Laguna.",
     members: [
-      { name: "Juliane Nicole Caballes", role: "VP for Community Development" },
-      { name: "John Doe", role: "President" },
-      { name: "John Doe", role: "Vice President" },
-      { name: "John Doe", role: "Secretary" },
-      { name: "John Doe", role: "Treasurer" },
-      { name: "John Doe", role: "President" },
-      { name: "John Doe", role: "Vice President" },
-      { name: "John Doe", role: "Treasurer" },
+      {
+        name: "Juliane Nicole Caballes",
+        role: "VP for Community Development",
+        photoSrc: samplePhoto,
+      },
+      { name: "(Name)", role: "(Role)" },
+      { name: "(Name)", role: "(Role)" },
+      { name: "(Name)", role: "(Role)" },
+      { name: "(Name)", role: "(Role)" },
+      { name: "(Name)", role: "(Role)" },
+      { name: "(Name)", role: "(Role)" },
+      { name: "(Name)", role: "(Role)" },
+      { name: "(Name)", role: "(Role)" },
+      { name: "(Name)", role: "(Role)" },
+      { name: "(Name)", role: "(Role)" },
+      { name: "(Name)", role: "(Role)" },
     ],
   },
   technology: {
@@ -182,7 +187,11 @@ const TEAMS: Record<
     description:
       "The Technology team builds and maintains tools, supports events, and helps members grow through hands-on technical work.",
     members: [
-      { name: "Juliane Nicole Caballes", role: "VP for Community Development" },
+      { name: "(Name)", role: "(Role)" },
+      { name: "(Name)", role: "(Role)" },
+      { name: "(Name)", role: "(Role)" },
+      { name: "(Name)", role: "(Role)" },
+      { name: "(Name)", role: "(Role)" },
       { name: "(Name)", role: "(Role)" },
       { name: "(Name)", role: "(Role)" },
       { name: "(Name)", role: "(Role)" },
@@ -192,7 +201,13 @@ const TEAMS: Record<
     label: "Community Development",
     description:
       "The Community Development team strengthens member engagement, runs initiatives, and builds a supportive learning environment.",
-    members: [{ name: "(Name)", role: "(Role)" }],
+    members: [
+      {
+        name: "Juliane Nicole Caballes",
+        role: "VP for Community Development",
+        photoSrc: samplePhoto,
+      },
+    ],
   },
   communications: {
     label: "Communications",
@@ -220,12 +235,20 @@ const TEAMS: Record<
   },
 }
 
-// component for rendering a team member card
-function TeamMemberCard({ name, role }: TeamMemberCardProps) {
+// renders a single team member card
+function TeamMemberCard({ name, role, photoSrc }: TeamMemberCardProps) {
   return (
-    <Card className="w-full overflow-hidden rounded-none border border-slate-300 bg-white shadow-none gap-0 py-0">      <div className="border-b border-slate-200">
-        <div className="flex aspect-square w-full items-center justify-center bg-slate-200">
-          <span className="text-xs font-medium text-slate-500">Photo</span>
+    <Card className="w-full overflow-hidden rounded-none border border-slate-300 bg-white shadow-none gap-0 py-0">
+      <div className="border-b border-slate-200">
+        <div className="flex aspect-square w-full overflow-hidden bg-slate-200">
+          <img
+            src={photoSrc ?? pfpPhoto}
+            alt=""
+            aria-hidden="true"
+            className="h-full w-full object-cover"
+            loading="lazy"
+            decoding="async"
+          />
         </div>
       </div>
 
@@ -243,50 +266,44 @@ function TeamMemberCard({ name, role }: TeamMemberCardProps) {
   )
 }
 
-// grid wrapper 
+// responsive grid wrapper for member cards
 function TeamGrid({ members }: { members: TeamMember[] }) {
   return (
     <div className="mx-auto grid w-full max-w-7xl grid-cols-2 gap-4 content-start sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
       {members.map((member) => (
-        <TeamMemberCard
-          key={`${member.name}-${member.role}`}
-          name={member.name}
-          role={member.role}
-        />
+        <TeamMemberCard key={`${member.name}-${member.role}`} {...member} />
       ))}
     </div>
   )
 }
 
-// main about page  
+// main About page
 export default function AboutPage() {
   const teamKeys = Object.keys(TEAMS)
   const [activeTeam, setActiveTeam] = useState(teamKeys[0] ?? "")
   const activeTeamData = TEAMS[activeTeam] ?? TEAMS[teamKeys[0]]
 
   return (
-    <div className="min-h-[70vh] w-screen pb-24 font-sans">
-      {/* section 1 - vision and mission */}
-      <section className="relative w-full overflow-hidden py-20">
+    <div className="min-h-[70vh] w-full overflow-x-hidden pb-24 font-sans">
+      {/* Section 1: Vision and Mission */}
+      <section className="relative min-h-screen w-full overflow-hidden">
+        
         <img
           src={bulbBg}
-          alt=""
           aria-hidden="true"
-          className="pointer-events-none absolute left-0 -top-10 z-0 w-[180px] md:w-[260px] lg:w-[320px]"
+          className="pointer-events-none absolute -left-5 -top-3 z-0 w-[180px] md:w-[260px] lg:w-[400px]"
         />
-
         <img
           src={targetBg}
-          alt=""
           aria-hidden="true"
-          className="pointer-events-none absolute right-0 -bottom-10 z-0 w-[180px] md:w-[260px] lg:w-[320px]"
+          className="pointer-events-none absolute right-0 -bottom-7 z-0 w-[180px] md:w-[260px] lg:w-[400px]"
         />
 
-        <div className="relative z-10 mx-auto w-full max-w-5xl px-4">
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+        <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-7xl items-center justify-center px-4">
+          <div className="grid w-full grid-cols-1 gap-8 md:max-w-4xl md:grid-cols-2">
             <Card className="rounded-none border border-slate-300 bg-white shadow-none">
               <CardHeader>
-                <Asterisk aria-hidden="true" className="h-7 w-7 text-sky-500" />
+                <img src={visionIcon} alt="visionIcon" aria-hidden="true" className="h-7 w-7" />
                 <CardTitle className="text-lg font-bold">VISION</CardTitle>
               </CardHeader>
               <CardContent>
@@ -301,7 +318,7 @@ export default function AboutPage() {
 
             <Card className="rounded-none border border-slate-300 bg-white shadow-none">
               <CardHeader>
-                <Asterisk aria-hidden="true" className="h-7 w-7 text-sky-500" />
+                <img src={missionIcon} alt="missionIcon" aria-hidden="true" className="h-7 w-7" />
                 <CardTitle className="text-lg font-bold">MISSION</CardTitle>
               </CardHeader>
               <CardContent>
@@ -319,15 +336,18 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* section 2 - what we do */}
+      {/* Section 2: What We Do */}
       <section className="w-full bg-slate-50 py-16">
         <div className="mx-auto w-full max-w-5xl px-4 text-center">
-          <h1 className="text-6xl font-bold text-transparent bg-clip-text bg-[linear-gradient(90deg,#00A2ED_0%,#6AAC0E_33%,#FEA60F_66%,#F04E1F_100%)]">
-            WHO WE ARE
+          <h1 className={`text-6xl font-bold ${BRAND_GRADIENT_TEXT}`}>
+            WHAT WE DO
           </h1>
-          <p className="mx-auto mt-3 max-w-xl text-sm text-gray-500">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          <p className="text-sm font-medium text-gray-600 mt-3">We're not just doing things to fill up our calendar</p>
+          <p className="mx-auto mt-2 max-w-4xl text-sm text-gray-500">
+            Here, we don’t believe in busywork. Everything we do has a reason — and that reason is, well, 
+            "so our members stop saying they’re not ready for the real world." 
+            We create space for students to learn, experiment, connect, and build things that matter 
+            (and look cool on a resume, too).
           </p>
 
           <div className="mx-auto mt-10 w-full max-w-4xl space-y-5 text-left">
@@ -338,10 +358,10 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* section 3 - team tabs*/}
+      {/* Section 3: Meet the Team */}
       <section className="w-full py-16">
         <div className="mx-auto w-full max-w-7xl px-4 text-center">
-          <h1 className="pb-8 text-4xl font-bold text-transparent bg-clip-text bg-[linear-gradient(90deg,#00A2ED_0%,#6AAC0E_33%,#FEA60F_66%,#F04E1F_100%)]">
+          <h1 className={`pb-8 text-4xl font-bold ${BRAND_GRADIENT_TEXT}`}>
             MEET THE TEAM
           </h1>
           <Tabs
@@ -349,9 +369,9 @@ export default function AboutPage() {
             onValueChange={setActiveTeam}
             className="w-full items-center"
           >
-            <TabsList className="mx-auto justify-center">
+            <TabsList className="mx-auto h-auto w-full max-w-6xl flex-wrap justify-center gap-2">
               {teamKeys.map((key) => (
-                <TabsTrigger key={key} value={key}>
+                <TabsTrigger key={key} value={key} className="whitespace-nowrap">
                   {TEAMS[key].label}
                 </TabsTrigger>
               ))}
@@ -372,21 +392,25 @@ export default function AboutPage() {
                   className="mt-8 min-h-[560px] sm:min-h-[620px] lg:min-h-[680px]"
                 >
                 <TeamGrid members={TEAMS[key].members} />
-
-                <div className="mt-10 flex justify-center">
-                  <div className="inline-block text-left leading-none">
-                    <p className="text-xl font-extrabold">THE</p>
-                    <p className="text-5xl font-bold tracking-tight text-transparent bg-clip-text bg-[linear-gradient(90deg,#00A2ED_0%,#6AAC0E_33%,#FEA60F_66%,#F04E1F_100%)] sm:text-6xl md:text-7xl">
-                      {(TEAMS[key].label ?? "").toUpperCase()}
-                    </p>
-                    <p className="mt-1 text-right text-xl font-extrabold tracking-wide">
-                      DEPARTMENT
-                    </p>
-                  </div>
-                </div>
               </TabsContent>
             ))}
           </Tabs>
+
+            <div className="mt-8 flex w-full justify-end">
+              <div className="inline-block text-left leading-none">
+                <p className={`text-xl font-bold ${WHITE_GRADIENT_TEXT}`}>
+                  THE
+                </p>
+                <p
+                  className={`text-2xl font-bold tracking-tight sm:text-6xl md:text-7xl ${BRAND_GRADIENT_TEXT}`}
+                >
+                  {(activeTeamData?.label ?? "").toUpperCase()}
+                </p>
+                <p className={`mt-1 text-right text-xl font-bold tracking-wide ${WHITE_GRADIENT_TEXT}`}>
+                  DEPARTMENT
+                </p>
+              </div>
+            </div>
         </div>
       </section>
     </div>
