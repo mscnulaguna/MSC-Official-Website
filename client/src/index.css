@@ -61,6 +61,52 @@
   --sidebar-ring: #00A2ED;
 }
 
+.dark {
+  color-scheme: dark;
+  color: #ffffff;
+  background-color: #0a0a0a;
+
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+
+  --primary: #00A2ED;
+  --primary-foreground: #ffffff;
+
+  --secondary: #1e1e1e;
+  --secondary-foreground: #ffffff;
+
+  --muted: #1e1e1e;
+  --muted-foreground: #64748b;
+
+  --accent: #1e1e1e;
+  --accent-foreground: #ffffff;
+
+  --destructive: #F04E1F;
+
+  --border: #2d2d2d;
+  --input: #2d2d2d;
+  --ring: #00A2ED;
+
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: #00A2ED;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #1e1e1e;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #2d2d2d;
+  --sidebar-ring: #00A2ED;
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -107,6 +153,7 @@
     @apply border-border;
     box-sizing: border-box;
   }
+
   html, body, #root {
     width: 100%;
     min-height: 100vh;

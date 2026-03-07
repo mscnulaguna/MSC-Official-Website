@@ -3,11 +3,11 @@ import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
 import { Label } from "../components/ui/label";
 import { Card, CardContent } from "../components/ui/card";
-import { CheckCheck, Copy, AlertCircle } from "lucide-react";
+import { CheckCheck, Copy } from "lucide-react";
 import { useEffect, useState, type JSX, type ChangeEvent, type CSSProperties } from "react";
 import mscLogo from "../assets/Favicon.png";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL;
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 const MSC_EMAIL = "msc@nu-laguna.edu.ph";
 
 const gradientStyle: CSSProperties = {
@@ -47,7 +47,7 @@ const PartnerLogo = ({ partner }: { partner: Partner }): JSX.Element => (
         <img
             src={partner.logo}
             alt={`${partner.name} logo`}
-            className="h-14 w-14 sm:h-24 sm:w-24 md:h-28 md:w-28 lg:h-32 lg:w-32 transition-transform duration-200 group-hover:scale-110 group-focus-visible:scale-110 rounded-none"
+            className="h-14 w-auto sm:h-24 md:h-28 lg:h-28 object-contain transition-transform duration-200 hover:scale-110 pointer-events-none"
         />
     </a>
 );
@@ -62,7 +62,7 @@ const StarIcon = ({ style }: { style?: CSSProperties }): JSX.Element => (
 // Logo skeleton 
 const LogoSkeleton = (): JSX.Element => (
     <div className="flex items-center justify-center p-2 sm:p-4">
-        <div className="h-14 w-14 sm:h-24 sm:w-24 md:h-28 md:w-28 lg:h-32 lg:w-32 rounded bg-gray-300 animate-pulse" />
+        <div className="h-14 w-24 sm:h-24 sm:w-28 md:h-28 md:w-32 lg:h-32 lg:w-36 rounded bg-gray-300 animate-pulse" />
     </div>
 );
 
@@ -120,16 +120,13 @@ const ContactForm = (): JSX.Element => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
         setSending(true);
         await new Promise((r) => setTimeout(r, 1000));
         setSending(false);
         setSent(true);
-        setForm({ companyName: "", 
-            contactName: "", 
-            email: "", 
-            message: "" 
-        });
+        setForm({ companyName: "", contactName: "", email: "", message: "" });
         setTimeout(() => setSent(false), 4000);
     };
 
@@ -140,9 +137,9 @@ const ContactForm = (): JSX.Element => {
     };
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 text-left items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 text-left items-stretch">
             {/* Left form fields */}
-            <div className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-1">
                     <Label htmlFor="companyName">Company Name</Label>
                     <Input
@@ -157,50 +154,50 @@ const ContactForm = (): JSX.Element => {
                 <div className="space-y-1">
                     <Label htmlFor="contactName">Contact Name</Label>
                     <Input
-                    id="contactName"
-                    required
-                    name="contactName"
-                    value={form.contactName}
-                    onChange={handleChange}
-                    placeholder="e.g. Juan Dela Cruz"
-                />            
+                        id="contactName"
+                        required
+                        name="contactName"
+                        value={form.contactName}
+                        onChange={handleChange}
+                        placeholder="e.g. Juan Dela Cruz"
+                    />
                 </div>
                 <div className="space-y-1">
                     <Label htmlFor="email">Email Address</Label>
                     <Input
-                    id="email"
-                    type="email"
-                    required
-                    name="email"
-                    value={form.email}
-                    onChange={handleChange}
-                    placeholder="e.g.email@company.com"
+                        id="email"
+                        type="email"
+                        required
+                        name="email"
+                        value={form.email}
+                        onChange={handleChange}
+                        placeholder="e.g. email@company.com"
                     />
                 </div>
                 <div className="space-y-1">
                     <Label htmlFor="message">Message</Label>
                     <Textarea
-                    id="message"
-                    required
-                    name="message"
-                    value={form.message}
-                    onChange={handleChange}
-                    placeholder="Tell us about your partnership interests..."
-                    className="resize-none"
-                />
+                        id="message"
+                        required
+                        name="message"
+                        value={form.message}
+                        onChange={handleChange}
+                        placeholder="Tell us about your partnership interests..."
+                        className="resize-none"
+                    />
                 </div>
                 <Button
-                    onClick={handleSubmit}
+                    type="submit"
                     disabled={sending || sent}
                     className="w-full text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    {sending ? "Sending..." : sent ? "Message sent! We'll get back to you as soon as possible." : "Submit"}    
+                    {sending ? "Sending..." : sent ? "Message sent! We'll get back to you shortly." : "Submit"}
                 </Button>
-            </div>
+            </form>
 
             {/* Right contact info */}
             <div
-                className="flex flex-col justify-start space-y-4 md:border-l md:pl-8 lg:pl-10"
+                className="flex flex-col justify-start space-y-4 lg:border-l lg:pl-10"
                 style={{ borderColor: "#CBD5E1" }}
             >
                 <h3 className="text-lg sm:text-xl font-bold" style={{ color: "#00A2ED" }}>
@@ -217,6 +214,7 @@ const ContactForm = (): JSX.Element => {
                         {MSC_EMAIL}
                     </span>
                     <Button
+                        type="button"
                         variant="outline"
                         onClick={handleCopy}
                         className="flex items-center gap-1 text-xs px-2 sm:px-3 py-1 shrink-0 h-auto"
@@ -262,6 +260,9 @@ export default function PartnersPage(): JSX.Element {
 
     return (
         <div className="font-sans">
+
+            {/* ── Navbar placeholder ── */}
+            <div className="h-16 shrink-0 z-20 relative border-b border-border bg-white/85 backdrop-blur-md" />
 
             {/* ── Section 1: Our Partners ── */}
             <section className="py-32 sm:py-40 text-center">
