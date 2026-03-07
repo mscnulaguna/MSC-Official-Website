@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import PartnersPage from './pages/partners'
+import { useState, useEffect } from 'react'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
