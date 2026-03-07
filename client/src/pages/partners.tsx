@@ -1,4 +1,7 @@
 import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Textarea } from "../components/ui/textarea";
+import { Label } from "../components/ui/label";
 import { Card, CardContent } from "../components/ui/card";
 import { CheckCheck, Copy, AlertCircle } from "lucide-react";
 import { useEffect, useState, type JSX, type ChangeEvent, type CSSProperties } from "react";
@@ -39,12 +42,12 @@ const PartnerLogo = ({ partner }: { partner: Partner }): JSX.Element => (
         target="_blank"
         rel="noopener noreferrer"
         title={partner.name}
-        className="flex items-center justify-center p-2 sm:p-4 transition-all duration-300 hover:scale-105"
+        className="group flex items-center justify-center p-2 sm:p-4 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-[#00A2ED] focus-visible:ring-offset-2"
     >
         <img
             src={partner.logo}
             alt={`${partner.name} logo`}
-            className="h-14 sm:h-24 md:h-28 lg:h-32 w-auto object-contain"
+            className="h-14 w-14 sm:h-24 sm:w-24 md:h-28 md:w-28 lg:h-32 lg:w-32 transition-transform duration-200 group-hover:scale-110 group-focus-visible:scale-110 rounded-none"
         />
     </a>
 );
@@ -59,7 +62,7 @@ const StarIcon = ({ style }: { style?: CSSProperties }): JSX.Element => (
 // Logo skeleton 
 const LogoSkeleton = (): JSX.Element => (
     <div className="flex items-center justify-center p-2 sm:p-4">
-        <div className="h-14 w-14 sm:h-20 sm:w-20 md:h-24 md:w-24 lg:h-28 lg:w-28 rounded bg-gray-200 animate-pulse" />
+        <div className="h-14 w-14 sm:h-24 sm:w-24 md:h-28 md:w-28 lg:h-32 lg:w-32 rounded bg-gray-300 animate-pulse" />
     </div>
 );
 
@@ -91,12 +94,11 @@ const TestimonialCard = (): JSX.Element => (
                     fill="#CBD5E1" />
             </svg>
             <p className="text-xs sm:text-sm text-gray-600">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
-                tempor incididunt ut labore et dolore magna aliqua.
+                IJBOL? ano kaya meaning non, diba korean yon? tae i just burst out laughing kasi, how about rofl? ano yun? edi rolling on the floor? pano mo isspell yon?? R-U-F-L? NUYAN?! rolling un the floor? ifukuk talaga.
             </p>
             <div className="pt-2">
-                <p className="text-sm font-bold text-gray-900">Alysa Liu</p>
-                <p className="text-xs text-gray-500">HR Director, Accenture Philippines</p>
+                <p className="text-sm font-bold text-gray-900">Julie, Keith, and Jompi Conversation</p>
+                <p className="text-xs text-gray-500">Sa Loob ng SDAO, NU Laguna</p>
             </div>
         </CardContent>
     </Card>
@@ -123,7 +125,11 @@ const ContactForm = (): JSX.Element => {
         await new Promise((r) => setTimeout(r, 1000));
         setSending(false);
         setSent(true);
-        setForm({ companyName: "", contactName: "", email: "", message: "" });
+        setForm({ companyName: "", 
+            contactName: "", 
+            email: "", 
+            message: "" 
+        });
         setTimeout(() => setSent(false), 4000);
     };
 
@@ -133,68 +139,93 @@ const ContactForm = (): JSX.Element => {
         setTimeout(() => setCopied(false), 3000);
     };
 
-    const inputClass = "w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#00A2ED]";
-
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 text-left items-stretch">
-
-            {/* Left: form fields */}
+            {/* Left form fields */}
             <div className="space-y-4">
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
-                    <input required name="companyName" value={form.companyName} onChange={handleChange} placeholder="e.g. NU Laguna" className={inputClass} />
+                <div className="space-y-1">
+                    <Label htmlFor="companyName">Company Name</Label>
+                    <Input
+                        id="companyName"
+                        required
+                        name="companyName"
+                        value={form.companyName}
+                        onChange={handleChange}
+                        placeholder="e.g. NU Laguna"
+                    />
                 </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Contact Name</label>
-                    <input required name="contactName" value={form.contactName} onChange={handleChange} placeholder="e.g. Juan dela Cruz" className={inputClass} />
+                <div className="space-y-1">
+                    <Label htmlFor="contactName">Contact Name</Label>
+                    <Input
+                    id="contactName"
+                    required
+                    name="contactName"
+                    value={form.contactName}
+                    onChange={handleChange}
+                    placeholder="e.g. Juan Dela Cruz"
+                />            
                 </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                    <input required name="email" type="email" value={form.email} onChange={handleChange} placeholder="e.g. juan@company.com" className={inputClass} />
+                <div className="space-y-1">
+                    <Label htmlFor="email">Email Address</Label>
+                    <Input
+                    id="email"
+                    type="email"
+                    required
+                    name="email"
+                    value={form.email}
+                    onChange={handleChange}
+                    placeholder="e.g.email@company.com"
+                    />
                 </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
-                    <textarea required name="message" value={form.message} onChange={handleChange} rows={5} placeholder="Tell us about your company and partnership interests..." className={`${inputClass} resize-none`} />
+                <div className="space-y-1">
+                    <Label htmlFor="message">Message</Label>
+                    <Textarea
+                    id="message"
+                    required
+                    name="message"
+                    value={form.message}
+                    onChange={handleChange}
+                    placeholder="Tell us about your partnership interests..."
+                    className="resize-none"
+                />
                 </div>
                 <Button
                     onClick={handleSubmit}
                     disabled={sending || sent}
-                    className="w-full text-white text-sm rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-                    style={{ backgroundColor: "#00A2ED" }}
+                    className="w-full text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    {sending ? "Sending..." : sent ? "Sent!" : "Send Message"}
+                    {sending ? "Sending..." : sent ? "Message sent! We'll get back to you as soon as possible." : "Submit"}    
                 </Button>
-                {sent && (
-                    <p className="text-sm text-center" style={{ color: "#6AAC0E" }}>
-                        ✓ Message sent! We'll get back to you shortly.
-                    </p>
-                )}
             </div>
 
-            {/* Right: reach out directly */}
+            {/* Right contact info */}
             <div
                 className="flex flex-col justify-start space-y-4 md:border-l md:pl-8 lg:pl-10"
                 style={{ borderColor: "#CBD5E1" }}
             >
-                <h3 className="text-lg sm:text-xl font-bold" style={{ color: "#00A2ED" }}>Reach Out Directly</h3>
+                <h3 className="text-lg sm:text-xl font-bold" style={{ color: "#00A2ED" }}>
+                    Reach Out Directly
+                </h3>
                 <p className="text-sm text-black">
                     Prefer to reach out directly? Send us an email and we'll get back to you as soon as possible.
                 </p>
                 <div
-                    className="flex items-center gap-3 px-4 py-3 rounded-md"
+                    className="flex items-center gap-3 px-4 py-3 rounded-none"
                     style={{ border: "1px solid #CBD5E1", backgroundColor: "#F5F5F5" }}
                 >
-                    <span className="text-xs sm:text-sm text-gray-700 flex-1 font-medium break-all">{MSC_EMAIL}</span>
-                    <button
+                    <span className="text-xs sm:text-sm text-gray-700 flex-1 font-medium break-all">
+                        {MSC_EMAIL}
+                    </span>
+                    <Button
+                        variant="outline"
                         onClick={handleCopy}
-                        className="flex items-center gap-1 text-xs px-2 sm:px-3 py-1 border rounded transition-colors shrink-0"
-                        style={{ color: "#00A2ED", borderColor: "#00A2ED", backgroundColor: "transparent" }}
+                        className="flex items-center gap-1 text-xs px-2 sm:px-3 py-1 shrink-0 h-auto"
                     >
                         {copied
-                            ? <><CheckCheck className="w-4 h-4" /><span className="hidden sm:inline">Copied</span></>
-                            : <><Copy className="w-4 h-4" /><span className="hidden sm:inline">Copy</span></>
+                            ? <><CheckCheck className="w-4 h-4" /><span className="hidden sm:inline ml-1">Copied</span></>
+                            : <><Copy className="w-4 h-4" /><span className="hidden sm:inline ml-1">Copy</span></>
                         }
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>
@@ -245,19 +276,19 @@ export default function PartnersPage(): JSX.Element {
 
                     {error && (
                         <div className="mt-6 flex items-center justify-center gap-2 text-base" style={{ color: "#F04E1F" }}>
-                            <AlertCircle className="w-4 h-4" />
-                            <span>{error}</span>
+                            {/*<AlertCircle className="w-4 h-4" />
+                            <span>{error}</span>*/}
                         </div>
                     )}
 
                     {loading && (
-                        <div className="mt-8 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 sm:gap-4">
+                        <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2 sm:gap-4">
                             {Array(12).fill(null).map((_, i) => <LogoSkeleton key={i} />)}
                         </div>
                     )}
 
                     {!loading && (
-                        <div className="mt-8 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 sm:gap-4">
+                        <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2 sm:gap-4">
                             {partners.map((partner) => (
                                 <PartnerLogo key={partner.id} partner={partner} />
                             ))}
