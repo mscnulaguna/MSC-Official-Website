@@ -77,7 +77,7 @@ const WHAT_WE_DO: WhatWeDoItem[] = [
   {
     title: "Certifications and credentials? Let's get them",
     description:
-      "Whether it's Microsoft Learn or something you've been eyeing on Linkedin, we help you find ways to get certified - and actually understand what you're doing.",
+      "Whether it's Microsoft Learn or something you've been eyeing on LinkedIn, we help you find ways to get certified - and actually understand what you're doing.",
     imageSrc: WWD5,
     imageAlt: "Certifications",
     align: "left",
