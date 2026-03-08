@@ -103,7 +103,19 @@ Server runs at `http://localhost:5000`.
 
 ## API Modules
 
-Base URL: `/api/v1`
+**MSC NU Laguna Official Website — API Contract**
+Version 1.0 | February 2026
+
+| Property | Value |
+|---|---|
+| Base URL | `https://api.msc-nulaguna.org/v1` |
+| API Version | 1.0 |
+| Protocol | HTTPS only |
+| Auth Method | JWT Bearer Token |
+| Content Type | `application/json` |
+| Rate Limiting | 100 req/min per IP (authenticated); 20 req/min (public) |
+
+> 🛠️ **Local development:** use `http://localhost:5000/api/v1`
 
 ---
 
