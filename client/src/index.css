@@ -116,23 +116,6 @@ a:hover {
   color: #535bf2;
 }
 
-body {
-  margin: 0;
-  min-height: 100vh;
-  width: 100%;
-  overflow-x: hidden;
-}
-
-html {
-  width: 100%;
-  overflow-x: hidden;
-}
-
-#root {
-  width: 100%;
-  min-height: 100vh;
-}
-
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
