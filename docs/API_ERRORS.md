@@ -1,5 +1,16 @@
 # Error Codes
 
+> **MSC NU Laguna Official Website — API Contract** | Version 1.0 | February 2026
+>
+> | Property | Value |
+> |---|---|
+> | Base URL | `https://api.msc-nulaguna.org/v1` |
+> | API Version | 1.0 |
+> | Protocol | HTTPS only |
+> | Auth Method | JWT Bearer Token |
+> | Content Type | `application/json` |
+> | Rate Limiting | 100 req/min per IP (authenticated); 20 req/min (public) |
+
 ## Overview
 
 All error responses from the API follow a single consistent shape:
@@ -51,7 +62,7 @@ Rate limit headers are included on every response (`RateLimit-*` standard header
 |------------------------------|---------------|
 | `POST /auth/login`           | 20 req / min  |
 | `POST /auth/refresh`         | 20 req / min  |
-| All other `/api/v1/*` routes | 100 req / min |
+| All other `https://api.msc-nulaguna.org/v1/*` routes | 100 req / min |
 
 When the limit is exceeded the server responds with `429`:
 
@@ -71,7 +82,7 @@ When the limit is exceeded the server responds with `429`:
 ### Missing or expired token
 
 ```http
-GET /api/v1/users/me
+GET https://api.msc-nulaguna.org/v1/users/me
 ```
 
 ```json
@@ -88,7 +99,7 @@ GET /api/v1/users/me
 ### Insufficient role
 
 ```http
-POST /api/v1/announcements
+POST https://api.msc-nulaguna.org/v1/announcements
 Authorization: Bearer <member-token>
 ```
 

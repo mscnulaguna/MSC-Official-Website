@@ -1,5 +1,16 @@
 # Users & Members API
 
+> **MSC NU Laguna Official Website — API Contract** | Version 1.0 | February 2026
+>
+> | Property | Value |
+> |---|---|
+> | Base URL | `https://api.msc-nulaguna.org/v1` |
+> | API Version | 1.0 |
+> | Protocol | HTTPS only |
+> | Auth Method | JWT Bearer Token |
+> | Content Type | `application/json` |
+> | Rate Limiting | 100 req/min per IP (authenticated); 20 req/min (public) |
+
 ## Overview
 
 Endpoints for reading and managing user profiles and member lists.  
@@ -152,10 +163,10 @@ Requires `Authorization: Bearer <token>`.
 ```json
 {
   "avatars": [
-    { "id": "avatar-1",  "name": "Avatar 1",  "path": "http://localhost:5000/avatars/avatar-1.svg" },
-    { "id": "avatar-2",  "name": "Avatar 2",  "path": "http://localhost:5000/avatars/avatar-2.svg" },
+    { "id": "avatar-1",  "name": "Avatar 1",  "path": "https://api.msc-nulaguna.org/avatars/avatar-1.svg" },
+    { "id": "avatar-2",  "name": "Avatar 2",  "path": "https://api.msc-nulaguna.org/avatars/avatar-2.svg" },
     "...",
-    { "id": "avatar-12", "name": "Avatar 12", "path": "http://localhost:5000/avatars/avatar-12.svg" }
+    { "id": "avatar-12", "name": "Avatar 12", "path": "https://api.msc-nulaguna.org/avatars/avatar-12.svg" }
   ]
 }
 ```

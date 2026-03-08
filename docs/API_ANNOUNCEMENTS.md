@@ -1,5 +1,16 @@
 # Announcements API
 
+> **MSC NU Laguna Official Website — API Contract** | Version 1.0 | February 2026
+>
+> | Property | Value |
+> |---|---|
+> | Base URL | `https://api.msc-nulaguna.org/v1` |
+> | API Version | 1.0 |
+> | Protocol | HTTPS only |
+> | Auth Method | JWT Bearer Token |
+> | Content Type | `application/json` |
+> | Rate Limiting | 100 req/min per IP (authenticated); 20 req/min (public) |
+
 ## Overview
 
 Endpoints for listing and creating announcements.  
@@ -52,7 +63,7 @@ Results are ordered with pinned announcements first, then by newest.
       "pinned": false,
       "guildId": "1",
       "guildName": "Tech Guild",
-      "imageUrl": "http://localhost:5000/uploads/announcement-banner.jpg",
+      "imageUrl": "https://api.msc-nulaguna.org/uploads/announcement-banner.jpg",
       "createdAt": "2026-03-07T09:00:00.000Z",
       "createdBy": "3",
       "createdByName": "Juan Dela Cruz"

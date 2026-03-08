@@ -1,5 +1,16 @@
 # Guilds & Learning API
 
+> **MSC NU Laguna Official Website — API Contract** | Version 1.0 | February 2026
+>
+> | Property | Value |
+> |---|---|
+> | Base URL | `https://api.msc-nulaguna.org/v1` |
+> | API Version | 1.0 |
+> | Protocol | HTTPS only |
+> | Auth Method | JWT Bearer Token |
+> | Content Type | `application/json` |
+> | Rate Limiting | 100 req/min per IP (authenticated); 20 req/min (public) |
+
 ## Overview
 
 Endpoints for browsing guilds, applying for membership, and accessing learning resources.  
@@ -32,7 +43,7 @@ Get the list of all guilds. **Public endpoint — no authentication required.**
       "name": "UI/UX Design",
       "slug": "uiux",
       "description": "A guild focused on user interface and experience design.",
-      "image_url": "http://localhost:5000/avatars/guild-uiux.svg",
+      "image_url": "https://api.msc-nulaguna.org/avatars/guild-uiux.svg",
       "memberCount": 18,
       "leaderName": "Maria Santos"
     },

@@ -1,5 +1,16 @@
 # Section 9 — SharePoint Membership Tracker Integration
 
+> **MSC NU Laguna Official Website — API Contract** | Version 1.0 | February 2026
+>
+> | Property | Value |
+> |---|---|
+> | Base URL | `https://api.msc-nulaguna.org/v1` |
+> | API Version | 1.0 |
+> | Protocol | HTTPS only |
+> | Auth Method | JWT Bearer Token |
+> | Content Type | `application/json` |
+> | Rate Limiting | 100 req/min per IP (authenticated); 20 req/min (public) |
+
 Syncs MSC Laguna member data to a Microsoft SharePoint list via the **Microsoft Graph API** (OAuth 2.0 client credentials flow). The website is the authoritative source for all fields except **IsActive**, which SharePoint officers may toggle directly in the tracker.
 
 ---
