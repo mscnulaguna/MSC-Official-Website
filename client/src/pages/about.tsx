@@ -53,7 +53,7 @@ const WHAT_WE_DO: WhatWeDoItem[] = [
   {
     title: "Mentorship that doesn't feel intimidating",
     description:
-      "Need he's figuring things out? We've got mentors, peers, and teammates who ve been where you are. We're building support systems that feel more like friendships than formalities.",
+      "Need help figuring things out? We've got mentors, peers, and teammates who've been where you are. We're building support systems that feel more like friendships than formalities.",
     imageSrc: WWD2,
     imageAlt: "Mentorship",
     align: "right",
@@ -270,8 +270,8 @@ function TeamMemberCard({ name, role, photoSrc }: TeamMemberCardProps) {
 function TeamGrid({ members }: { members: TeamMember[] }) {
   return (
     <div className="mx-auto grid w-full max-w-7xl grid-cols-2 gap-4 content-start sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-      {members.map((member) => (
-        <TeamMemberCard key={`${member.name}-${member.role}`} {...member} />
+      {members.map((member, index) => (
+        <TeamMemberCard key={`${member.name}-${member.role}-${index}`} {...member} />
       ))}
     </div>
   )
@@ -291,11 +291,13 @@ export default function AboutPage() {
         <img
           src={bulbBg}
           aria-hidden="true"
+          alt=""
           className="pointer-events-none absolute -left-5 -top-3 z-0 w-[180px] md:w-[260px] lg:w-[400px]"
         />
         <img
           src={targetBg}
           aria-hidden="true"
+          alt=""
           className="pointer-events-none absolute right-0 -bottom-7 z-0 w-[180px] md:w-[260px] lg:w-[400px]"
         />
 
@@ -303,7 +305,7 @@ export default function AboutPage() {
           <div className="grid w-full grid-cols-1 gap-8 md:max-w-4xl md:grid-cols-2">
             <Card className="rounded-none border border-slate-300 bg-white shadow-none">
               <CardHeader>
-                <img src={visionIcon} alt="visionIcon" aria-hidden="true" className="h-7 w-7" />
+                <img src={visionIcon} alt="" aria-hidden="true" className="h-7 w-7" />
                 <CardTitle className="text-lg font-bold">VISION</CardTitle>
               </CardHeader>
               <CardContent>
@@ -318,7 +320,7 @@ export default function AboutPage() {
 
             <Card className="rounded-none border border-slate-300 bg-white shadow-none">
               <CardHeader>
-                <img src={missionIcon} alt="missionIcon" aria-hidden="true" className="h-7 w-7" />
+                <img src={missionIcon} alt="" aria-hidden="true" className="h-7 w-7" />
                 <CardTitle className="text-lg font-bold">MISSION</CardTitle>
               </CardHeader>
               <CardContent>
