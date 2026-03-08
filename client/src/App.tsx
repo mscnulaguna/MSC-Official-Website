@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import AboutPage from './pages/about'
 import PartnersPage from './pages/partners'
 import { useState, useEffect } from 'react'
 
@@ -27,6 +28,7 @@ export default function App() {
     <BrowserRouter>
       <div className="min-h-screen w-full overflow-x-hidden">
         <Routes>
+          <Route path="/about" element={<AboutPage />} />
           <Route path="/partners" element={<PartnersPage />} />
         </Routes>
       </div>
