@@ -4,6 +4,20 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Ensure full-width mobile layout with no right-side whitespace */
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  width: 100%;
+  overflow-x: hidden;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -62,10 +76,8 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 h1 {

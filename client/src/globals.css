@@ -70,9 +70,9 @@
   --muted: #f5f5f5;
   --muted-foreground: #4b5563; /* medium gray for secondary text */
 
-  /* ACCENT (purple from Accents 500) */
-  --accent: #8806ce;
-  --accent-foreground: #ffffff;
+  /* ACCENT (darker neutral grey for hover states) */
+  --accent: #e5e5e5;
+  --accent-foreground: #000000;
 
   /* SEMANTIC */
   --destructive: #F04E1F; /* Error 500 */
