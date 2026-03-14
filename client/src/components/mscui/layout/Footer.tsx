@@ -1,7 +1,8 @@
 "use client"
 
-import { MapPin, Mail } from 'lucide-react'
 import msclogoFooter from '@/assets/logos/msclogofooter.svg'
+import locationIcon from '@/assets/icons/locationicon.svg'
+import emailIcon from '@/assets/icons/emailicon.svg'
 import fbIcon from '@/assets/icons/fb-icon.svg'
 import linkedinIcon from '@/assets/icons/linkedin-icon.svg'
 import githubIcon from '@/assets/icons/github-icon.svg'
@@ -36,14 +37,14 @@ import { Button } from '@/components/mscui/button'
 
 export function Footer() {
   return (
-    <footer className="w-full bg-gray-50 border-t border-border/40">
+    <footer className="w-full bg-white border-t border-border">
       {/* Main Footer Content - Compact spacing */}
-      <div className="mx-auto max-w-[1700px] px-4 sm:px-8 md:px-12 py-8 sm:py-10">
-       {/* Main Footer Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-[auto_1fr_auto] gap-6 md:gap-8 mb-0">
+      <div className="mx-auto max-w-[1700px] px-2 sm:px-3 md:px-4 lg:px-6 py-8 sm:py-10">
+        {/* Desktop Layout: Logo | Contact/Follow | Partner Button */}
+        <div className="hidden md:grid md:grid-cols-[auto_1fr_auto] gap-6 md:gap-8 mb-0">
           {/* Logo Section */}
           <div className="flex flex-col items-center md:items-start md:justify-start">
-            <div className="relative h-28 w-40">
+            <div className="relative h-28 w-40 md:h-28 md:w-40">
               <img
                 src={msclogoFooter}
                 alt="MSC Logo"
@@ -53,9 +54,9 @@ export function Footer() {
           </div>
 
           {/* Contact Us and Follow Us - Nested Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-6">
             {/* Contact Us Column */}
-            <div className="text-center md:text-left">
+            <div className="text-left">
               <h3 className="text-base font-semibold mb-3 text-foreground">Contact Us</h3>
               <div className="space-y-2">
                 {/* Address */}
@@ -63,13 +64,15 @@ export function Footer() {
                   href="https://maps.google.com/?q=KM+53+Pan+Philippine+Highway,+Brgy.+Milagrosa,+Calamba,+Philippines"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex flex-col md:flex-row items-center md:items-start gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors justify-center md:justify-start"
+                  className="flex items-start gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
                   aria-label="MSC Office Address"
                 >
-                  <MapPin
-                    className="h-3.5 w-3.5 flex-shrink-0 text-black"
-                    fill="currentColor"
-                    strokeWidth={1.4}
+                  <img
+                    src={locationIcon}
+                    alt="Location icon"
+                    width={16}
+                    height={16}
+                    className="flex-shrink-0 mt-0.5"
                   />
                   <span>KM 53 Pan Philippine Highway, Brgy. Milagrosa, Calamba, Philippines, 4027</span>
                 </a>
@@ -77,13 +80,15 @@ export function Footer() {
                 {/* Email */}
                 <a
                   href="mailto:msc@nu-laguna.edu.ph"
-                  className="flex flex-col md:flex-row items-center md:items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors justify-center md:justify-start"
+                  className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
                   aria-label="Contact email"
                 >
-                  <Mail
-                    className="h-3.5 w-3.5 flex-shrink-0 text-black"
-                    fill="currentColor"
-                    strokeWidth={1.4}
+                  <img
+                    src={emailIcon}
+                    alt="Email icon"
+                    width={16}
+                    height={16}
+                    className="flex-shrink-0"
                   />
                   <span>msc@nu-laguna.edu.ph</span>
                 </a>
@@ -91,10 +96,9 @@ export function Footer() {
             </div>
 
             {/* Follow Us Column */}
-            <div className="text-center md:text-left">
+            <div className="text-left">
               <h3 className="text-base font-semibold mb-3 text-foreground">Follow Us</h3>
-              {/* Custom project icons - stored in src/assets/icons/ */}
-              <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+              <div className="flex flex-wrap gap-2">
                 {/* Facebook */}
                 <a
                   href="https://facebook.com"
@@ -108,7 +112,6 @@ export function Footer() {
                     alt="Facebook icon"
                     width={20}
                     height={20}
-                    className="text-foreground"
                   />
                 </a>
 
@@ -212,17 +215,202 @@ export function Footer() {
           </div>
 
           {/* Partner with Us Section */}
-          <div className="flex items-center justify-center md:items-center md:justify-end">
+          <div className="flex items-center justify-end">
             <Button className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-1 h-auto text-sm">
               Partner with Us
             </Button>
           </div>
         </div>
+
+        {/* Mobile/Tablet Layout: 2x2 Grid */}
+        <div className="md:hidden px-3 sm:px-4 md:px-5 lg:px-6 py-4">
+          {/* Row 1: Contact Us | Follow Us */}
+          <div className="grid grid-cols-2 gap-4 mb-6 pb-6">
+            {/* Contact Us */}
+            <div className="text-left">
+              <h3 className="text-sm font-semibold mb-2 text-foreground">Contact Us</h3>
+              <div className="space-y-2">
+                {/* Address */}
+                <a
+                  href="https://maps.google.com/?q=KM+53+Pan+Philippine+Highway,+Brgy.+Milagrosa,+Calamba,+Philippines"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label="MSC Office Address"
+                >
+                  <img
+                    src={locationIcon}
+                    alt="Location icon"
+                    width={14}
+                    height={14}
+                    className="flex-shrink-0 mt-0.5"
+                  />
+                  <span>KM 53 Pan Philippine Highway, Brgy. Milagrosa, Calamba, Philippines, 4027</span>
+                </a>
+
+                {/* Email */}
+                <a
+                  href="mailto:msc@nu-laguna.edu.ph"
+                  className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label="Contact email"
+                >
+                  <img
+                    src={emailIcon}
+                    alt="Email icon"
+                    width={14}
+                    height={14}
+                    className="flex-shrink-0"
+                  />
+                  <span>msc@nu-laguna.edu.ph</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Follow Us */}
+            <div className="text-left">
+              <h3 className="text-sm font-semibold mb-2 text-foreground">Follow Us</h3>
+              <div className="flex flex-wrap gap-1">
+                {/* Facebook */}
+                <a
+                  href="https://facebook.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-1.5 hover:opacity-75 transition-opacity"
+                  aria-label="Facebook"
+                >
+                  <img
+                    src={fbIcon}
+                    alt="Facebook icon"
+                    width={16}
+                    height={16}
+                  />
+                </a>
+
+                {/* LinkedIn */}
+                <a
+                  href="https://linkedin.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-1.5 hover:opacity-75 transition-opacity"
+                  aria-label="LinkedIn"
+                >
+                  <img
+                    src={linkedinIcon}
+                    alt="LinkedIn icon"
+                    width={16}
+                    height={16}
+                  />
+                </a>
+
+                {/* GitHub */}
+                <a
+                  href="https://github.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-1.5 hover:opacity-75 transition-opacity"
+                  aria-label="GitHub"
+                >
+                  <img
+                    src={githubIcon}
+                    alt="GitHub icon"
+                    width={16}
+                    height={16}
+                  />
+                </a>
+
+                {/* Instagram */}
+                <a
+                  href="https://instagram.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-1.5 hover:opacity-75 transition-opacity"
+                  aria-label="Instagram"
+                >
+                  <img
+                    src={igIcon}
+                    alt="Instagram icon"
+                    width={16}
+                    height={16}
+                  />
+                </a>
+
+                {/* Twitter */}
+                <a
+                  href="https://twitter.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-1.5 hover:opacity-75 transition-opacity"
+                  aria-label="Twitter"
+                >
+                  <img
+                    src={twitterIcon}
+                    alt="Twitter icon"
+                    width={16}
+                    height={16}
+                  />
+                </a>
+
+                {/* Discord */}
+                <a
+                  href="https://discord.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-1.5 hover:opacity-75 transition-opacity"
+                  aria-label="Discord"
+                >
+                  <img
+                    src={discordIcon}
+                    alt="Discord icon"
+                    width={16}
+                    height={16}
+                  />
+                </a>
+
+                {/* TikTok */}
+                <a
+                  href="https://tiktok.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-1.5 hover:opacity-75 transition-opacity"
+                  aria-label="TikTok"
+                >
+                  <img
+                    src={tiktokIcon}
+                    alt="TikTok icon"
+                    width={16}
+                    height={16}
+                  />
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Row 2: Logo | Partner Button */}
+          <div className="grid grid-cols-[1fr_1fr] gap-4 items-center">
+            {/* Logo - Full height on left */}
+            <div className="flex flex-col items-center justify-center">
+              <div className="relative h-24 w-32">
+                <img
+                  src={msclogoFooter}
+                  alt="MSC Logo"
+                  className="object-contain h-full w-full"
+                />
+              </div>
+            </div>
+
+            {/* Partner Button - Full width on right */}
+            <div className="flex items-center justify-center h-full\">
+              <Button className="bg-orange-600 hover:bg-orange-700 text-white w-full px-3 py-2 h-auto text-xs font-medium">
+                Partner with Us
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Bottom Copyright Section */}
-      <div className="w-full bg-blue-600 text-white py-3">
-        <div className="mx-auto max-w-[1700px] px-4 sm:px-8 md:px-12">
+      <div className="w-full bg-blue-600 text-white py-2">
+        <div className="mx-auto max-w-[1700px] px-2 sm:px-3 md:px-4 lg:px-6">
           <p className="text-center text-xs">
             © 2026 NU Laguna Microsoft Student Community | All Rights Reserved.
           </p>

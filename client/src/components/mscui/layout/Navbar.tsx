@@ -5,6 +5,7 @@ import { NavbarLeft } from './NavbarLeft'
 import { NavbarCenter } from './NavbarCenter'
 import { NavbarRight } from './NavbarRight'
 import { MobileNavDrawer } from './MobileNavDrawer'
+import { Button } from '@/components/mscui/button'
 
 /**
  * ============================================================================
@@ -72,31 +73,43 @@ export function Navbar({
 }: NavbarProps) {
   return (
     <header
-      className={`sticky top-0 z-50 w-full border-b border-border/40 bg-white ${className}`}
+      className={`sticky top-0 z-50 w-full border-b border-border/40 bg-white overflow-visible ${className}`}
       suppressHydrationWarning
     >
       {/* Max-width constraint: 1700px for consistency with page layouts */}
-      {/* To adjust: Change max-w-[1700px] to max-w-[1600px], max-w-[1800px], etc. */}
-      <div className="mx-auto max-w-[1700px] px-4 sm:px-8 md:px-12">
-        <nav className="relative flex h-16 items-center justify-between gap-4">
-          {/* LEFT: Logo */}
-          <div className="flex-shrink-0">
+      {/* Reduced padding for 1024px+ desktop support */}
+      <div className="w-full mx-auto max-w-[1700px] px-2 sm:px-3 md:px-4 lg:px-6">
+        <nav className="relative flex h-16 w-full items-center justify-between gap-2 lg:gap-4">
+          {/* MOBILE/TABLET: Hamburger Menu Drawer - Left */}
+          <div className="lg:hidden z-20 flex-shrink-0">
+            <MobileNavDrawer />
+          </div>
+
+          {/* DESKTOP: Logo Left, MOBILE: Centered Logo */}
+          <div className="hidden lg:flex lg:flex-shrink-0 z-10">
             <NavbarLeft logoSrc={logoSrc} logoAlt={logoAlt} />
           </div>
 
-          {/* CENTER: Navigation Menu (Desktop Only) - Positioned at center of max-width */}
-          <div className="absolute left-1/2 transform -translate-x-1/2">
+          {/* MOBILE/TABLET: Centered Logo */}
+          <div className="lg:hidden flex-1 flex justify-center z-10">
+            <NavbarLeft logoSrc={logoSrc} logoAlt={logoAlt} />
+          </div>
+
+          {/* CENTER: Navigation Menu (Desktop Only) - Exactly centered */}
+          <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 z-0">
             <NavbarCenter />
           </div>
 
           {/* RIGHT: Search, Theme Toggle, Sign In */}
-          <div className="flex items-center gap-1 ml-auto">
+          <div className="flex items-center gap-1 ml-auto z-10 hidden lg:flex justify-end">
             <NavbarRight />
           </div>
 
-          {/* MOBILE: Hamburger Menu Drawer */}
-          <div className="lg:hidden">
-            <MobileNavDrawer />
+          {/* MOBILE/TABLET: Sign Up Button (Right) */}
+          <div className="lg:hidden z-20 flex-shrink-0">
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white px-3 h-10 text-sm font-medium">
+              Sign Up
+            </Button>
           </div>
         </nav>
       </div>

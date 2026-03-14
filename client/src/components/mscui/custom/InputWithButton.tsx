@@ -7,7 +7,7 @@ import { Input } from "@/components/mscui/input"
 import { Button } from "@/components/mscui/button"
 
 export interface InputWithButtonProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, "onSubmit"> {
   label?: string
   placeholder?: string
   buttonLabel?: string

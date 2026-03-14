@@ -78,7 +78,7 @@ function SubmenuItem({
 export function NavbarCenter() {
   return (
     <nav className="hidden lg:block" suppressHydrationWarning>
-      {/* Navigation Menu - Only visible on large screens */}
+      {/* Navigation Menu - Only visible on extra large screens */}
       <NavigationMenu>
         <NavigationMenuList className="gap-1">
           {menuItems.map((item) => (

@@ -28,7 +28,7 @@ const carouselVariants = cva("relative w-full", {
 })
 
 const carouselViewportVariants = cva(
-  "relative overflow-hidden rounded-none bg-gray-100",
+  "relative overflow-hidden rounded-xl bg-gray-100 shadow-xl border border-border/50",
   {
     variants: {
       size: {
@@ -94,7 +94,7 @@ export function Carousel({
         size="icon"
         variant="ghost"
         onClick={prev}
-        className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white"
+        className="absolute -left-12 md:-left-16 top-1/2 -translate-y-1/2 hover:bg-muted text-foreground"
         aria-label="Previous slide"
       >
         <ChevronLeft className="h-6 w-6" />
@@ -104,7 +104,7 @@ export function Carousel({
         size="icon"
         variant="ghost"
         onClick={next}
-        className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white"
+        className="absolute -right-12 md:-right-16 top-1/2 -translate-y-1/2 hover:bg-muted text-foreground"
         aria-label="Next slide"
       >
         <ChevronRight className="h-6 w-6" />
@@ -181,7 +181,7 @@ export function CarouselRow({
             size="icon"
             variant="ghost"
             onClick={prev}
-            className="absolute left-0 top-1/2 -translate-y-1/2 h-8 w-8 bg-background/80 hover:bg-muted"
+            className="absolute -left-5 md:-left-9 top-1/2 -translate-y-1/2 h-8 w-8 hover:bg-muted"
             aria-label="Previous items"
           >
             <ChevronLeft className="h-4 w-4" />
@@ -191,7 +191,7 @@ export function CarouselRow({
             size="icon"
             variant="ghost"
             onClick={next}
-            className="absolute right-0 top-1/2 -translate-y-1/2 h-8 w-8 bg-background/80 hover:bg-muted"
+            className="absolute -right-5 md:-right-9 top-1/2 -translate-y-1/2 h-8 w-8 hover:bg-muted"
             aria-label="Next items"
           >
             <ChevronRight className="h-4 w-4" />

@@ -50,10 +50,10 @@ export function NavbarRight() {
       <div className="flex items-center gap-2 sm:gap-3">
         {/* Search Input Group - Opens on click or Ctrl+K */}
         <div className="hidden sm:flex" onClick={() => setIsSearchOpen(true)}>
-          <InputGroup className="w-64 cursor-pointer relative">
+          <InputGroup className="w-32 lg:w-40 xl:w-56 cursor-pointer relative">
             <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
             <InputGroupInput
-              placeholder="Search components..."
+              placeholder="Search.."
               className="pl-9 cursor-pointer"
               readOnly
             />
