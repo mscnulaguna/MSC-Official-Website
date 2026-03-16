@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Button } from '@/components/ui/button'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import AboutPage from './pages/about'
+import PartnersPage from './pages/partners'
+import { useState, useEffect } from 'react'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
@@ -23,9 +25,13 @@ export default function App() {
   useEffect(() => { fetchMessage() }, [])
 
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">{message}</h1>
-      <Button onClick={fetchMessage}>Refresh</Button>
-    </div>
+    <BrowserRouter>
+      <div className="min-h-screen w-full overflow-x-hidden">
+        <Routes>
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/partners" element={<PartnersPage />} />
+        </Routes>
+      </div>
+    </BrowserRouter>
   )
 }
