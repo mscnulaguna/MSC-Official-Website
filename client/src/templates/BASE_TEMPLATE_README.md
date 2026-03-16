@@ -2,6 +2,9 @@
 
 Learn how to create new pages using the BASE_PAGE_TEMPLATE.
 
+> **Note:** This template is designed for a Vite + React app (see `client/package.json` and `src/main.tsx`). 
+> Adjust any React Router or component import paths based on your project's actual routing configuration.
+
 ---
 
 ## What is the Base Template?
@@ -22,12 +25,10 @@ Learn how to create new pages using the BASE_PAGE_TEMPLATE.
 ### Creating a New Page
 
 1. **Open BASE_PAGE_TEMPLATE.tsx** to use as reference
-2. **Create file:** `src/app/[page-name]/page.tsx`
+2. **Create file:** `src/pages/YourPageName.tsx`
 3. **Copy structure:**
 
 ```tsx
-'use client'
-
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 
@@ -47,6 +48,8 @@ export default function YourPageName() {
   )
 }
 ```
+
+4. **Register the route** in `src/App.tsx` using React Router or your routing library
 
 ---
 

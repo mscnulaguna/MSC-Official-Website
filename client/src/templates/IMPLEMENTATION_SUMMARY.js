@@ -109,13 +109,14 @@
 // Result: Buttons stack on mobile, sit side-by-side on larger screens
 
 // ═════════════════════════════════════════════════════════════════════════
-// FILE STRUCTURE
+// FILE STRUCTURE (VITE + REACT)
 // ═════════════════════════════════════════════════════════════════════════
 
 // MODIFIED FILES:
 // ─────────────────────────────────────────────────────────────────────────
-// src/app/page.tsx              → Complete responsive layout implementation
-// src/app/layout.tsx            → Added Sonner Toaster
+// src/App.tsx                   → Complete responsive layout implementation
+// src/layout.tsx                → AppLayout with Navbar and Toaster
+// src/main.tsx                  → Vite entry point with ToastProvider
 
 // NEW COMPONENT FILES:
 // ─────────────────────────────────────────────────────────────────────────
@@ -268,41 +269,33 @@
 // CUSTOMIZATION EXAMPLES
 // ═════════════════════════════════════════════════════════════════════════
 
-// EXAMPLE 1: Change max-width from 1400px to 1200px
-// File: src/app/page.tsx, line 131
-// OLD:  <main className="w-full max-w-[1400px] mx-auto">
-// NEW:  <main className="w-full max-w-[1200px] mx-auto">
-// Effect: Layout is more compact, content stops at 1200px instead
+// EXAMPLE 1: Change max-width from 1700px to 1400px
+// File: src/App.tsx (Navbar, Footer, etc.), various lines
+// OLD:  className="...max-w-[1700px]..."
+// NEW:  className="...max-w-[1400px]..."
+// Effect: Layout is more compact, content stops at 1400px instead
 // Use case: Tighter, more condensed design
 
 // EXAMPLE 2: Increase padding on mobile
-// File: src/app/page.tsx, line 134
-// OLD:  className="...px-4 sm:px-6..."
-// NEW:  className="...px-6 sm:px-8..."
+// File: Various component files using px-2 sm:px-3 sm:px-4
+// OLD:  className="...px-2 sm:px-3 md:px-4..."
+// NEW:  className="...px-4 sm:px-6 md:px-8..."
 // Effect: More breathing room on phones
 // Use case: Less cramped mobile experience
 
-// EXAMPLE 3: Show sidebar earlier (at tablet, not desktop)
-// File: src/app/page.tsx, line 260
-// OLD:  <div className="md:col-span-1 lg:col-span-1">
-// NEW:  <div className="sm:col-span-1 md:col-span-1">
-// Effect: Sidebar visible starting at 640px instead of 1024px
-// Use case: Earlier multi-column layout
+// EXAMPLE 3: Change breakpoint from lg to md
+// File: Navbar.tsx, MobileNavDrawer.tsx, etc.
+// OLD:  className="lg:hidden"
+// NEW:  className="md:hidden"
+// Effect: Mobile menu shows up earlier on tablets
+// Use case: Earlier mobile menu display
 
 // EXAMPLE 4: Make feature grid 4 columns on desktop
-// File: src/app/page.tsx, line 280
+// File: src/App.tsx (in showcase sections)
 // OLD:  className="grid grid-cols-1 sm:grid-cols-2 gap-4..."
 // NEW:  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4..."
 // Effect: 1 → 2 → 4 columns as screen grows
 // Use case: More cards visible on large screens
-
-// EXAMPLE 5: Remove max-width limit (stretch infinitely)
-// File: src/app/page.tsx, line 131
-// OLD:  <main className="w-full max-w-[1400px] mx-auto">
-// NEW:  <main className="w-full">
-// Effect: Layout stretches to fill entire width
-// Effect: No centering on ultra-wide screens
-// Use case: Full-width experience (not recommended for readability)
 
 // ═════════════════════════════════════════════════════════════════════════
 // REMOVING DEBUG RED OUTLINES
@@ -311,7 +304,7 @@
 // When you're ready to finalize the layout:
 
 // Method 1: Search & Replace (Recommended)
-// - Open file: src/app/page.tsx
+// - Open file: src/App.tsx or component files
 // - Find: outline outline-red-500 outline-1
 // - Replace with: outline-none
 // - Click: Replace All

@@ -1,26 +1,25 @@
 /**
- * BASE LAYOUT TEMPLATE FOR NEW PAGES
+ * BASE PAGE TEMPLATE FOR NEW PAGES
  *
  * This is a starter template for developers to use when creating new pages
- * in the MSC - NU Laguna Design System.
+ * in the MSC - NU Laguna Design System (Vite + React).
  *
- * File Location: src/app/[page-name]/page.tsx
- * Or: src/pages/[page-name].tsx
+ * File Location: src/pages/YourPageName.tsx
  *
  * How to use this:
  * 1. Copy this entire file
- * 2. Create a new folder: src/app/your-page-name/
- * 3. Create page.tsx and paste this template
- * 4. Replace [Page Name] with your actual page name
- * 5. Add your content after the <!-- YOUR CONTENT HERE --> section
+ * 2. Create a new file: src/pages/your-page-name.tsx
+ * 3. Paste this template and replace [Page Name] with your actual page name
+ * 4. Add your content after the <!-- YOUR CONTENT HERE --> section
+ * 5. Register the route in src/App.tsx
  * 6. Keep the red debug outlines for layout verification
  * 7. Remove outlines when layout is finalized
  */
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Navbar } from "@/components/mscui/layout/Navbar"
-import { Footer } from "@/components/mscui/layout/Footer"
+import { Navbar } from "@/components/ui/layout/Navbar"
+import { Footer } from "@/components/ui/layout/Footer"
 
 /**
  * BASE PAGE LAYOUT TEMPLATE
