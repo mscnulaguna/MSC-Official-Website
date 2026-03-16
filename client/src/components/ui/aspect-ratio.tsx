@@ -1,11 +1,43 @@
-"use client"
+import * as React from "react"
+import { cn } from "@/lib/utils"
 
-import { AspectRatio as AspectRatioPrimitive } from "radix-ui"
+/**
+ * Aspect Ratio Component
+ * ======================
+ *
+ * Maintains aspect ratio for media containers.
+ * Useful for images, videos, and other media.
+ * Responsive and CSS-based sizing.
+ * Customized to match MSC Design System.
+ */
 
-function AspectRatio({
-  ...props
-}: React.ComponentProps<typeof AspectRatioPrimitive.Root>) {
-  return <AspectRatioPrimitive.Root data-slot="aspect-ratio" {...props} />
+interface AspectRatioProps extends React.HTMLAttributes<HTMLDivElement> {
+  ratio?: number
 }
+
+const AspectRatio = React.forwardRef<HTMLDivElement, AspectRatioProps>(
+  ({ ratio = 16 / 9, className, ...props }, ref) => {
+    const aspectRatioClasses = {
+      "1/1": "aspect-square",
+      "3/2": "aspect-[3/2]",
+      "4/3": "aspect-[4/3]",
+      "16/9": "aspect-video",
+      "9/16": "aspect-[9/16]",
+      "3/4": "aspect-[3/4]",
+    } as Record<string, string>
+
+    const ratioKey = `${ratio}`.replace(".", "/")
+    const aspectClass = aspectRatioClasses[ratioKey] ?? `aspect-[${ratio}]`
+
+    return (
+      <div
+        ref={ref}
+        className={cn("overflow-hidden rounded-lg bg-muted", aspectClass, className)}
+        {...props}
+      />
+    )
+  }
+)
+AspectRatio.displayName = "AspectRatio"
 
 export { AspectRatio }

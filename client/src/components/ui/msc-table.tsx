@@ -1,32 +1,23 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
-/**
- * Table Component
- * ===============
- *
- * Accessible data table with clean design.
- * Customized to match MSC Design System.
- * Sharp styling with proper spacing and hierarchy.
- */
-
-const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
+const MscTable = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
   ({ className, ...props }, ref) => (
     <div className="w-full overflow-auto rounded-none border border-border">
       <table ref={ref} className={cn("w-full caption-bottom text-sm", className)} {...props} />
     </div>
   )
 )
-Table.displayName = "Table"
+MscTable.displayName = "Table"
 
-const TableHeader = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
+const MscTableHeader = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
   ({ className, ...props }, ref) => (
     <thead ref={ref} className={cn("bg-gray-50 border-b border-border", className)} {...props} />
   )
 )
-TableHeader.displayName = "TableHeader"
+MscTableHeader.displayName = "TableHeader"
 
-const TableBody = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
+const MscTableBody = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
   ({ className, ...props }, ref) => (
     <tbody
       ref={ref}
@@ -35,9 +26,9 @@ const TableBody = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes
     />
   )
 )
-TableBody.displayName = "TableBody"
+MscTableBody.displayName = "TableBody"
 
-const TableFooter = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
+const MscTableFooter = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
   ({ className, ...props }, ref) => (
     <tfoot
       ref={ref}
@@ -46,9 +37,9 @@ const TableFooter = React.forwardRef<HTMLTableSectionElement, React.HTMLAttribut
     />
   )
 )
-TableFooter.displayName = "TableFooter"
+MscTableFooter.displayName = "TableFooter"
 
-const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTMLTableRowElement>>(
+const MscTableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTMLTableRowElement>>(
   ({ className, ...props }, ref) => (
     <tr
       ref={ref}
@@ -60,9 +51,9 @@ const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTML
     />
   )
 )
-TableRow.displayName = "TableRow"
+MscTableRow.displayName = "TableRow"
 
-const TableHead = React.forwardRef<HTMLTableCellElement, React.ThHTMLAttributes<HTMLTableCellElement>>(
+const MscTableHead = React.forwardRef<HTMLTableCellElement, React.ThHTMLAttributes<HTMLTableCellElement>>(
   ({ className, ...props }, ref) => (
     <th
       ref={ref}
@@ -74,16 +65,16 @@ const TableHead = React.forwardRef<HTMLTableCellElement, React.ThHTMLAttributes<
     />
   )
 )
-TableHead.displayName = "TableHead"
+MscTableHead.displayName = "TableHead"
 
-const TableCell = React.forwardRef<HTMLTableCellElement, React.TdHTMLAttributes<HTMLTableCellElement>>(
+const MscTableCell = React.forwardRef<HTMLTableCellElement, React.TdHTMLAttributes<HTMLTableCellElement>>(
   ({ className, ...props }, ref) => (
     <td ref={ref} className={cn("px-4 py-3 align-middle", className)} {...props} />
   )
 )
-TableCell.displayName = "TableCell"
+MscTableCell.displayName = "TableCell"
 
-const TableCaption = React.forwardRef<HTMLTableCaptionElement, React.HTMLAttributes<HTMLTableCaptionElement>>(
+const MscTableCaption = React.forwardRef<HTMLTableCaptionElement, React.HTMLAttributes<HTMLTableCaptionElement>>(
   ({ className, ...props }, ref) => (
     <caption
       ref={ref}
@@ -92,6 +83,15 @@ const TableCaption = React.forwardRef<HTMLTableCaptionElement, React.HTMLAttribu
     />
   )
 )
-TableCaption.displayName = "TableCaption"
+MscTableCaption.displayName = "TableCaption"
 
-export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption }
+export {
+  MscTable as Table,
+  MscTableHeader as TableHeader,
+  MscTableBody as TableBody,
+  MscTableFooter as TableFooter,
+  MscTableHead as TableHead,
+  MscTableRow as TableRow,
+  MscTableCell as TableCell,
+  MscTableCaption as TableCaption,
+}
