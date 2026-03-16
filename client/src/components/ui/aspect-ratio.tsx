@@ -26,8 +26,15 @@ const AspectRatio = React.forwardRef<HTMLDivElement, AspectRatioProps>(
       "3/4": "aspect-[3/4]",
     } as Record<string, string>
 
-    const ratioKey = `${ratio}`.replace(".", "/")
-    const aspectClass = aspectRatioClasses[ratioKey] ?? `aspect-[${ratio}]`
+    let aspectClass: string
+    if (typeof ratio === 'number') {
+      // Handle numeric ratios: look for exact match or use Tailwind syntax
+      const ratioStr = ratio.toString()
+      aspectClass = aspectRatioClasses[ratioStr] ?? `aspect-[${ratio}]`
+    } else {
+      // Handle string ratios like "16/9"
+      aspectClass = aspectRatioClasses[ratio as string] ?? `aspect-[${ratio}]`
+    }
 
     return (
       <div

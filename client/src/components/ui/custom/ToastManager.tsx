@@ -46,7 +46,7 @@ export function ToastManager() {
   if (!mounted) return null
 
   return (
-    <>
+    <div className="fixed bottom-4 right-4 z-50 max-w-md pointer-events-none space-y-2">
       {toasts.map((toast: ToastItem) => {
         const Wrapper =
           toast.variant === 'destructive'
@@ -58,12 +58,14 @@ export function ToastManager() {
             : AlertInfo
 
         return (
-          <Wrapper key={toast.id} className="mb-2">
-            <AlertTitle>{toast.title}</AlertTitle>
-            {toast.description && <AlertDescription>{toast.description}</AlertDescription>}
-          </Wrapper>
+          <div key={toast.id} className="pointer-events-auto">
+            <Wrapper className="mb-0">
+              <AlertTitle>{toast.title}</AlertTitle>
+              {toast.description && <AlertDescription>{toast.description}</AlertDescription>}
+            </Wrapper>
+          </div>
         )
       })}
-    </>
+    </div>
   )
 }

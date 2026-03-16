@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { InputGroup, InputGroupInput, InputGroupAddon } from '@/components/ui/input-group'
+import { InputGroup, InputGroupContent, InputGroupSuffix } from '@/components/ui/input-group'
 import { Kbd } from '@/components/ui/kbd'
 import circleHalfWhite from "@/assets/icons/circle-half-white.svg"
 import circleHalfBlack from "@/assets/icons/circle-half-black.svg"
 import { Search } from 'lucide-react'
 import { SearchDialog } from './SearchDialog'
+import { useTheme } from '@/context/ThemeContext'
 
 /**
  * NavbarRight Component
@@ -22,8 +23,8 @@ import { SearchDialog } from './SearchDialog'
  */
 
 export function NavbarRight() {
-  const [isDarkMode, setIsDarkMode] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const { isDarkMode, toggleDarkMode } = useTheme()
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -51,14 +52,14 @@ export function NavbarRight() {
         <div className="hidden sm:flex" onClick={() => setIsSearchOpen(true)}>
           <InputGroup className="w-32 lg:w-40 xl:w-56 cursor-pointer">
             <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
-            <InputGroupInput
+            <InputGroupContent
               placeholder="Search..."
               className="pl-9 pr-14 cursor-pointer"
               readOnly
             />
-            <InputGroupAddon className="absolute right-2 pointer-events-none">
+            <InputGroupSuffix className="absolute right-2 pointer-events-none">
               <Kbd>Ctrl K</Kbd>
-            </InputGroupAddon>
+            </InputGroupSuffix>
           </InputGroup>
         </div>
 
@@ -77,7 +78,7 @@ export function NavbarRight() {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => setIsDarkMode(!isDarkMode)}
+          onClick={toggleDarkMode}
           aria-label="Toggle dark mode"
           className="h-10 w-10"
         >

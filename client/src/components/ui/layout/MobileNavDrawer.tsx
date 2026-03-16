@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { ChevronDown } from 'lucide-react'
 import circleHalfWhite from '@/assets/icons/circle-half-white.svg'
 import circleHalfBlack from '@/assets/icons/circle-half-black.svg'
+import { useTheme } from '@/context/ThemeContext'
 
 /**
  * MobileNavDrawer Component
@@ -106,7 +107,7 @@ function CollapsibleNavItem({
 
 export function MobileNavDrawer({ onNavigate }: MobileNavDrawerProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const [isDarkMode, setIsDarkMode] = useState(false)
+  const { isDarkMode, toggleDarkMode } = useTheme()
 
   const handleNavigate = () => {
     onNavigate?.()
@@ -127,7 +128,7 @@ export function MobileNavDrawer({ onNavigate }: MobileNavDrawerProps) {
       </Button>
 
       {/* Drawer Content with built-in animation */}
-      <DrawerContent hideOverlay className="fixed !inset-y-auto !top-16 !left-0 !h-[calc(100vh-64px)] !w-full !max-w-none rounded-none flex flex-col !border-l-0 border-t border-border bg-background">
+      <DrawerContent showOverlay={false} className="fixed !inset-y-auto !top-16 !left-0 !h-[calc(100vh-64px)] !w-full !max-w-none rounded-none flex flex-col !border-l-0 border-t border-border bg-background">
         {/* Visible Separator at top */}
         <div className="h-px bg-border/60" />
         {/* Search and Theme Toggle Row */}
@@ -147,7 +148,7 @@ export function MobileNavDrawer({ onNavigate }: MobileNavDrawerProps) {
             variant="ghost"
             size="icon"
             className="h-10 w-10 flex-shrink-0"
-            onClick={() => setIsDarkMode(!isDarkMode)}
+            onClick={toggleDarkMode}
             aria-label="Toggle dark mode"
           >
             {isDarkMode ? (

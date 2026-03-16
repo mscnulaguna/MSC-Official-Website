@@ -62,15 +62,20 @@ export function Carousel({
   const [current, setCurrent] = React.useState(0)
   const count = React.Children.count(children)
 
-  const next = () => setCurrent((current + 1) % count)
-  const prev = () => setCurrent((current - 1 + count) % count)
+  const next = React.useCallback(() => {
+    setCurrent((prev) => (prev + 1) % count)
+  }, [count])
+
+  const prev = React.useCallback(() => {
+    setCurrent((prev) => (prev - 1 + count) % count)
+  }, [count])
 
   React.useEffect(() => {
     if (!autoPlay) return
 
     const interval = setInterval(next, autoPlayInterval)
     return () => clearInterval(interval)
-  }, [current, autoPlay, autoPlayInterval])
+  }, [autoPlay, autoPlayInterval, next])
 
   return (
     <div className={cn(carouselVariants({ size }), className)} {...props}>

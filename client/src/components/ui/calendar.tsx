@@ -23,7 +23,37 @@ export interface CalendarProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export function Calendar({ className, ...props }: CalendarProps) {
-  const [date] = React.useState<Date>(new Date())
+  const [date, setDate] = React.useState<Date>(new Date())
+  const currentDate = date.getDate()
+  const currentMonth = date.getMonth()
+  const currentYear = date.getFullYear()
+
+  // Get the first day of the month (0 = Sunday, 1 = Monday, etc.)
+  const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay()
+  
+  // Get the number of days in the month
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate()
+  
+  // Create calendar days: pad with previous month days at start
+  const calendarDays: (number | null)[] = []
+  
+  // Add padding for days from previous month
+  for (let i = 0; i < firstDayOfMonth; i++) {
+    calendarDays.push(null)
+  }
+  
+  // Add current month days
+  for (let i = 1; i <= daysInMonth; i++) {
+    calendarDays.push(i)
+  }
+
+  const handlePrevMonth = () => {
+    setDate(new Date(currentYear, currentMonth - 1, 1))
+  }
+
+  const handleNextMonth = () => {
+    setDate(new Date(currentYear, currentMonth + 1, 1))
+  }
 
   return (
     <div className={cn("p-4 rounded-none border border-border bg-white", className)} {...props}>
@@ -32,10 +62,10 @@ export function Calendar({ className, ...props }: CalendarProps) {
           {date.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
         </h3>
         <div className="flex gap-1">
-          <Button size="sm" variant="ghost">
+          <Button size="sm" variant="ghost" onClick={handlePrevMonth}>
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <Button size="sm" variant="ghost">
+          <Button size="sm" variant="ghost" onClick={handleNextMonth}>
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
@@ -47,15 +77,16 @@ export function Calendar({ className, ...props }: CalendarProps) {
             {day}
           </div>
         ))}
-        {Array.from({ length: 35 }).map((_, i) => (
+        {calendarDays.map((day, i) => (
           <button
             key={i}
+            disabled={day === null}
             className={cn(
-              "p-2 text-xs rounded-none hover:bg-blue-50 transition-colors border border-transparent",
-              i === 15 && "bg-primary text-primary-foreground font-semibold hover:bg-primary/90 border-primary"
+              "p-2 text-xs rounded-none hover:bg-blue-50 transition-colors border border-transparent disabled:opacity-30 disabled:cursor-not-allowed",
+              day === currentDate && "bg-primary text-primary-foreground font-semibold hover:bg-primary/90 border-primary"
             )}
           >
-            {i + 1}
+            {day}
           </button>
         ))}
       </div>

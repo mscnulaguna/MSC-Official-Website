@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useRef, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
 
 export interface ToastItem {
   id: string
@@ -85,6 +85,14 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     timeoutIds: timeoutIdsRef.current,
   }
 
+  // Cleanup all pending timeouts when provider unmounts to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      timeoutIdsRef.current.forEach((id) => clearTimeout(id))
+      timeoutIdsRef.current.clear()
+    }
+  }, [])
+
   return <ToastContext.Provider value={value}>{children}</ToastContext.Provider>
 }
 
@@ -144,6 +152,12 @@ export function useToast(): UseToastReturn {
         open,
         onOpenChange: (isOpen) => {
           if (!isOpen) {
+            // Clear timeout when toast is dismissed early
+            const timeoutId = timeoutIds.get(id)
+            if (timeoutId) {
+              clearTimeout(timeoutId)
+              timeoutIds.delete(id)
+            }
             dismiss(id)
           }
           onOpenChange?.(isOpen)

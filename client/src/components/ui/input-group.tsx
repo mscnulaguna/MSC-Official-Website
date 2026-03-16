@@ -60,5 +60,4 @@ export {
   InputGroupPrefix,
   InputGroupContent,
   InputGroupSuffix,
-  InputGroupContent as InputGroupInput,
 }

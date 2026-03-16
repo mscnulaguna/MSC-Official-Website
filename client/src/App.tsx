@@ -1,21 +1,21 @@
 import { useState } from 'react'
-import Layout from '@/components/mscui/layout/Layout'
+import Layout from '@/components/ui/layout/Layout'
 
-import { Button } from '@/components/mscui/button'
-import { Badge } from '@/components/mscui/badge'
-import { Input } from '@/components/mscui/input'
-import { Checkbox } from '@/components/mscui/checkbox'
-import { Toggle } from '@/components/mscui/toggle'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/mscui/tooltip'
-import { Progress } from '@/components/mscui/progress'
-import { SpinnerWithText } from '@/components/mscui/spinner'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Toggle } from '@/components/ui/toggle'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { Progress } from '@/components/ui/progress'
+import { SpinnerWithText } from '@/components/ui/spinner'
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
   CardContent,
-} from '@/components/mscui/card'
+} from '@/components/ui/card'
 import {
   AlertTitle,
   AlertDescription,
@@ -23,8 +23,8 @@ import {
   AlertSuccess,
   AlertWarning,
   AlertDestructive,
-} from '@/components/mscui/msc-alert'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/mscui/msc-tabs'
+} from '@/components/ui/msc-alert'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/msc-tabs'
 import {
   Table,
   TableHeader,
@@ -33,15 +33,15 @@ import {
   TableHead,
   TableCell,
   TableCaption,
-} from '@/components/mscui/msc-table'
-import { Textarea } from '@/components/mscui/msc-textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/mscui/select'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/mscui/dialog'
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/mscui/drawer'
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/mscui/accordion'
-import { EmptyState, EmptyStateContainer } from '@/components/mscui/empty-state'
-import { Combobox } from '@/components/mscui/combobox'
-import { CarouselRow } from '@/components/mscui/carousel'
+} from '@/components/ui/msc-table'
+import { Textarea } from '@/components/ui/msc-textarea'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import { EmptyState, EmptyStateContainer } from '@/components/ui/empty-state'
+import { Combobox } from '@/components/ui/combobox'
+import { CarouselRow } from '@/components/ui/carousel'
 // AspectRatio is used via the reusable AspectRatioPreset component
 import {
   Sidebar,
@@ -50,12 +50,11 @@ import {
   SidebarHeader,
   SidebarNav,
   SidebarNavItem,
-} from '@/components/mscui/sidebar'
-import { InputGroup, InputGroupContent, InputGroupPrefix, InputGroupSuffix } from '@/components/mscui/input-group'
-import { KBD } from '@/components/mscui/kbd'
-import { Separator } from '@/components/mscui/separator'
-import { Item, ItemAction, ItemContent, ItemDescription, ItemIcon, ItemLabel } from '@/components/mscui/item'
-import { Calendar } from '@/components/mscui/calendar'
+} from '@/components/ui/sidebar'
+import { InputGroup, InputGroupContent, InputGroupPrefix, InputGroupSuffix } from '@/components/ui/input-group'
+import { Kbd } from '@/components/ui/kbd'
+import { Separator } from '@/components/ui/separator'
+import { Calendar } from '@/components/ui/calendar'
 import {
   AlertDialogBasic,
   EventHoverCard,
@@ -65,8 +64,7 @@ import {
   DatePicker,
   AvatarCircle,
   GreenAlertBox,
-} from '@/components/mscui/custom'
-import { Toaster } from '@/components/mscui/sonner'
+} from '@/components/ui/custom'
 import { Search } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -75,11 +73,8 @@ export default function App() {
   const [selectedOption, setSelectedOption] = useState('')
 
   return (
-    <>
-      <Layout className="bg-background">
-        <div className="flex flex-col min-h-screen">
-          <main className="flex-1">
-          <div className="mx-auto max-w-[1700px] px-4 sm:px-8 md:px-12 py-12">
+    <Layout className="bg-background">
+      <div className="mx-auto max-w-[1700px] px-4 sm:px-8 md:px-12 py-12">
             {/* Page Title */}
             <header className="mb-12">
               <h1 className="heading-h1 mb-4">Component Showcase</h1>
@@ -339,9 +334,9 @@ export default function App() {
                     <Badge>Default</Badge>
                     <Badge variant="secondary">Secondary</Badge>
                     <Badge variant="outline">Outline</Badge>
-                    <Badge variant="success">Success</Badge>
-                    <Badge variant="warning">Warning</Badge>
-                    <Badge variant="info">Info</Badge>
+                    <Badge variant="secondary">Success</Badge>
+                    <Badge variant="destructive">Warning</Badge>
+                    <Badge variant="default">Info</Badge>
                   </CardContent>
                 </Card>
 
@@ -588,39 +583,6 @@ export default function App() {
               </EmptyStateContainer>
             </section>
 
-            {/* ===== SECTION: LIST ITEMS ===== */}
-            <section className="mb-12">
-              <h2 className="heading-h2 mb-6">List Items</h2>
-              <Card>
-                <CardContent className="p-0">
-                  <Item>
-                    <ItemIcon>
-                      <Badge>NEW</Badge>
-                    </ItemIcon>
-                    <ItemContent>
-                      <ItemLabel>New Announcement</ItemLabel>
-                      <ItemDescription>Latest update from MSC officers.</ItemDescription>
-                    </ItemContent>
-                    <ItemAction>
-                      <Button size="sm" variant="outline">View</Button>
-                    </ItemAction>
-                  </Item>
-                  <Item>
-                    <ItemIcon>
-                      <Badge variant="secondary">EVENT</Badge>
-                    </ItemIcon>
-                    <ItemContent>
-                      <ItemLabel>General Assembly</ItemLabel>
-                      <ItemDescription>All members are invited to join.</ItemDescription>
-                    </ItemContent>
-                    <ItemAction>
-                      <Button size="sm" variant="outline">Details</Button>
-                    </ItemAction>
-                  </Item>
-                </CardContent>
-              </Card>
-            </section>
-
             {/* ===== SECTION: CAROUSEL ===== */}
             <section className="mb-12">
               <h2 className="heading-h2 mb-6">Event Carousel (1:1, 4 per row)</h2>
@@ -720,6 +682,68 @@ export default function App() {
               </Card>
             </section>
 
+            {/* ===== SECTION: NAVBAR ===== */}
+            <section className="mb-12">
+              <h2 className="heading-h2 mb-6">Navbar</h2>
+              <div className="space-y-6">
+                {/* Features Info Card */}
+                <Card className="bg-gradient-to-r from-slate-50 to-slate-100 border-slate-200">
+                  <CardHeader>
+                    <CardTitle className="heading-h4">Responsive Navigation Bar</CardTitle>
+                    <CardDescription>Fully responsive navbar with desktop and mobile layouts</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <div className="flex gap-3">
+                        <div className="text-primary mt-1 flex-shrink-0">✓</div>
+                        <div className="space-y-1">
+                          <p className="body-small font-medium">Responsive Design</p>
+                          <p className="text-xs text-muted-foreground">Works on mobile, tablet, and desktop</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-3">
+                        <div className="text-primary mt-1 flex-shrink-0">✓</div>
+                        <div className="space-y-1">
+                          <p className="body-small font-medium">Mobile Menu</p>
+                          <p className="text-xs text-muted-foreground">Hamburger drawer on left side</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-3">
+                        <div className="text-primary mt-1 flex-shrink-0">✓</div>
+                        <div className="space-y-1">
+                          <p className="body-small font-medium">Search Integration</p>
+                          <p className="text-xs text-muted-foreground">Ctrl+K keyboard shortcut</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-3">
+                        <div className="text-primary mt-1 flex-shrink-0">✓</div>
+                        <div className="space-y-1">
+                          <p className="body-small font-medium">Dark Mode</p>
+                          <p className="text-xs text-muted-foreground">Theme toggle in navbar</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-3">
+                        <div className="text-primary mt-1 flex-shrink-0">✓</div>
+                        <div className="space-y-1">
+                          <p className="body-small font-medium">Centered Menu</p>
+                          <p className="text-xs text-muted-foreground">Navigation centered on lg+ screens</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-3">
+                        <div className="text-primary mt-1 flex-shrink-0">✓</div>
+                        <div className="space-y-1">
+                          <p className="body-small font-medium">Customizable</p>
+                          <p className="text-xs text-muted-foreground">Props for logo and content</p>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+
+              </div>
+            </section>
+
             {/* ===== SECTION: INPUT GROUP WITH KBD ===== */}
             <section className="mb-12">
               <h2 className="heading-h2 mb-6">Input Group with KBD</h2>
@@ -735,8 +759,8 @@ export default function App() {
                       </InputGroupPrefix>
                       <InputGroupContent placeholder="Search components" />
                       <InputGroupSuffix>
-                        <KBD>Ctrl</KBD>
-                        <KBD>K</KBD>
+                        <Kbd>Ctrl</Kbd>
+                        <Kbd>K</Kbd>
                       </InputGroupSuffix>
                     </InputGroup>
                   </CardContent>
@@ -747,9 +771,9 @@ export default function App() {
                     <CardTitle className="heading-h4">Keyboard Hint</CardTitle>
                   </CardHeader>
                   <CardContent className="space-x-2">
-                    <KBD>Ctrl</KBD>
-                    <KBD>Shift</KBD>
-                    <KBD>P</KBD>
+                    <Kbd>Ctrl</Kbd>
+                    <Kbd>Shift</Kbd>
+                    <Kbd>P</Kbd>
                   </CardContent>
                 </Card>
               </div>
@@ -810,10 +834,7 @@ export default function App() {
               </Card>
             </section>
           </div>
-          </main>
-        </div>
-      </Layout>
-      <Toaster />
-    </>
-  )
-}
+        </Layout>
+      )
+    }
+  
