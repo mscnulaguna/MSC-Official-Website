@@ -1,0 +1,31 @@
+name: MSC Website CI/CD Pipeline # display name for the workflow
+
+on: # trigger
+  push:
+    branches: 
+        - main
+        - dev
+  pull_request:
+    branches:
+        - main
+        - dev
+
+jobs:
+  build-and-test:
+    # creates a temporary Ubuntu Linux server to work on
+    runs-on: ubuntu-latest
+    steps:
+      # checks out the code from the repository
+      - uses: actions/checkout@v4
+      - name: Build Server
+        run: docker build ./server -t msc-server:latest
+      - name: Build Client
+        run: docker build ./client -t msc-client:latest
+
+  deploy-staging:
+    needs: build-and-test
+    if: github.ref == 'refs/heads/dev' # only deploy to staging on dev branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Staging
+        run: echo "Deploying to staging environment..." # replace with actual deployment commands

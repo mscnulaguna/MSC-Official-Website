@@ -3,7 +3,7 @@ import AboutPage from './pages/about'
 import PartnersPage from './pages/partners'
 import { useState, useEffect } from 'react'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
 
 export default function App() {
   const [message, setMessage] = useState('')
@@ -27,6 +27,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <div className="min-h-screen w-full overflow-x-hidden">
+        <div className="bg-slate-900 text-white p-2 text-center text-sm font-mono"> Backend Status: {message || 'Connecting...'}</div>
         <Routes>
           <Route path="/about" element={<AboutPage />} />
           <Route path="/partners" element={<PartnersPage />} />
