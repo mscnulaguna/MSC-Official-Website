@@ -43,14 +43,19 @@ function DrawerOverlay({
   )
 }
 
+interface DrawerContentProps extends React.ComponentProps<typeof DrawerPrimitive.Content> {
+  showOverlay?: boolean
+}
+
 function DrawerContent({
   className,
   children,
+  showOverlay = true,
   ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Content>) {
+}: DrawerContentProps) {
   return (
     <DrawerPortal data-slot="drawer-portal">
-      <DrawerOverlay />
+      {showOverlay && <DrawerOverlay />}
       <DrawerPrimitive.Content
         data-slot="drawer-content"
         className={cn(
