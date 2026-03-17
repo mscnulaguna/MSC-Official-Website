@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils"
  */
 
 interface AspectRatioProps extends React.HTMLAttributes<HTMLDivElement> {
-  ratio?: number | string
+  ratio?: number
 }
 
 const AspectRatio = React.forwardRef<HTMLDivElement, AspectRatioProps>(
@@ -26,15 +26,8 @@ const AspectRatio = React.forwardRef<HTMLDivElement, AspectRatioProps>(
       "3/4": "aspect-[3/4]",
     } as Record<string, string>
 
-    let aspectClass: string
-    if (typeof ratio === 'number') {
-      // Handle numeric ratios: look for exact match or use Tailwind syntax
-      const ratioStr = ratio.toString()
-      aspectClass = aspectRatioClasses[ratioStr] ?? `aspect-[${ratio}]`
-    } else {
-      // Handle string ratios like "16/9"
-      aspectClass = aspectRatioClasses[ratio as string] ?? `aspect-[${ratio}]`
-    }
+    const ratioStr = ratio.toString()
+    const aspectClass = aspectRatioClasses[ratioStr] ?? `aspect-[${ratio}]`
 
     return (
       <div
