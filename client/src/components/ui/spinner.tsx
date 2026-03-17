@@ -25,7 +25,8 @@ export function Spinner({ className, size = 40, ...props }: SpinnerProps) {
     >
       <img
         src={loadingIcon}
-        alt="Loading icon"
+        alt=""
+        aria-hidden="true"
         width={size}
         height={size}
         className="animate-spin object-contain"
