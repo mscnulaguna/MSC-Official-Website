@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils"
  */
 
 interface AspectRatioProps extends React.HTMLAttributes<HTMLDivElement> {
-  ratio?: number
+  ratio?: number | string
 }
 
 const AspectRatio = React.forwardRef<HTMLDivElement, AspectRatioProps>(
