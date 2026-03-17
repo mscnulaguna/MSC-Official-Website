@@ -5,7 +5,7 @@ import { Label } from "../components/ui/label";
 import { Card, CardContent } from "../components/ui/card";
 import { CheckCheck, Copy } from "lucide-react";
 import { useEffect, useState, type JSX, type ChangeEvent, type CSSProperties } from "react";
-import mscLogo from "../assets/Favicon.png";
+import mscLogo from "../assets/logos/msclogo.svg";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 const MSC_EMAIL = "msc@nu-laguna.edu.ph";
@@ -47,7 +47,7 @@ const PartnerLogo = ({ partner }: { partner: Partner }): JSX.Element => (
         <img
             src={partner.logo}
             alt={`${partner.name} logo`}
-            className="h-14 w-auto sm:h-24 md:h-28 lg:h-28 object-contain transition-transform duration-200 hover:scale-110 pointer-events-none"
+            className="h-20 w-auto sm:h-30 md:h-34 lg:h-38 object-contain transition-transform duration-200 hover:scale-110 pointer-events-none"
         />
     </a>
 );
@@ -215,7 +215,7 @@ const ContactForm = (): JSX.Element => {
                     </span>
                     <Button
                         type="button"
-                        variant="outline"
+                        variant="secondary"
                         onClick={handleCopy}
                         className="flex items-center gap-1 text-xs px-2 sm:px-3 py-1 shrink-0 h-auto"
                     >
@@ -261,16 +261,13 @@ export default function PartnersPage(): JSX.Element {
     return (
         <div className="font-sans">
 
-            {/* ── Navbar placeholder ── */}
-            <div className="h-16 shrink-0 z-20 relative border-b border-border bg-white/85 backdrop-blur-md" />
-
             {/* ── Section 1: Our Partners ── */}
-            <section className="py-32 sm:py-40 text-center">
+            <section className="py-16 sm:py-20 text-center mb-40">
                 <div className="w-4/5 mx-auto px-4 sm:px-6 lg:px-8">
-                    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold inline-block" style={gradientStyle}>
+                    <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold inline-block" style={gradientStyle}>
                         OUR PARTNERS
                     </h1>
-                    <p className="mt-3 text-black text-sm sm:text-sm     lg:text-lg max-w-4xl mx-auto">
+                    <p className="mt-3 text-gray-700 text-sm sm:text-sm     lg:text-lg max-w-4xl mx-auto">
                         We collaborate with tech companies and organizations to bring exclusive
                         benefits to our community members.
                     </p>
@@ -289,7 +286,7 @@ export default function PartnersPage(): JSX.Element {
                     )}
 
                     {!loading && (
-                        <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2 sm:gap-4">
+                        <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2 sm:gap-4">
                             {partners.map((partner) => (
                                 <PartnerLogo key={partner.id} partner={partner} />
                             ))}
@@ -304,7 +301,7 @@ export default function PartnersPage(): JSX.Element {
                     <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold inline-block" style={gradientStyle}>
                         WHY PARTNER WITH US
                     </h2>
-                    <p className="mt-2 text-black text-sm sm:text-sm lg:text-lg max-w-4xl mx-auto">
+                    <p className="mt-2 text-gray-700 text-sm max-w-4xl mx-auto">
                         From certifications to career connections, being part of MSC opens
                         doors you didn't know existed.
                     </p>
@@ -334,7 +331,7 @@ export default function PartnersPage(): JSX.Element {
                                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold inline-block" style={gradientStyle}>
                                     BECOME A PARTNER
                                 </h2>
-                                <p className="mt-2 text-black text-sm sm:text-sm lg:text-lg max-w-4xl mx-auto">
+                                <p className="mt-2 text-gray-700 text-sm mx-auto">
                                     Interested in partnering with MSC NU Laguna? Fill out the form
                                     below and we'll get back to you shortly.
                                 </p>

@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button'
  * ✓ Modular, reusable sub-components
  * ✓ Flex layout with no hardcoded px widths
  * ✓ Dropdown menus (Activities, Learn)
- * ✓ Search popover with category filtering
+ * ✓ Search dialog with keyboard-friendly filtering UI
  * ✓ Dark mode toggle UI (ready for integration)
  * ✓ Mobile drawer navigation
  * ✓ WCAG accessible with keyboard navigation
@@ -70,7 +70,7 @@ export function Navbar({
 }: NavbarProps) {
   return (
     <header
-      className={`fixed left-0 right-0 top-0 z-50 mx-auto max-w-[1700px] border-b border-border/40 bg-white overflow-visible ${className}`}
+      className={`fixed left-0 right-0 top-0 z-50 mx-auto  border-b border-border/40 bg-white overflow-visible ${className}`}
       suppressHydrationWarning
     >
       {/* Padding for mobile/tablet/desktop - no additional max-width wrapper needed */}
@@ -167,26 +167,18 @@ export function Navbar({
  *
  * 4. HOW TO ENABLE REAL SEARCH FUNCTIONALITY
  * ───────────────────────────────────────────
- * In SearchPopover.tsx, replace the handleSearch function:
+ * In SearchDialog.tsx, replace the submit handler with your real search flow:
  *
- *   const handleSearch = async (e: React.FormEvent) => {
- *     e.preventDefault()
+ *   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+ *     event.preventDefault()
  *
  *     // Call your API or search service
- *     const results = await searchAPI(searchQuery, selectedCategory)
+ *     const results = await searchApi(searchQuery)
  *
- *     // Handle results (navigate, show in separate page, etc.)
- *     router.push(`/search?q=${searchQuery}&cat=${selectedCategory}`)
- *     setIsOpen(false)
+ *     // Handle results (navigate, show inline results, etc.)
+ *     navigate(`/search?q=${encodeURIComponent(searchQuery)}`)
+ *     setOpen(false)
  *   }
- *
- * To add more categories, update SEARCH_CATEGORIES array:
- *
- *   const SEARCH_CATEGORIES = [
- *     { id: 'articles', label: 'Articles' },
- *     { id: 'events', label: 'Events' },
- *     { id: 'my-new-cat', label: 'My New Category' }, // ← Add
- *   ]
  *
  *
  * 5. HOW TO CONVERT TOGGLE INTO REAL DARK MODE TOGGLE
@@ -259,7 +251,7 @@ export function Navbar({
  * In NavbarRight.tsx, add components to the flex container:
  *
  *   <div className="flex items-center gap-2 sm:gap-3">
- *     <SearchPopover />
+ *     <Button variant="ghost" size="icon">...</Button>
  *     <Toggle>...</Toggle>
  *
  *     // Your new control

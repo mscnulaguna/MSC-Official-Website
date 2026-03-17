@@ -1,11 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from 'react'
-
-/**
- * ThemeContext
- * ============
- * Provides a shared theme/dark mode state across the entire application.
- * Ensures dark mode toggles are synchronized across all components.
- */
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
 
 interface ThemeContextType {
   isDarkMode: boolean
@@ -16,11 +9,21 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [isDarkMode, setIsDarkMode] = useState(false)
+  const [isDarkMode, setIsDarkMode] = useState(
+    () => localStorage.getItem('msc-theme') === 'dark'  // persist across refreshes
+  )
 
-  const toggleDarkMode = () => {
-    setIsDarkMode(prev => !prev)
-  }
+  useEffect(() => {
+    const root = window.document.documentElement
+    if (isDarkMode) {
+      root.classList.add('dark')
+    } else {
+      root.classList.remove('dark')
+    }
+    localStorage.setItem('msc-theme', isDarkMode ? 'dark' : 'light')
+  }, [isDarkMode])
+
+  const toggleDarkMode = () => setIsDarkMode(prev => !prev)
 
   return (
     <ThemeContext.Provider value={{ isDarkMode, setIsDarkMode, toggleDarkMode }}>
@@ -29,15 +32,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   )
 }
 
-/**
- * useTheme Hook
- * =============
- * Access shared theme state from any component.
- * Must be used within a ThemeProvider.
- * 
- * Usage:
- * const { isDarkMode, toggleDarkMode } = useTheme()
- */
 export function useTheme() {
   const context = useContext(ThemeContext)
   if (!context) {
