@@ -10,6 +10,8 @@ import discordIcon from '@/assets/icons/discord-icon.svg'
 import tiktokIcon from '@/assets/icons/tiktok-icon.svg'
 import { Button } from '@/components/ui/button'
 
+import { Link } from 'react-router-dom'
+
 /**
  * Footer Component
  * ================
@@ -363,9 +365,11 @@ export function Footer() {
 
           {/* Partner with Us Section */}
           <div className="flex items-center justify-center md:items-center md:justify-end">
-            <Button className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-1 h-auto text-sm">
-              Partner with Us
-            </Button>
+            <Link to="/partners">
+              <Button className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-1 h-auto text-sm">
+                Partner with Us
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

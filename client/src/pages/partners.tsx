@@ -323,7 +323,7 @@ export default function PartnersPage(): JSX.Element {
             </section>
 
             {/* ── Section 3: Become a Partner ── */}
-            <section className="py-32 sm:py-40">
+            <section className="py-32 sm:py-40" id="contactForm">
                 <div className="w-4/5 mx-auto px-4 sm:px-6 lg:px-8">
                     <Card className="rounded-none shadow-sm" style={{ border: "1px solid #CBD5E1" }}>
                         <CardContent className="p-6 sm:p-10 lg:p-12">
@@ -341,7 +341,6 @@ export default function PartnersPage(): JSX.Element {
                     </Card>
                 </div>
             </section>
-
         </div>
     );
 }
