@@ -1,7 +1,6 @@
 import React from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { NavbarWrapper } from "@/components/ui/layout";
-import "./globals.css";
 
 /**
  * AppLayout - Global App Wrapper Component
