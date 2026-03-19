@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import AboutPage from './pages/about'
 import PartnersPage from './pages/partners'
 import { useState, useEffect } from 'react'
+import { Footer } from "@/components/ui/layout/Footer";
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
 
@@ -32,6 +33,8 @@ export default function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/partners" element={<PartnersPage />} />
         </Routes>
+
+        <Footer />
       </div>
     </BrowserRouter>
   )
