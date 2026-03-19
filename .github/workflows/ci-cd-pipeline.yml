@@ -2,30 +2,55 @@ name: MSC Website CI/CD Pipeline # display name for the workflow
 
 on: # trigger
   push:
-    branches: 
-        - main
-        - dev
+    branches: [main, dev] # trigger on push to main and dev branches
   pull_request:
-    branches:
-        - main
-        - dev
+    branches: [main, dev] # trigger on pull request to main and dev branches
 
 jobs:
   build-and-test:
     # creates a temporary Ubuntu Linux server to work on
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read # allows the workflow to read the repository contents
+      packages: write # allows the workflow to write to GitHub Packages (if needed)
+
     steps:
       # checks out the code from the repository
-      - uses: actions/checkout@v4
-      - name: Build Server
-        run: docker build ./server -t msc-server:latest
-      - name: Build Client
-        run: docker build ./client -t msc-client:latest
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-  deploy-staging:
-    needs: build-and-test
-    if: github.ref == 'refs/heads/dev' # only deploy to staging on dev branch
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to Staging
-        run: echo "Deploying to staging environment..." # replace with actual deployment commands
+      # logs into the registry
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # builds and pushes the node.js server
+      # Docker requires repository names to be strictly lowercase
+      - name: Build and Push Server
+        run: | 
+          REPO_LC=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          docker build ./server -t ghcr.io/$REPO_LC/msc-server:latest
+          docker push ghcr.io/$REPO_LC/msc-server:latest
+
+      # injects the staging URL as a build argument when building the client image
+      - name: Build and Push Client
+        run: | 
+          REPO_LC=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          docker build ./client \
+            --build-arg VITE_API_BASE_URL=https://msc-dev-test.azurewebsites.net \
+            -t ghcr.io/$REPO_LC/msc-client:latest
+          docker push ghcr.io/$REPO_LC/msc-client:latest
+
+      - name: Deploy to Azure Web App
+        if: github.ref == 'refs/heads/dev' # only deploy to staging on dev branch
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: msc-dev-test
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }} # add your publish profile as a secret
+          images: |
+            ghcr.io/${{ github.repository }}/msc-server:latest
+            ghcr.io/${{ github.repository }}/msc-client:latest

@@ -1,0 +1,18 @@
+services:
+  # 1. The Node.js Backend (Production)
+  server:
+    # Notice we use 'image' instead of 'build'
+    image: ghcr.io/mscnulaguna/msc-official-website/msc-server:latest
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+
+  # 2. The React/Vite Frontend (Production)
+  client:
+    image: ghcr.io/mscnulaguna/msc-official-website/msc-client:latest
+    ports:
+      # Maps Azure's public port 80 to our unprivileged Nginx port 8080
+      - "80:8080"
+    depends_on:
+      - server
