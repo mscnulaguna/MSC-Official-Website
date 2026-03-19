@@ -63,7 +63,7 @@ export default function Home() {
   useEffect(() => {
     const currentWord = words[currentWordIndex].text;
     let index = displayText.length;
-    let timeoutId: ReturnType<typeof setTimeout>;
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
     if (isTyping) {
       // Typing phase
@@ -90,7 +90,11 @@ export default function Home() {
       }
     }
 
-    return () => clearTimeout(timeoutId);
+    return () => {
+      if (timeoutId !== undefined) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, [displayText, isTyping, currentWordIndex, words]);
 
   // Effect for SVG position changes (teleportation)
