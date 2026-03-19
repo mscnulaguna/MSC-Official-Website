@@ -13,6 +13,14 @@ import '@/styles/home.css';
 // Section 4 Abstract Image
 import abstracticon from '@/assets/shapes/abstacticons.svg';
 
+// Typing animation words - stable constant to prevent effect re-runs
+const TYPING_WORDS = [
+  { text: 'Achieve', color: 'text-[#00A4EF]' }, // Blue
+  { text: 'Build', color: 'text-[#7FBA00]' },   // Green
+  { text: 'Learn', color: 'text-[#F25022]' },   // Orange/Red
+  { text: 'Create', color: 'text-[#FFB900]' },  // Yellow
+];
+
 // Responsive carousel wrapper that shows different counts based on screen size
 function ResponsiveCarouselRow({ children, className }: { children: React.ReactNode[], className?: string }) {
   const isMobile = useIsMobile();
@@ -43,13 +51,6 @@ function ResponsiveCarouselRow({ children, className }: { children: React.ReactN
 }
 
 export default function Home() {
-  const words = [
-    { text: 'Achieve', color: 'text-[#00A4EF]' }, // Blue
-    { text: 'Build', color: 'text-[#7FBA00]' },   // Green
-    { text: 'Learn', color: 'text-[#F25022]' },   // Orange/Red
-    { text: 'Create', color: 'text-[#FFB900]' },  // Yellow
-  ];
-
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [displayText, setDisplayText] = useState('');
   const [isTyping, setIsTyping] = useState(true);
@@ -61,7 +62,7 @@ export default function Home() {
 
   // Effect for typing animation
   useEffect(() => {
-    const currentWord = words[currentWordIndex].text;
+    const currentWord = TYPING_WORDS[currentWordIndex].text;
     let index = displayText.length;
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
@@ -85,7 +86,7 @@ export default function Home() {
         }, 80); // Backspace speed: 80ms per letter
       } else {
         // Word fully erased, move to next word and start typing
-        setCurrentWordIndex((prev) => (prev + 1) % words.length);
+        setCurrentWordIndex((prev) => (prev + 1) % TYPING_WORDS.length);
         setIsTyping(true);
       }
     }
@@ -95,7 +96,7 @@ export default function Home() {
         clearTimeout(timeoutId);
       }
     };
-  }, [displayText, isTyping, currentWordIndex, words]);
+  }, [displayText, isTyping, currentWordIndex]);
 
   // Effect for SVG position changes (teleportation)
   useEffect(() => {
@@ -138,8 +139,8 @@ export default function Home() {
               Helping You
               <br />
               <span className="inline-flex items-center text-left">
-                <span className={`${words[currentWordIndex].color}`}>#</span>
-                <span className={`inline-block ${words[currentWordIndex].color}`}>
+                <span className={`${TYPING_WORDS[currentWordIndex].color}`}>#</span>
+                <span className={`inline-block ${TYPING_WORDS[currentWordIndex].color}`}>
                   {displayText}
                 </span>
                 <span className="text-foreground ml-1">More<BlinkingCursor className="ml-1" /></span>
