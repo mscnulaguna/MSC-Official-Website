@@ -1,12 +1,5 @@
-<<<<<<< HEAD
-import Home from '@/pages/home'
-// import { Toaster } from '@/components/mscui/sonner'
-
-export default function App() {
-  return (
-    <Home />
-=======
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Home from '@/pages/home'
 import AboutPage from './pages/about'
 import PartnersPage from './pages/partners'
 import { useState, useEffect } from 'react'
@@ -37,6 +30,7 @@ export default function App() {
     <BrowserRouter>
       <div className="min-h-screen w-full overflow-x-hidden">
         <Routes>
+          <Route path="/" element={<Home />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/partners" element={<PartnersPage />} />
         </Routes>
@@ -44,6 +38,5 @@ export default function App() {
         <Footer />
       </div>
     </BrowserRouter>
->>>>>>> 89a8be17ae8b1ec96205b5091097bd7cc056d413
   )
 }
