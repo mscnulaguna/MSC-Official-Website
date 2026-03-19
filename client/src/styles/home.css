@@ -93,7 +93,14 @@
 .bg-shape-8 { animation: teleport8 24s linear infinite; }
 .bg-shape-9 { animation: teleport9 24s linear infinite; } */
 
-
+@keyframes spin-continuous {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 .animate-spin-slow {
   animation: spin-continuous 12s linear infinite;
 }
