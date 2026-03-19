@@ -70,13 +70,32 @@ function getEmbedUrl(src: string): string {
   }
 }
 
+function isEmbedUrl(src: string): boolean {
+  try {
+    const url = new URL(src)
+    const hostname = url.hostname.toLowerCase()
+    return (
+      hostname === 'youtube.com' ||
+      hostname === 'www.youtube.com' ||
+      hostname === 'm.youtube.com' ||
+      hostname === 'youtu.be' ||
+      hostname === 'vimeo.com' ||
+      hostname === 'www.vimeo.com' ||
+      hostname === 'player.vimeo.com'
+    )
+  } catch {
+    // If URL parsing fails, treat as non-embed
+    return false
+  }
+}
+
 export function VideoPlayer({ 
   src, 
   type = "video/mp4", 
   title = "Video Player",
   className = "" 
 }: VideoPlayerProps) {
-  const isEmbed = src.includes('youtube.com') || src.includes('youtu.be') || src.includes('vimeo.com')
+  const isEmbed = isEmbedUrl(src)
   const embedSrc = isEmbed ? getEmbedUrl(src) : src
 
   const videoContent = isEmbed ? (
