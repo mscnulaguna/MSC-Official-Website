@@ -8,8 +8,6 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    },
-    "moduleResolution": "node",
-    "jsx": "react-jsx"
+    }
   }
 }

@@ -33,29 +33,43 @@ Complete documentation for the MSC Design System. A modern, production-ready Nex
 ## Project Structure
 
 ```
-design-system/
+msc-official-website/
 ├── src/
-│   ├── app/
-│   │   ├── globals.css          # Global styles
-│   │   ├── layout.tsx           # Root layout with Navbar
-│   │   └── page.tsx             # Homepage
+│   ├── globals.css              # Global styles & CSS variables
+│   ├── index.css                # Entry point styles
+│   ├── main.tsx                 # Vite app entry point
+│   ├── App.tsx                  # Main app component with routes
+│   ├── layout.tsx               # Global layout wrapper (AppLayout)
 │   │
 │   ├── components/
-│   │   ├── layout/              # Layout components
-│   │   │   ├── Navbar.tsx       # Main navigation
-│   │   │   ├── NavbarLeft.tsx   # Logo
-│   │   │   ├── NavbarCenter.tsx # Menu
-│   │   │   ├── NavbarRight.tsx  # Search, theme, sign-in
-│   │   │   ├── Footer.tsx       # Footer section
-│   │   │   ├── MobileNavDrawer.tsx
-│   │   │   └── SearchDialog.tsx
-│   │   │
-│   │   └── ui/                  # shadcn/ui components
-│   │       ├── button.tsx
-│   │       ├── card.tsx
-│   │       ├── dialog.tsx
-│   │       ├── input.tsx
-│   │       ├── ... (20+ components)
+│   │   └── ui/                  # MSC Design System components
+│   │       ├── layout/          # Layout components
+│   │       │   ├── Navbar.tsx   # Main navigation
+│   │       │   ├── NavbarLeft.tsx   # Logo
+│   │       │   ├── NavbarCenter.tsx # Menu
+│   │       │   ├── NavbarRight.tsx  # Search, theme, sign-in
+│   │       │   ├── Footer.tsx       # Footer section
+│   │       │   ├── MobileNavDrawer.tsx
+│   │       │   └── SearchDialog.tsx
+│   │       ├── custom/          # Custom composed components
+│   │       │   ├── DatePicker.tsx
+│   │       │   ├── AvatarCircle.tsx
+│   │       │   ├── AspectRatioPreset.tsx
+│   │       │   ├── ToastManager.tsx
+│   │       │   ├── AlertDialogBasic.tsx
+│   │       │   ├── EventHoverCard.tsx
+│   │       │   ├── GreenAlertBox.tsx
+│   │       │   ├── InputWithButton.tsx
+│   │       │   └── SignInDialog.tsx
+│   │       ├── registry/        # Component registry
+│   │       │   ├── msc-alert-dialog.tsx
+│   │       │   └── index.tsx
+│   │       ├── button.tsx       # Button component
+│   │       ├── card.tsx        # Card component
+│   │       ├── dialog.tsx      # Dialog component
+│   │       ├── input.tsx       # Input component
+│   │       ├── ... (40+ components)
+│   │       └── index.tsx        # Component exports
 │   │
 │   ├── lib/
 │   │   └── utils.ts             # Utility functions (cn, etc.)
@@ -106,21 +120,32 @@ open http://localhost:3000
 ### Creating Your First Page
 
 1. **Use BASE_PAGE_TEMPLATE.tsx** as reference
-2. **Create file:** `src/app/your-page/page.tsx`
-3. **Copy structure from template:**
+2. **Create file:** `src/pages/YourPage.tsx`
+3. **Add route in App.tsx** to render your page component
+4. **Copy structure from template:**
 
 ```tsx
-'use client'
-
-import { Navbar } from '@/components/layout/Navbar'
-import { Footer } from '@/components/layout/Footer'
+import { Layout } from '@/components/ui/layout'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 export default function YourPage() {
   return (
-    <>
-      <Navbar logoSrc="/msclogo.svg" />
-      
-      <main className="flex-1">
+    <Layout>
+      <main className="mx-auto max-w-[1700px] px-4 py-8">
+        <h1>Your Page Content</h1>
+      </main>
+    </Layout>
+  )
+}
+```
+
+5. **Register in App.tsx:**
+
+```tsx
+import YourPage from '@/pages/YourPage'
+
+// Inside your routing logic
+<Route path="/your-page" element={<YourPage />} />
         <div className="mx-auto max-w-[1600px] px-4 sm:px-8 md:px-12 py-8">
           <h1 className="heading-h1 mb-4">Your Page Title</h1>
           <p className="body-text">Your content here</p>

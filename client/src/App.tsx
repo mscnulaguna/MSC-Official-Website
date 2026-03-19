@@ -10,6 +10,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import AboutPage from './pages/about'
 import PartnersPage from './pages/partners'
 import { useState, useEffect } from 'react'
+import { Footer } from "@/components/ui/layout/Footer";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
@@ -39,6 +40,8 @@ export default function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/partners" element={<PartnersPage />} />
         </Routes>
+
+        <Footer />
       </div>
     </BrowserRouter>
 >>>>>>> 89a8be17ae8b1ec96205b5091097bd7cc056d413

@@ -1,193 +1,66 @@
 import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
-import { Slot } from "radix-ui"
-
 import { cn } from "@/lib/utils"
-import { Separator } from "@/components/ui/separator"
 
-function ItemGroup({ className, ...props }: React.ComponentProps<"div">) {
-  return (
+/**
+ * Item Components
+ * ===============
+ *
+ * List item building blocks for displaying content.
+ * Composable and flexible for various use cases.
+ * Customized to match MSC Design System.
+ */
+
+const Item = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
     <div
-      role="list"
-      data-slot="item-group"
-      className={cn("group/item-group flex flex-col", className)}
+      ref={ref}
+      className={cn(
+        "flex items-center gap-4 px-4 py-3 border-b border-border hover:bg-gray-50 transition-colors",
+        className
+      )}
       {...props}
     />
   )
-}
-
-function ItemSeparator({
-  className,
-  ...props
-}: React.ComponentProps<typeof Separator>) {
-  return (
-    <Separator
-      data-slot="item-separator"
-      orientation="horizontal"
-      className={cn("my-0", className)}
-      {...props}
-    />
-  )
-}
-
-const itemVariants = cva(
-  "group/item flex items-center border border-transparent text-sm rounded-md transition-colors [a]:hover:bg-accent/50 [a]:transition-colors duration-100 flex-wrap outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-  {
-    variants: {
-      variant: {
-        default: "bg-transparent",
-        outline: "border-border",
-        muted: "bg-muted/50",
-      },
-      size: {
-        default: "p-4 gap-4 ",
-        sm: "py-3 px-4 gap-2.5",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-      size: "default",
-    },
-  }
 )
+Item.displayName = "Item"
 
-function Item({
-  className,
-  variant = "default",
-  size = "default",
-  asChild = false,
-  ...props
-}: React.ComponentProps<"div"> &
-  VariantProps<typeof itemVariants> & { asChild?: boolean }) {
-  const Comp = asChild ? Slot.Root : "div"
-  return (
-    <Comp
-      data-slot="item"
-      data-variant={variant}
-      data-size={size}
-      className={cn(itemVariants({ variant, size, className }))}
+const ItemIcon = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn("flex-shrink-0 flex items-center justify-center", className)}
       {...props}
     />
   )
-}
-
-const itemMediaVariants = cva(
-  "flex shrink-0 items-center justify-center gap-2 group-has-[[data-slot=item-description]]/item:self-start [&_svg]:pointer-events-none group-has-[[data-slot=item-description]]/item:translate-y-0.5",
-  {
-    variants: {
-      variant: {
-        default: "bg-transparent",
-        icon: "size-8 border rounded-sm bg-muted [&_svg:not([class*='size-'])]:size-4",
-        image:
-          "size-10 rounded-sm overflow-hidden [&_img]:size-full [&_img]:object-cover",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
 )
+ItemIcon.displayName = "ItemIcon"
 
-function ItemMedia({
-  className,
-  variant = "default",
-  ...props
-}: React.ComponentProps<"div"> & VariantProps<typeof itemMediaVariants>) {
-  return (
-    <div
-      data-slot="item-media"
-      data-variant={variant}
-      className={cn(itemMediaVariants({ variant, className }))}
-      {...props}
-    />
+const ItemContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
+    <div ref={ref} className={cn("flex-1 min-w-0", className)} {...props} />
   )
-}
+)
+ItemContent.displayName = "ItemContent"
 
-function ItemContent({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="item-content"
-      className={cn(
-        "flex flex-1 flex-col gap-1 [&+[data-slot=item-content]]:flex-none",
-        className
-      )}
-      {...props}
-    />
+const ItemLabel = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
+    <div ref={ref} className={cn("text-sm font-semibold text-foreground", className)} {...props} />
   )
-}
+)
+ItemLabel.displayName = "ItemLabel"
 
-function ItemTitle({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="item-title"
-      className={cn(
-        "flex w-fit items-center gap-2 text-sm leading-snug font-medium",
-        className
-      )}
-      {...props}
-    />
+const ItemDescription = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
+    <div ref={ref} className={cn("text-xs text-muted-foreground mt-1", className)} {...props} />
   )
-}
+)
+ItemDescription.displayName = "ItemDescription"
 
-function ItemDescription({ className, ...props }: React.ComponentProps<"p">) {
-  return (
-    <p
-      data-slot="item-description"
-      className={cn(
-        "text-muted-foreground line-clamp-2 text-sm leading-normal font-normal text-balance",
-        "[&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4",
-        className
-      )}
-      {...props}
-    />
+const ItemAction = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
+    <div ref={ref} className={cn("flex-shrink-0 flex items-center gap-2", className)} {...props} />
   )
-}
+)
+ItemAction.displayName = "ItemAction"
 
-function ItemActions({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="item-actions"
-      className={cn("flex items-center gap-2", className)}
-      {...props}
-    />
-  )
-}
-
-function ItemHeader({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="item-header"
-      className={cn(
-        "flex basis-full items-center justify-between gap-2",
-        className
-      )}
-      {...props}
-    />
-  )
-}
-
-function ItemFooter({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="item-footer"
-      className={cn(
-        "flex basis-full items-center justify-between gap-2",
-        className
-      )}
-      {...props}
-    />
-  )
-}
-
-export {
-  Item,
-  ItemMedia,
-  ItemContent,
-  ItemActions,
-  ItemGroup,
-  ItemSeparator,
-  ItemTitle,
-  ItemDescription,
-  ItemHeader,
-  ItemFooter,
-}
+export { Item, ItemIcon, ItemContent, ItemLabel, ItemDescription, ItemAction }

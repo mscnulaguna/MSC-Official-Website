@@ -1,17 +1,11 @@
-/**
- * Custom React Hooks Index
+ /**
+ * Hooks index
  *
- * Central export point for all custom hooks
- *
- * Available hooks:
- * - useMediaQuery: Media query responsive hook
- * - useTheme: Theme/dark mode hook
- *
- * Usage:
- * import { useMediaQuery } from "@/lib/hooks"
+ * Central export point for custom hooks used throughout the application.
+ * 
+ * Import hooks from this file:
+ *   import { useToast } from '@/hooks'
  */
 
-// Placeholder for future hooks
-export const hooks = {}
-
-export default hooks
+export { useToast } from './useToast'
+export type { ToastItem } from './useToast'
