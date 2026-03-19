@@ -93,23 +93,11 @@
 .bg-shape-8 { animation: teleport8 24s linear infinite; }
 .bg-shape-9 { animation: teleport9 24s linear infinite; } */
 
-/* Continuous rotation for snow shapes */
-@keyframes spin-continuous {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
 
 .animate-spin-slow {
   animation: spin-continuous 12s linear infinite;
 }
 
-/* Base styles for the logo scroller */
-.logo-scroller-container {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  width: max-content;
-}
 
 @keyframes slide {
   0% { transform: translateX(0); }

@@ -1,88 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Carousel, CarouselRow } from '@/components/ui/carousel';
+import { CarouselRow } from '@/components/ui/carousel';
+import { BlinkingCursor } from '@/components/ui/custom/BlinkingCursor';
+import { HeroShapes, POSITION_SETS } from '@/components/ui/custom/positions';
+import { VideoPlayer } from '@/components/ui/custom/VideoPlayer';
+import { MemberPerkCard } from '@/components/ui/custom/MemberPerkCard';
+import { EventHoverCard } from '@/components/ui/custom/EventHoverCard';
 import mscLogo from '@/assets/logos/msclogo.svg';
 import '@/styles/home.css';
 
-// Tetris BGs - All variants
-import bluefadedtetris from '@/assets/bg/bluefadedtetris.svg';
-import bluesingletetris from '@/assets/bg/bluesingletetris.svg';
-import blueTetris from '@/assets/bg/bluetetris.svg';
-import greensingletetris from '@/assets/bg/greensingletetris.svg';
-import greenTetris from '@/assets/bg/greentetris.svg';
-import redsingletetris from '@/assets/bg/redsingletetris.svg';
-import redTetris from '@/assets/bg/redtetris.svg';
-import yellowsingletetris from '@/assets/bg/yellowsingletetris.svg';
-import yellowTetris from '@/assets/bg/yellowtetris.svg';
-
-// Custom Shapes for Section 4
+// Section 4 Abstract Image
 import abstracticon from '@/assets/shapes/abstacticons.svg';
-
-// Predefined position sets (outside component to prevent recreation)
-const POSITION_SETS: { [key: number]: Array<{ position: string; top?: string; right?: string; bottom?: string; left?: string }> } = {
-  1: [
-    { position: 'absolute', top: '4px', left: '4px' },
-    { position: 'absolute', top: '2%', left: '8%' },
-    { position: 'absolute', top: '10%', left: '2%' },
-    { position: 'absolute', top: '15%', left: '12%' },
-  ],
-  2: [
-    { position: 'absolute', top: '8px', right: '24px' },
-    { position: 'absolute', top: '5%', right: '8%' },
-    { position: 'absolute', top: '12%', right: '15%' },
-    { position: 'absolute', top: '3%', right: '5%' },
-  ],
-  3: [
-    { position: 'absolute', bottom: '32px', right: '32px' },
-    { position: 'absolute', bottom: '10%', right: '12%' },
-    { position: 'absolute', bottom: '5%', right: '8%' },
-    { position: 'absolute', bottom: '15%', right: '18%' },
-  ],
-  4: [
-    { position: 'absolute', bottom: '16px', left: '24px' },
-    { position: 'absolute', bottom: '8%', left: '10%' },
-    { position: 'absolute', bottom: '12%', left: '15%' },
-    { position: 'absolute', bottom: '5%', left: '8%' },
-  ],
-  5: [
-    { position: 'absolute', top: '25%', left: '-16px' },
-    { position: 'absolute', top: '20%', left: '0px' },
-    { position: 'absolute', top: '30%', left: '4px' },
-    { position: 'absolute', top: '18%', left: '-8px' },
-  ],
-  6: [
-    { position: 'absolute', bottom: '33%', right: '-8px' },
-    { position: 'absolute', bottom: '30%', right: '8px' },
-    { position: 'absolute', bottom: '40%', right: '0px' },
-    { position: 'absolute', bottom: '25%', right: '4px' },
-  ],
-  7: [
-    { position: 'absolute', top: '8px', right: '25%' },
-    { position: 'absolute', top: '2%', right: '28%' },
-    { position: 'absolute', top: '5%', right: '22%' },
-    { position: 'absolute', top: '10%', right: '30%' },
-  ],
-  8: [
-    { position: 'absolute', bottom: '0px', left: '33%' },
-    { position: 'absolute', bottom: '2%', left: '30%' },
-    { position: 'absolute', bottom: '5%', left: '35%' },
-    { position: 'absolute', bottom: '-4px', left: '32%' },
-  ],
-  9: [
-    { position: 'absolute', top: '33%', right: '0px' },
-    { position: 'absolute', top: '30%', right: '4px' },
-    { position: 'absolute', top: '38%', right: '8px' },
-    { position: 'absolute', top: '28%', right: '-4px' },
-  ],
-};
-
-const PlaceHolderImg = ({ className = "w-full h-full" }) => (
-  <div className={`bg-muted flex items-center justify-center text-muted-foreground ${className}`}>
-    Image Placeholder
-  </div>
-);
 
 // Responsive carousel wrapper that shows different counts based on screen size
 function ResponsiveCarouselRow({ children, className }: { children: React.ReactNode[], className?: string }) {
@@ -187,55 +116,14 @@ export default function Home() {
       {/* 1. HERO SECTION */}
       {/* Changed to max-w-1700px constraint wrapper with centered content */}
       <section className="relative w-full overflow-hidden flex justify-center border-b border-border/10">
+        {/* Grid Background */}
         <div className="absolute inset-0 z-0 pointer-events-none opacity-20" 
              style={{ backgroundImage: 'linear-gradient(#cbd5e1 1px, transparent 1px), linear-gradient(90deg, #cbd5e1 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
         
+        {/* Hero Shapes - SVG Tetris pieces with random teleportation */}
+        <HeroShapes shapePositions={shapePositions} />
+        
         <div className="relative max-w-[1700px] w-full px-4 py-20 sm:px-8 md:px-12 md:py-32 flex flex-col items-center text-center z-10">
-          
-          {/* SVG Shape 1 - Instant Position Changes */}
-          <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 opacity-60 z-0" style={POSITION_SETS[1][shapePositions[1]] as React.CSSProperties}>
-            <img src={bluefadedtetris} alt="Blue Faded Tetris" className="w-full h-full object-contain" />
-          </div>
-          
-          {/* SVG Shape 2 - Instant Position Changes */}
-          <div className="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 opacity-60 z-0" style={POSITION_SETS[2][shapePositions[2]] as React.CSSProperties}>
-            <img src={bluesingletetris} alt="Blue Single Tetris" className="w-full h-full object-contain" />
-          </div>
-          
-          {/* SVG Shape 3 - Instant Position Changes */}
-          <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 opacity-60 z-0" style={POSITION_SETS[3][shapePositions[3]] as React.CSSProperties}>
-            <img src={blueTetris} alt="Blue Tetris" className="w-full h-full object-contain" />
-          </div>
-          
-          {/* SVG Shape 4 - Instant Position Changes */}
-          <div className="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 opacity-60 z-0" style={POSITION_SETS[4][shapePositions[4]] as React.CSSProperties}>
-            <img src={greensingletetris} alt="Green Single Tetris" className="w-full h-full object-contain" />
-          </div>
-          
-          {/* SVG Shape 5 - Instant Position Changes */}
-          <div className="w-10 h-10 sm:w-14 sm:h-14 md:w-18 md:h-18 opacity-60 z-0" style={POSITION_SETS[5][shapePositions[5]] as React.CSSProperties}>
-            <img src={greenTetris} alt="Green Tetris" className="w-full h-full object-contain" />
-          </div>
-          
-          {/* SVG Shape 6 - Instant Position Changes */}
-          <div className="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 opacity-60 z-0" style={POSITION_SETS[6][shapePositions[6]] as React.CSSProperties}>
-            <img src={redsingletetris} alt="Red Single Tetris" className="w-full h-full object-contain" />
-          </div>
-          
-          {/* SVG Shape 7 - Instant Position Changes */}
-          <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-18 md:h-18 opacity-60 z-0" style={POSITION_SETS[7][shapePositions[7]] as React.CSSProperties}>
-            <img src={redTetris} alt="Red Tetris" className="w-full h-full object-contain" />
-          </div>
-          
-          {/* SVG Shape 8 - Instant Position Changes */}
-          <div className="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 opacity-60 z-0" style={POSITION_SETS[8][shapePositions[8]] as React.CSSProperties}>
-            <img src={yellowsingletetris} alt="Yellow Single Tetris" className="w-full h-full object-contain" />
-          </div>
-          
-          {/* SVG Shape 9 - Instant Position Changes */}
-          <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 opacity-60 z-0" style={POSITION_SETS[9][shapePositions[9]] as React.CSSProperties}>
-            <img src={yellowTetris} alt="Yellow Tetris" className="w-full h-full object-contain" />
-          </div>
 
           <div className="relative z-10 max-w-4xl mx-auto space-y-6">
             <p className="text-sm md:text-base font-semibold tracking-widest text-foreground uppercase">
@@ -250,7 +138,7 @@ export default function Home() {
                 <span className={`inline-block ${words[currentWordIndex].color}`}>
                   {displayText}
                 </span>
-                <span className="text-foreground ml-1">More</span>
+                <span className="text-foreground ml-1">More<BlinkingCursor className="ml-1" /></span>
               </span>
             </h1>
             
@@ -270,20 +158,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 2. BRAND LOGO SCROLLER */}
-      {/* Taller section, larger logos, bounded center layout */}
-      <section className="w-full py-12 md:py-16 border-b border-border/40 bg-white flex justify-center overflow-hidden">
-        <div className="max-w-[1700px] w-full inline-flex flex-nowrap logo-scroller-container shadow-sm border border-border/10 rounded-xl bg-white m-4 hidden">
-          {/* Note: In a real environment, max-w with continuous wrap requires calculating double widths. 
-              We'll let infinite loop run over full width visually but keep centered on massive screens. */}
-        </div>
+      {/* 2. BRAND LOGO SCROLLER - Marquee */}
+      <section className="w-full py-12 md:py-16 border-b border-border bg-background dark:bg-card flex justify-center overflow-hidden">
         <div className="w-full max-w-[1700px] flex flex-nowrap overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
-          <div className="flex items-center justify-center md:justify-start whitespace-nowrap shrink-0 animate-[slide_20s_linear_infinite]">
+          <div className="flex items-center justify-start whitespace-nowrap shrink-0 animate-marquee">
             {[...Array(6)].map((_, i) => (
               <img key={`logo-1-${i}`} src={mscLogo} alt="MSC Logo" className="h-20 md:h-24 mx-12 md:mx-16 transition-transform duration-200 ease-in-out hover:scale-[1.15] cursor-pointer" />
             ))}
           </div>
-          <div className="flex items-center justify-center md:justify-start whitespace-nowrap shrink-0 animate-[slide_20s_linear_infinite]" aria-hidden="true">
+          <div className="flex items-center justify-start whitespace-nowrap shrink-0 animate-marquee" aria-hidden="true">
             {[...Array(6)].map((_, i) => (
               <img key={`logo-2-${i}`} src={mscLogo} alt="MSC Logo" className="h-20 md:h-24 mx-12 md:mx-16 transition-transform duration-200 ease-in-out hover:scale-[1.15] cursor-pointer" />
             ))}
@@ -292,7 +175,6 @@ export default function Home() {
       </section>
 
       {/* 3. WHO WE ARE SECTION */}
-      {/* Dimmer background */}
       <section className="w-full bg-secondary/50 flex justify-center py-20 px-4 sm:px-8 md:px-12 border-b border-border/30">
         <div className="max-w-[1700px] w-full mx-auto">
           <div className="text-center mb-12">
@@ -301,15 +183,15 @@ export default function Home() {
             </h2>
           </div>
           
-          <div className="w-full mb-12 relative px-4 sm:px-6 md:px-8">
-            <Carousel autoPlay autoPlayInterval={4000} size="16x9">
-              <PlaceHolderImg />
-              <PlaceHolderImg />
-              <PlaceHolderImg />
-            </Carousel>
+          <div className="w-full mb-12 relative px-4 sm:px-6 md:px-8 aspect-video rounded-2xl overflow-hidden bg-muted dark:bg-card">
+            <VideoPlayer 
+              src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+              title="MSC NU Laguna - Who We Are"
+              className="w-full h-full rounded-2xl"
+            />
           </div>
 
-          <div className="max-w-4xl mx-auto text-center space-y-6 text-lg text-muted-foreground leading-relaxed">
+          <div className="max-w-7xl mx-auto text-center space-y-6 text-lg text-muted-foreground leading-relaxed">
             <p>
               We're a community of curious, creative, and ambitious students pushing ourselves to learn, build, and actually do something with what we know. So we made something. MSC – NU Laguna is for students who want to learn more, try more, build more, achieve more, and figure stuff out together.
             </p>
@@ -324,7 +206,7 @@ export default function Home() {
       </section>
 
       {/* 4. MEMBERS HIGHLIGHT SECTION */}
-      <section className="w-full py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8 lg:px-12 bg-white flex justify-center border-b border-border/30">
+      <section className="w-full py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8 lg:px-12 bg-background dark:bg-card flex justify-center border-b border-border">
         <div className="max-w-[1700px] w-full mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8 items-center">
           <div className="aspect-square md:aspect-[4/3] rounded-2xl overflow-hidden relative flex items-center justify-center">
             <img src={abstracticon} alt="Abstract Icon" className="w-full h-full object-contain" />
@@ -344,68 +226,139 @@ export default function Home() {
       </section>
 
       {/* 5. MEMBER PERKS SECTION */}
-      {/* Background is faded white similar to who we are */}
-      <section className="w-full py-20 px-4 sm:px-8 md:px-12 bg-secondary/50 flex justify-center border-b border-border/30">
+      <section className="w-full py-20 px-4 sm:px-8 md:px-12 bg-secondary dark:bg-card flex justify-center border-b border-border">
         <div className="max-w-[1700px] w-full mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-[linear-gradient(to_right,#00A4EF,#7FBA00,#F25022,#FFB900)]">
-              MEMBER PERKS
-            </h2>
-            <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-              From certifications to career connections, being part of MSC opens doors you didn't know existed.
-            </p>
-          </div>
+          {/* Member Perks Data - Customize each perk individually */}
+          {(() => {
+            const memberPerksData = [
+              {
+                icon: "✦",
+                title: "Exclusive Workshops",
+                description: "Learn cutting-edge skills and technologies through hands-on sessions led by industry experts and community mentors."
+              },
+              {
+                icon: "🏆",
+                title: "Career Opportunities",
+                description: "Connect with Microsoft recruiters, internship programs, and exclusive job opportunities for MSC members."
+              },
+              {
+                icon: "🎓",
+                title: "Certifications",
+                description: "Earn industry-recognized certifications through Microsoft Learn paths and exam vouchers provided to members."
+              },
+              {
+                icon: "🤝",
+                title: "Networking Events",
+                description: "Build meaningful connections with peers, mentors, and professionals in tech at our exclusive networking events."
+              },
+              {
+                icon: "💻",
+                title: "Project Showcase",
+                description: "Display your portfolio projects and get feedback from experienced developers and potential employers."
+              },
+              {
+                icon: "📚",
+                title: "Resource Library",
+                description: "Access exclusive learning materials, tutorials, and documentation curated for our community members."
+              }
+            ];
+            return (
+              <>
+                <div className="text-center mb-16">
+                  <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-[linear-gradient(to_right,#00A4EF,#7FBA00,#F25022,#FFB900)]">
+                    MEMBER PERKS
+                  </h2>
+                  <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
+                    From certifications to career connections, being part of MSC opens doors you didn't know existed.
+                  </p>
+                </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-            {[...Array(6)].map((_, i) => (
-              <Card key={i} className="border-border hover:shadow-xl transition-all duration-300 ease-in-out hover:scale-[1.03] bg-white rounded-xl overflow-hidden">
-                <CardHeader>
-                  <div className="text-2xl md:text-3xl mb-4 text-[#00A4EF]">✦</div>
-                  <CardTitle className="text-lg md:text-xl font-bold">Exclusive Workshops</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-sm md:text-base text-muted-foreground leading-relaxed">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  </CardDescription>
-                </CardContent>
-              </Card>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                  {memberPerksData.map((perk, i) => (
+              <MemberPerkCard key={i} {...perk} />
             ))}
           </div>
 
-          <div className="text-center">
-            <Button size="lg" variant="outline" className="border-[#00A2ED] text-[#00A2ED] hover:bg-[#00A2ED] hover:text-white transition-colors">
-              Past Activities
-            </Button>
-          </div>
+                <div className="text-center">
+                  <Button size="lg" variant="outline" className="border-[#00A2ED] text-[#00A2ED] hover:bg-[#00A2ED] hover:text-white transition-colors">
+                    View All Perks
+                  </Button>
+                </div>
+              </>
+            );
+          })()}
         </div>
       </section>
 
       {/* 6. PAST ACTIVITIES SECTION */}
-      <section className="w-full py-20 px-4 sm:px-8 md:px-12 bg-white flex justify-center">
+      <section className="w-full py-20 px-4 sm:px-8 md:px-12 bg-background dark:bg-card flex justify-center border-b border-border">
         <div className="max-w-[1700px] w-full mx-auto text-center">
-          <div className="mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-[linear-gradient(to_right,#00A4EF,#7FBA00,#F25022,#FFB900)]">
-              PAST ACTIVITIES
-            </h2>
-            <p className="text-base md:text-lg text-muted-foreground">
-              A look at some of the events that brought our community together.
-            </p>
-          </div>
+          {(() => {
+            const pastActivitiesData = [
+              {
+                image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=500&fit=crop",
+                tag: "ASSEMBLY",
+                title: "General Assembly 2026",
+                date: "August 24, 2026",
+                description: "Kick-off the academic year with updates, officer introductions, and org plans."
+              },
+              {
+                image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=500&h=500&fit=crop",
+                tag: "WORKSHOP",
+                title: "Web Dev Workshop",
+                date: "March 10, 2026",
+                description: "Learn React and build modern web apps with hands-on coding sessions."
+              },
+              {
+                image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=500&fit=crop",
+                tag: "PANEL",
+                title: "Career Session",
+                date: "March 8, 2026",
+                description: "Microsoft careers and internships panel with industry professionals."
+              },
+              {
+                image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=500&fit=crop",
+                tag: "MEETUP",
+                title: "Community Meetup",
+                date: "March 5, 2026",
+                description: "Networking and social gathering to connect with fellow community members."
+              },
+              {
+                image: "https://images.unsplash.com/photo-1543269865-cbdf26cecb46?w=500&h=500&fit=crop",
+                tag: "WORKSHOP",
+                title: "AI Workshop",
+                date: "March 1, 2026",
+                description: "Introduction to AI and machine learning with practical examples."
+              },
+              {
+                image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=500&h=500&fit=crop",
+                tag: "HACKATHON",
+                title: "Hackathon",
+                date: "February 28, 2026",
+                description: "24-hour coding competition and collaboration to build amazing projects."
+              }
+            ];
+            return (
+              <>
+                <div className="mb-16">
+                  <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-[linear-gradient(to_right,#00A4EF,#7FBA00,#F25022,#FFB900)]">
+                    PAST ACTIVITIES
+                  </h2>
+                  <p className="text-base md:text-lg text-muted-foreground">
+                    A look at some of the events that brought our community together.
+                  </p>
+                </div>
 
-          <ResponsiveCarouselRow className="max-w-[1500px] mx-auto pb-10">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
+                <ResponsiveCarouselRow className="max-w-[1500px] mx-auto pb-4">
+                  {pastActivitiesData.map((activity, i) => (
               <div key={i} className="px-3" style={{ padding: '0 12px' }}>
-                <Card className="rounded-xl border-border border h-full flex flex-col items-center justify-center p-0 overflow-hidden bg-muted aspect-[4/5] relative group shadow-sm hover:shadow-md transition-shadow">
-                  <PlaceHolderImg className="absolute inset-0" />
-                  <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-300 ease-in-out">
-                    <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                      <span className="text-white font-bold text-lg md:text-xl">Event {i}</span>
-                    </div>
-                  </div>
-                </Card>
-              </div>
-            ))}
-          </ResponsiveCarouselRow>
+                <EventHoverCard {...activity} />
+                </div>
+                  ))}
+                </ResponsiveCarouselRow>
+              </>
+            );
+          })()}
         </div>
       </section>
 
