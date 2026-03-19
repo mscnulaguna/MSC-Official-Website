@@ -73,9 +73,9 @@ const shapeConfigs = [
   { src: bluesingletetris, alt: 'Blue Single Tetris', size: 'w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16', index: 2 },
   { src: blueTetris, alt: 'Blue Tetris', size: 'w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20', index: 3 },
   { src: greensingletetris, alt: 'Green Single Tetris', size: 'w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16', index: 4 },
-  { src: greenTetris, alt: 'Green Tetris', size: 'w-10 h-10 sm:w-14 sm:h-14 md:w-18 md:h-18', index: 5 },
+  { src: greenTetris, alt: 'Green Tetris', size: 'w-10 h-10 sm:w-14 sm:h-14 md:w-[4.5rem] md:h-[4.5rem]', index: 5 },
   { src: redsingletetris, alt: 'Red Single Tetris', size: 'w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16', index: 6 },
-  { src: redTetris, alt: 'Red Tetris', size: 'w-12 h-12 sm:w-16 sm:h-16 md:w-18 md:h-18', index: 7 },
+  { src: redTetris, alt: 'Red Tetris', size: 'w-12 h-12 sm:w-16 sm:h-16 md:w-[4.5rem] md:h-[4.5rem]', index: 7 },
   { src: yellowsingletetris, alt: 'Yellow Single Tetris', size: 'w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16', index: 8 },
   { src: yellowTetris, alt: 'Yellow Tetris', size: 'w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20', index: 9 },
 ];
