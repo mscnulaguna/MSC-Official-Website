@@ -35,7 +35,7 @@ const InputGroupContent = React.forwardRef<
   <input
     ref={ref}
     className={cn(
-      "w-full flex-1 border-0 bg-transparent px-8 py-0 focus:outline-none",
+      "w-full flex-1 border-0 bg-transparent px-8 py-0 text-foreground placeholder:text-foreground/50 dark:placeholder:text-foreground/60 focus:outline-none",
       className
     )}
     {...props}
