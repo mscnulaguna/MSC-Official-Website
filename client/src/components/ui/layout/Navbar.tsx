@@ -3,7 +3,8 @@ import { NavbarLeft } from './NavbarLeft'
 import { NavbarCenter } from './NavbarCenter'
 import { NavbarRight } from './NavbarRight'
 import { MobileNavDrawer } from './MobileNavDrawer'
-import { Button } from '@/components/ui/button'
+// import { Button } from '@/components/ui/button'
+// build fails  because of unused import - will add back when we add more controls to the right section
 
 /**
  * ============================================================================
