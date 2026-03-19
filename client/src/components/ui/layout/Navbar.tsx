@@ -3,7 +3,6 @@ import { NavbarLeft } from './NavbarLeft'
 import { NavbarCenter } from './NavbarCenter'
 import { NavbarRight } from './NavbarRight'
 import { MobileNavDrawer } from './MobileNavDrawer'
-import { Button } from '@/components/ui/button'
 
 /**
  * ============================================================================
@@ -70,7 +69,7 @@ export function Navbar({
 }: NavbarProps) {
   return (
     <header
-      className={`fixed left-0 right-0 top-0 z-50 mx-auto  border-b border-border/40 bg-white overflow-visible ${className}`}
+      className={`fixed left-0 right-0 top-0 z-50 mx-auto  border-b border-border/40 bg-background overflow-visible ${className}`}
       suppressHydrationWarning
     >
       {/* Padding for mobile/tablet/desktop - no additional max-width wrapper needed */}

@@ -37,7 +37,7 @@ import { Link } from 'react-router-dom'
 
 export function Footer() {
   return (
-    <footer className="w-full bg-white border-t border-border">
+    <footer className="w-full bg-background border-t border-border">
       {/* Main Footer Content - Compact spacing */}
       <div className="mx-auto max-w-[1700px] px-2 sm:px-3 md:px-4 lg:px-6 py-6 sm:py-8">
         {/* Mobile/Tablet Layout (< md) */}
@@ -375,7 +375,7 @@ export function Footer() {
       </div>
 
       {/* Bottom Copyright Section */}
-      <div className="w-full bg-blue-600 text-white py-1.5">
+      <div className="w-full bg-blue-600 text-white py-4 sm:py-6 md:py-7">
         <div className="mx-auto max-w-[1700px] px-2 sm:px-3 md:px-4 lg:px-6">
           <p className="text-center text-xs">
             © 2026 NU Laguna Microsoft Student Community | All Rights Reserved.
