@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
-import Layout from '@/components/mscui/layout/Layout';
-import { Button } from '@/components/mscui/button';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/mscui/card';
-import { Carousel, CarouselRow } from '@/components/mscui/carousel';
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Carousel, CarouselRow } from '@/components/ui/carousel';
 import mscLogo from '@/assets/logos/msclogo.svg';
 import '@/styles/home.css';
 
@@ -183,7 +182,7 @@ export default function Home() {
   }, []);
 
   return (
-    <Layout className="bg-background">
+    <main className="bg-background">
       
       {/* 1. HERO SECTION */}
       {/* Changed to max-w-1700px constraint wrapper with centered content */}
@@ -410,6 +409,6 @@ export default function Home() {
         </div>
       </section>
 
-    </Layout>
+    </main>
   );
 }
