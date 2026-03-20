@@ -10,43 +10,7 @@ import { ChevronDown } from 'lucide-react'
 import circleHalfWhite from '@/assets/icons/circle-half-white.svg'
 import circleHalfBlack from '@/assets/icons/circle-half-black.svg'
 import { useTheme } from '@/context/ThemeContext'
-
-/**
- * MobileNavDrawer Component
- * ========================
- * Mobile navigation menu that appears as a drawer.
- * Features:
- * - Hamburger menu button that opens a drawer
- * - Collapsible menu items with dropdown support
- * - Close button and swipe-to-close gesture
- * - Maintains navigation structure from desktop menu
- */
-
-interface NavItem {
-  label: string
-  href: string
-  submenu?: NavItem[]
-}
-
-const NAV_ITEMS: NavItem[] = [
-  { label: 'Home', href: '/' },
-  { label: 'About', href: '/about' },
-  {
-    label: 'Activities',
-    href: '#',
-    submenu: [
-      { label: 'Events', href: '/activities/events' },
-    ],
-  },
-  {
-    label: 'Learn',
-    href: '#',
-    submenu: [
-      { label: 'Guilds', href: '/learn/guilds' },
-    ],
-  },
-  { label: 'Partners', href: '/partners' },
-]
+import { NAV_ITEMS, type NavItem } from '@/config/navigation'
 
 interface MobileNavDrawerProps {
   onNavigate?: () => void
@@ -65,7 +29,7 @@ function CollapsibleNavItem({
   if (!hasSubmenu) {
     return (
       <a
-        href={item.href}
+        href={item.href || '#'}
         className="block w-full px-4 py-3 text-base font-medium border-b border-border/40 hover:bg-muted/50 transition-colors"
         onClick={onNavigate}
       >

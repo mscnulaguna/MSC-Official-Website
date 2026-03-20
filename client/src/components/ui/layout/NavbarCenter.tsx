@@ -7,49 +7,7 @@ import {
   NavigationMenuLink,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu'
-
-/**
- * NavbarCenter Component
- * ======================
- * Displays the main navigation menu in the center of the navbar.
- * Features:
- * - Uses shadcn NavigationMenu component
- * - Supports dropdown menus (Activities, Learn)
- * - Works on hover (desktop) and click (mobile)
- * - Fully responsive and accessible
- *
- * Menu Items:
- * - Home (simple link)
- * - About (simple link)
- * - Activities (with dropdown)
- * - Learn (with dropdown)
- * - Partners (simple link)
- *
- * Fix:
- * - Uses asChild on NavigationMenuLink to avoid <a> inside <a> HTML error
- */
-
-const menuItems = [
-  { label: 'Home', href: '/' },
-  { label: 'About', href: '/about' },
-  {
-    label: 'Activities',
-    submenu: [
-      { label: 'Community Events', href: '/activities/events' },
-      { label: 'Workshops', href: '/activities/workshops' },
-      { label: 'Network Meetups', href: '/activities/meetups' },
-    ],
-  },
-  {
-    label: 'Learn',
-    submenu: [
-      { label: 'Tutorials', href: '/learn/tutorials' },
-      { label: 'Documentation', href: '/learn/docs' },
-      { label: 'Resources', href: '/learn/resources' },
-    ],
-  },
-  { label: 'Partners', href: '/partners' },
-]
+import { NAV_ITEMS } from '@/config/navigation'
 
 /**
  * Helper component to render submenu items
@@ -80,10 +38,10 @@ export function NavbarCenter() {
       {/* Navigation Menu - Only visible on large screens */}
       <NavigationMenu>
         <NavigationMenuList className="gap-1">
-          {menuItems.map((item) => (
+          {NAV_ITEMS.map((item) => (
             <NavigationMenuItem key={item.label}>
               {/* Simple Link Item */}
-              {'href' in item && item.href ? (
+              {!item.submenu || item.submenu.length === 0 ? (
                 <NavigationMenuLink asChild>
                   <a href={item.href} className={navigationMenuTriggerStyle()}>
                     {item.label}
@@ -100,7 +58,7 @@ export function NavbarCenter() {
                       {item.submenu?.map((subitem) => (
                         <SubmenuItem
                           key={subitem.href}
-                          href={subitem.href}
+                          href={subitem.href || '#'}
                           label={subitem.label}
                         />
                       ))}
