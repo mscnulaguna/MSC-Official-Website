@@ -9,7 +9,7 @@ import igIcon from '@/assets/icons/ig-icon.svg'
 import discordIcon from '@/assets/icons/discord-icon.svg'
 import tiktokIcon from '@/assets/icons/tiktok-icon.svg'
 import { Button } from '@/components/ui/button'
-
+import { useTheme } from '@/context/ThemeContext'
 import { Link } from 'react-router-dom'
 
 /**
@@ -36,6 +36,9 @@ import { Link } from 'react-router-dom'
  */
 
 export function Footer() {
+  const { isDarkMode } = useTheme()
+  const iconFilter = isDarkMode ? 'brightness(0) invert(1)' : 'none'
+
   return (
     <footer className="w-full bg-background border-t border-border">
       {/* Main Footer Content - Compact spacing */}
@@ -73,6 +76,7 @@ export function Footer() {
                     width={18}
                     height={18}
                     className="flex-shrink-0 mt-0.5"
+                    style={{ filter: iconFilter }}
                   />
                   <span>KM 53 Pan Philippine Highway, Brgy. Milagrosa, Calamba, Philippines, 4027</span>
                 </a>
@@ -89,6 +93,7 @@ export function Footer() {
                     width={18}
                     height={18}
                     className="flex-shrink-0"
+                    style={{ filter: iconFilter }}
                   />
                   <span>msc@nu-laguna.edu.ph</span>
                 </a>
@@ -112,6 +117,7 @@ export function Footer() {
                     alt="Facebook icon"
                     width={20}
                     height={20}
+                    style={{ filter: iconFilter }}
                   />
                 </a>
 
@@ -128,6 +134,7 @@ export function Footer() {
                     alt="LinkedIn icon"
                     width={20}
                     height={20}
+                    style={{ filter: iconFilter }}
                   />
                 </a>
 
@@ -144,6 +151,7 @@ export function Footer() {
                     alt="GitHub icon"
                     width={20}
                     height={20}
+                    style={{ filter: iconFilter }}
                   />
                 </a>
 
@@ -160,6 +168,7 @@ export function Footer() {
                     alt="Instagram icon"
                     width={20}
                     height={20}
+                    style={{ filter: iconFilter }}
                   />
                 </a>
 
@@ -176,6 +185,7 @@ export function Footer() {
                     alt="Discord icon"
                     width={20}
                     height={20}
+                    style={{ filter: iconFilter }}
                   />
                 </a>
 
@@ -192,6 +202,7 @@ export function Footer() {
                     alt="TikTok icon"
                     width={20}
                     height={20}
+                    style={{ filter: iconFilter }}
                   />
                 </a>
               </div>
@@ -237,6 +248,7 @@ export function Footer() {
                     width={16}
                     height={16}
                     className="flex-shrink-0 mt-0.5"
+                    style={{ filter: iconFilter }}
                   />
                   <span>KM 53 Pan Philippine Highway, Brgy. Milagrosa, Calamba, Philippines, 4027</span>
                 </a>
@@ -253,6 +265,7 @@ export function Footer() {
                     width={16}
                     height={16}
                     className="flex-shrink-0"
+                    style={{ filter: iconFilter }}
                   />
                   <span>msc@nu-laguna.edu.ph</span>
                 </a>
@@ -276,7 +289,7 @@ export function Footer() {
                     alt="Facebook icon"
                     width={20}
                     height={20}
-                    className="text-foreground"
+                    style={{ filter: iconFilter }}
                   />
                 </a>
 
@@ -293,6 +306,7 @@ export function Footer() {
                     alt="LinkedIn icon"
                     width={20}
                     height={20}
+                    style={{ filter: iconFilter }}
                   />
                 </a>
 
@@ -309,6 +323,7 @@ export function Footer() {
                     alt="GitHub icon"
                     width={20}
                     height={20}
+                    style={{ filter: iconFilter }}
                   />
                 </a>
 
@@ -325,6 +340,7 @@ export function Footer() {
                     alt="Instagram icon"
                     width={20}
                     height={20}
+                    style={{ filter: iconFilter }}
                   />
                 </a>
 
@@ -341,6 +357,7 @@ export function Footer() {
                     alt="Discord icon"
                     width={20}
                     height={20}
+                    style={{ filter: iconFilter }}
                   />
                 </a>
 
@@ -357,6 +374,7 @@ export function Footer() {
                     alt="TikTok icon"
                     width={20}
                     height={20}
+                    style={{ filter: iconFilter }}
                   />
                 </a>
               </div>

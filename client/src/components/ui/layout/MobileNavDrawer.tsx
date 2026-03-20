@@ -7,7 +7,6 @@ import {
 } from '@/components/ui/drawer'
 import { Button } from '@/components/ui/button'
 import { ChevronDown } from 'lucide-react'
-import circleHalfWhite from '@/assets/icons/circle-half-white.svg'
 import circleHalfBlack from '@/assets/icons/circle-half-black.svg'
 import { useTheme } from '@/context/ThemeContext'
 import { NAV_ITEMS, type NavItem } from '@/config/navigation'
@@ -72,6 +71,7 @@ function CollapsibleNavItem({
 export function MobileNavDrawer({ onNavigate }: MobileNavDrawerProps) {
   const [isOpen, setIsOpen] = useState(false)
   const { isDarkMode, toggleDarkMode } = useTheme()
+  const iconFilter = isDarkMode ? 'brightness(0) invert(1)' : 'none'
 
   const handleNavigate = () => {
     onNavigate?.()
@@ -115,23 +115,14 @@ export function MobileNavDrawer({ onNavigate }: MobileNavDrawerProps) {
             onClick={toggleDarkMode}
             aria-label="Toggle dark mode"
           >
-            {isDarkMode ? (
-              <img
-                src={circleHalfWhite}
-                alt="Dark mode"
-                width={20}
-                height={20}
-                className="object-contain"
-              />
-            ) : (
-              <img
-                src={circleHalfBlack}
-                alt="Light mode"
-                width={20}
-                height={20}
-                className="object-contain"
-              />
-            )}
+            <img
+              src={circleHalfBlack}
+              alt="Theme toggle icon"
+              width={20}
+              height={20}
+              className="object-contain"
+              style={{ filter: iconFilter }}
+            />
           </Button>
         </div>
 
