@@ -20,6 +20,16 @@ interface MemberPerkCardProps {
   className?: string
 }
 
+interface Perk {
+  icon: string
+  title: string
+  description: string
+}
+
+interface MemberPerksGridProps {
+  perks: Perk[]
+}
+
 export function MemberPerkCard({
   icon = "✦",
   title,
@@ -42,5 +52,20 @@ export function MemberPerkCard({
         </CardDescription>
       </CardContent>
     </Card>
+  )
+}
+
+/**
+ * MemberPerksGrid Component
+ * =========================
+ * Renders a responsive grid of member perks/benefits
+ */
+export function MemberPerksGrid({ perks }: MemberPerksGridProps) {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+      {perks.map((perk, i) => (
+        <MemberPerkCard key={i} {...perk} />
+      ))}
+    </div>
   )
 }
