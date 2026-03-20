@@ -99,41 +99,33 @@ function isPositionSafe(x: number, y: number, shape: BlockShape, existingBlocks:
 }
 
 /**
- * Generate a random position trying to place blocks in outer areas
+ * Generate a random position biased towards corners and edges
  */
-function getRandomPosition(): { x: number; y: number } | null {
-  const maxAttempts = 20
-  let attempts = 0
+function getRandomPosition(): { x: number; y: number } {
+  // Bias towards corners and edges
+  const quadrant = Math.floor(Math.random() * 4)
+  let x: number
+  let y: number
 
-  while (attempts < maxAttempts) {
-    attempts++
-    // Bias towards corners and edges
-    const quadrant = Math.floor(Math.random() * 4)
-    let x: number
-    let y: number
-
-    if (quadrant === 0) {
-      // Top-left corner
-      x = Math.random() * 25
-      y = Math.random() * 25
-    } else if (quadrant === 1) {
-      // Top-right corner
-      x = 75 + Math.random() * 25
-      y = Math.random() * 25
-    } else if (quadrant === 2) {
-      // Bottom-left corner
-      x = Math.random() * 25
-      y = 75 + Math.random() * 25
-    } else {
-      // Bottom-right corner
-      x = 75 + Math.random() * 25
-      y = 75 + Math.random() * 25
-    }
-
-    return { x, y }
+  if (quadrant === 0) {
+    // Top-left corner
+    x = Math.random() * 25
+    y = Math.random() * 25
+  } else if (quadrant === 1) {
+    // Top-right corner
+    x = 75 + Math.random() * 25
+    y = Math.random() * 25
+  } else if (quadrant === 2) {
+    // Bottom-left corner
+    x = Math.random() * 25
+    y = 75 + Math.random() * 25
+  } else {
+    // Bottom-right corner
+    x = 75 + Math.random() * 25
+    y = 75 + Math.random() * 25
   }
 
-  return null
+  return { x, y }
 }
 
 /**
