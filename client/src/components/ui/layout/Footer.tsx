@@ -216,7 +216,7 @@ export function Footer() {
         </div>
 
         {/* Desktop Layout: Logo | Contact/Follow | Partner Button */}
-        <div className="hidden md:grid md:grid-cols-[auto_1fr_auto] gap-6 md:gap-8 mb-0">
+        <div className="hidden md:grid md:grid-cols-[auto_auto_auto] gap-6 md:gap-8 mb-0">
           {/* Logo Section */}
           <div className="flex flex-col items-center md:items-start md:justify-start">
             <div className="relative h-28 w-40">
@@ -382,7 +382,7 @@ export function Footer() {
           </div>
 
           {/* Partner with Us Section */}
-          <div className="flex items-center justify-center md:items-center md:justify-end">
+          <div className="flex items-center justify-center">
             <Link to="/partners">
               <Button className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-1 h-auto text-sm">
                 Partner with Us
