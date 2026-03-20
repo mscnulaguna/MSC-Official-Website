@@ -17,11 +17,11 @@ COPY --chown=node:node . .
 # remove any node_modules that may have been copied from the host to avoid overriding the clean install.
 RUN rm -rf node_modules && npm ci --only=production
 # expose the port the Express server runs on (default is 5000). 
-EXPOSE 5000
+EXPOSE 80
 
 # run the server as a non-root user for improved security.
 # the node:20-alpine image includes a built-in "node" user (uid 1000) for this purpose.
-USER node
+USER root
 
 # start the server.
 CMD ["npm", "start"]
