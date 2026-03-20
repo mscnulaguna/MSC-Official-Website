@@ -1,11 +1,13 @@
+'use client'
+
 import { Button } from '@/components/ui/button';
 import { BlinkingCursor } from '@/components/ui/custom/BlinkingCursor';
-import { HeroShapes } from '@/components/ui/custom/positions';
+import { TetrisBlocksBackground } from '@/components/home/TetrisBlocksBackground';
 import { VideoPlayer } from '@/components/ui/custom/VideoPlayer';
 import { MemberPerksGrid } from '@/components/ui/custom/MemberPerkCard';
 import { PastActivitiesCarousel } from '@/components/ui/carousel';
 import { useTypingAnimation, type TypingWord } from '@/hooks/useTypingAnimation';
-import { useShapePositions } from '@/hooks/useShapePositions';
+import { useTheme } from '@/context/ThemeContext';
 import mscLogo from '@/assets/logos/msclogo.svg';
 import '@/styles/home.css';
 
@@ -102,7 +104,8 @@ const MEMBER_PERKS_DATA = [
 
 export default function Home() {
   const { currentWordIndex, displayText } = useTypingAnimation(TYPING_WORDS);
-  const shapePositions = useShapePositions();
+  const { isDarkMode } = useTheme();
+  const gridOpacity = isDarkMode ? 'opacity-10' : 'opacity-20';
 
   return (
     <main className="bg-background">
@@ -110,10 +113,10 @@ export default function Home() {
       {/* 1. HERO SECTION */}
       <section className="relative w-full overflow-hidden flex justify-center border-b border-border/10">
         {/* Grid Background */}
-        <div className="absolute inset-0 z-0 pointer-events-none opacity-20 grid-background" />
+        <div className={`absolute inset-0 z-0 pointer-events-none ${gridOpacity} grid-background`} />
         
-        {/* Hero Shapes - SVG Tetris pieces with random teleportation */}
-        <HeroShapes shapePositions={shapePositions} />
+        {/* Tetris Background - Animated blocks with shape variants and 4s transitions */}
+        <TetrisBlocksBackground />
         
         <div className="relative section-container md:py-32 py-20 flex flex-col items-center text-center z-10 section-padding">
           <div className="relative z-10 max-w-4xl mx-auto space-y-6">
