@@ -12,7 +12,7 @@ import mscLogo from '@/assets/logos/msclogo.svg';
 import '@/styles/home.css';
 
 // Section 4 Abstract Image
-import abstracticon from '@/assets/shapes/abstacticons.svg';
+import abstracticon from '@/assets/shapes/abstracticons.svg';
 
 // Typing animation words - stable constant to prevent effect re-runs
 const TYPING_WORDS: TypingWord[] = [

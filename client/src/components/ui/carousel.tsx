@@ -156,7 +156,10 @@ export function CarouselRow({
   ...props
 }: CarouselRowProps) {
   const isMobile = useIsMobile();
-  const [isTablet, setIsTablet] = React.useState(false)
+  const [isTablet, setIsTablet] = React.useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.innerWidth >= 768 && window.innerWidth < 1024;
+  })
 
   React.useEffect(() => {
     const checkTablet = () => {
