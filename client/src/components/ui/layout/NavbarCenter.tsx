@@ -41,7 +41,7 @@ export function NavbarCenter() {
           {NAV_ITEMS.map((item) => (
             <NavigationMenuItem key={item.label}>
               {/* Simple Link Item */}
-              {!item.submenu || item.submenu.length === 0 ? (
+              {'href' in item ? (
                 <NavigationMenuLink asChild>
                   <a href={item.href} className={navigationMenuTriggerStyle()}>
                     {item.label}
@@ -55,10 +55,10 @@ export function NavbarCenter() {
                   {/* Dropdown Content */}
                   <NavigationMenuContent>
                     <div className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-                      {item.submenu?.map((subitem) => (
+                      {item.submenu.map((subitem) => (
                         <SubmenuItem
                           key={subitem.href}
-                          href={subitem.href || '#'}
+                          href={subitem.href}
                           label={subitem.label}
                         />
                       ))}

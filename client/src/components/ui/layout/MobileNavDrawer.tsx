@@ -23,12 +23,12 @@ function CollapsibleNavItem({
   onNavigate?: () => void
 }) {
   const [isOpen, setIsOpen] = useState(false)
-  const hasSubmenu = item.submenu && item.submenu.length > 0
+  const hasSubmenu = 'submenu' in item
 
   if (!hasSubmenu) {
     return (
       <a
-        href={item.href || '#'}
+        href={item.href}
         className="block w-full px-4 py-3 text-base font-medium border-b border-border/40 hover:bg-muted/50 transition-colors"
         onClick={onNavigate}
       >
@@ -50,7 +50,7 @@ function CollapsibleNavItem({
           }`}
         />
       </button>
-      {isOpen && item.submenu && (
+      {isOpen && (
         <div className="bg-muted/20 space-y-0">
           {item.submenu.map((subitem) => (
             <a
