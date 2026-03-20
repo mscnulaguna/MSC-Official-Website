@@ -12,7 +12,6 @@ services:
   client:
     image: ghcr.io/mscnulaguna/msc-official-website/msc-client:latest
     ports:
-      # Maps Azure's public port 80 to our unprivileged Nginx port 8080
-      - "80:8080"
+      - "80:80"
     depends_on:
       - server

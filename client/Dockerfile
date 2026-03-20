@@ -1,4 +1,3 @@
-
 FROM node:20-alpine AS builder
 
 WORKDIR /app
@@ -10,12 +9,16 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-FROM nginxinc/nginx-unprivileged:alpine
+# Switch to the standard, official NGINX image
+FROM nginx:alpine
+
+# Force the container to run as the root administrator
+USER root
 
 COPY --from=builder /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+RUN rm -f /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/conf.d/app.conf
 
-EXPOSE 8080
+EXPOSE 80
 
-USER nginx
 CMD ["nginx", "-g", "daemon off;"]
