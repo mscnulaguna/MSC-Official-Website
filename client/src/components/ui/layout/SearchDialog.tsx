@@ -151,7 +151,7 @@ export function SearchDialog({
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
                 autoFocus
-                className="w-full pl-10 pr-12 h-12 text-base border border-border/60 rounded-sm bg-background focus:border-primary focus:outline-none"
+                className="w-full pl-10 pr-12 h-12 text-base border border-border/60 rounded-sm bg-background text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
               />
 
               {/* ESC Indicator */}
@@ -168,12 +168,12 @@ export function SearchDialog({
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="flex items-center gap-2 text-sm hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded px-2 py-1"
+              className="flex items-center gap-2 text-sm text-foreground hover:text-primary dark:text-foreground dark:hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded px-2 py-1"
               aria-expanded={isDropdownOpen}
             >
               <span className="font-medium">Filter:</span>
 
-              <span className="text-muted-foreground">
+              <span className="text-muted-foreground dark:text-muted-foreground">
                 {selectedCategoryLabel}
               </span>
 
@@ -187,7 +187,7 @@ export function SearchDialog({
 
             {/* Dropdown */}
             {isDropdownOpen && (
-              <div className="absolute left-0 top-full mt-2 w-48 rounded-sm border border-border/60 bg-background shadow-md z-50">
+              <div className="absolute left-0 top-full mt-2 w-48 rounded-sm border border-border/60 bg-background text-foreground dark:bg-card dark:text-foreground shadow-md z-50">
                 <div className="py-1">
                   {SEARCH_CATEGORIES.map((category) => (
                     <button
@@ -195,8 +195,8 @@ export function SearchDialog({
                       onClick={() => handleCategorySelect(category.id)}
                       className={`w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors ${
                         selectedCategory === category.id
-                          ? 'bg-primary/10 text-primary'
-                          : 'hover:bg-muted'
+                          ? 'bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary'
+                          : 'hover:bg-muted dark:hover:bg-card dark:hover:text-foreground'
                       }`}
                     >
                       {category.label}
@@ -212,7 +212,7 @@ export function SearchDialog({
           </div>
 
           {/* Help text */}
-          <p className="text-xs text-muted-foreground pt-2">
+          <p className="text-xs text-muted-foreground dark:text-muted-foreground pt-2">
             Filter results by category or search across all
           </p>
         </div>

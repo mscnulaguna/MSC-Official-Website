@@ -9,7 +9,7 @@ import igIcon from '@/assets/icons/ig-icon.svg'
 import discordIcon from '@/assets/icons/discord-icon.svg'
 import tiktokIcon from '@/assets/icons/tiktok-icon.svg'
 import { Button } from '@/components/ui/button'
-
+import { useTheme } from '@/context/ThemeContext'
 import { Link } from 'react-router-dom'
 
 /**
@@ -36,8 +36,11 @@ import { Link } from 'react-router-dom'
  */
 
 export function Footer() {
+  const { isDarkMode } = useTheme()
+  const iconFilter = isDarkMode ? 'brightness(0) invert(1)' : 'none'
+
   return (
-    <footer className="w-full bg-white border-t border-border">
+    <footer className="w-full bg-background border-t border-border">
       {/* Main Footer Content - Compact spacing */}
       <div className="mx-auto max-w-[1700px] px-2 sm:px-3 md:px-4 lg:px-6 py-6 sm:py-8">
         {/* Mobile/Tablet Layout (< md) */}
@@ -73,6 +76,7 @@ export function Footer() {
                     width={18}
                     height={18}
                     className="flex-shrink-0 mt-0.5"
+                    style={{ filter: iconFilter }}
                   />
                   <span>KM 53 Pan Philippine Highway, Brgy. Milagrosa, Calamba, Philippines, 4027</span>
                 </a>
@@ -89,6 +93,7 @@ export function Footer() {
                     width={18}
                     height={18}
                     className="flex-shrink-0"
+                    style={{ filter: iconFilter }}
                   />
                   <span>msc@nu-laguna.edu.ph</span>
                 </a>
@@ -112,6 +117,7 @@ export function Footer() {
                     alt="Facebook icon"
                     width={20}
                     height={20}
+                    style={{ filter: iconFilter }}
                   />
                 </a>
 
@@ -128,6 +134,7 @@ export function Footer() {
                     alt="LinkedIn icon"
                     width={20}
                     height={20}
+                    style={{ filter: iconFilter }}
                   />
                 </a>
 
@@ -144,6 +151,7 @@ export function Footer() {
                     alt="GitHub icon"
                     width={20}
                     height={20}
+                    style={{ filter: iconFilter }}
                   />
                 </a>
 
@@ -160,6 +168,7 @@ export function Footer() {
                     alt="Instagram icon"
                     width={20}
                     height={20}
+                    style={{ filter: iconFilter }}
                   />
                 </a>
 
@@ -176,6 +185,7 @@ export function Footer() {
                     alt="Discord icon"
                     width={20}
                     height={20}
+                    style={{ filter: iconFilter }}
                   />
                 </a>
 
@@ -192,6 +202,7 @@ export function Footer() {
                     alt="TikTok icon"
                     width={20}
                     height={20}
+                    style={{ filter: iconFilter }}
                   />
                 </a>
               </div>
@@ -205,7 +216,7 @@ export function Footer() {
         </div>
 
         {/* Desktop Layout: Logo | Contact/Follow | Partner Button */}
-        <div className="hidden md:grid md:grid-cols-[auto_1fr_auto] gap-6 md:gap-8 mb-0">
+        <div className="hidden md:grid md:grid-cols-[auto_auto_auto] gap-6 md:gap-8 mb-0">
           {/* Logo Section */}
           <div className="flex flex-col items-center md:items-start md:justify-start">
             <div className="relative h-28 w-40">
@@ -237,6 +248,7 @@ export function Footer() {
                     width={16}
                     height={16}
                     className="flex-shrink-0 mt-0.5"
+                    style={{ filter: iconFilter }}
                   />
                   <span>KM 53 Pan Philippine Highway, Brgy. Milagrosa, Calamba, Philippines, 4027</span>
                 </a>
@@ -253,6 +265,7 @@ export function Footer() {
                     width={16}
                     height={16}
                     className="flex-shrink-0"
+                    style={{ filter: iconFilter }}
                   />
                   <span>msc@nu-laguna.edu.ph</span>
                 </a>
@@ -276,7 +289,7 @@ export function Footer() {
                     alt="Facebook icon"
                     width={20}
                     height={20}
-                    className="text-foreground"
+                    style={{ filter: iconFilter }}
                   />
                 </a>
 
@@ -293,6 +306,7 @@ export function Footer() {
                     alt="LinkedIn icon"
                     width={20}
                     height={20}
+                    style={{ filter: iconFilter }}
                   />
                 </a>
 
@@ -309,6 +323,7 @@ export function Footer() {
                     alt="GitHub icon"
                     width={20}
                     height={20}
+                    style={{ filter: iconFilter }}
                   />
                 </a>
 
@@ -325,6 +340,7 @@ export function Footer() {
                     alt="Instagram icon"
                     width={20}
                     height={20}
+                    style={{ filter: iconFilter }}
                   />
                 </a>
 
@@ -341,6 +357,7 @@ export function Footer() {
                     alt="Discord icon"
                     width={20}
                     height={20}
+                    style={{ filter: iconFilter }}
                   />
                 </a>
 
@@ -357,6 +374,7 @@ export function Footer() {
                     alt="TikTok icon"
                     width={20}
                     height={20}
+                    style={{ filter: iconFilter }}
                   />
                 </a>
               </div>
@@ -364,7 +382,7 @@ export function Footer() {
           </div>
 
           {/* Partner with Us Section */}
-          <div className="flex items-center justify-center md:items-center md:justify-end">
+          <div className="flex items-center justify-center">
             <Link to="/partners">
               <Button className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-1 h-auto text-sm">
                 Partner with Us
@@ -375,7 +393,7 @@ export function Footer() {
       </div>
 
       {/* Bottom Copyright Section */}
-      <div className="w-full bg-blue-600 text-white py-1.5">
+      <div className="w-full bg-blue-600 text-white py-4 sm:py-6 md:py-7">
         <div className="mx-auto max-w-[1700px] px-2 sm:px-3 md:px-4 lg:px-6">
           <p className="text-center text-xs">
             © 2026 NU Laguna Microsoft Student Community | All Rights Reserved.

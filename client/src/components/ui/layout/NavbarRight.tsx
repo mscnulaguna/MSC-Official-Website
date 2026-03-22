@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { InputGroup, InputGroupContent, InputGroupSuffix } from '@/components/ui/input-group'
 import { Kbd } from '@/components/ui/kbd'
-import circleHalfWhite from "@/assets/icons/circle-half-white.svg"
 import circleHalfBlack from "@/assets/icons/circle-half-black.svg"
 import { Search } from 'lucide-react'
 import { SearchDialog } from './SearchDialog'
@@ -25,6 +24,7 @@ import { useTheme } from '@/context/ThemeContext'
 export function NavbarRight() {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const { isDarkMode, toggleDarkMode } = useTheme()
+  const iconFilter = isDarkMode ? 'brightness(0) invert(1)' : 'none'
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -82,23 +82,14 @@ export function NavbarRight() {
           aria-label="Toggle dark mode"
           className="h-10 w-10"
         >
-          {isDarkMode ? (
-            <img
-              src={circleHalfWhite}
-              alt="Dark mode icon"
-              width={24}
-              height={24}
-              className="object-contain"
-            />
-          ) : (
-            <img
-              src={circleHalfBlack}
-              alt="Light mode icon"
-              width={24}
-              height={24}
-              className="object-contain"
-            />
-          )}
+          <img
+            src={circleHalfBlack}
+            alt="Theme toggle icon"
+            width={24}
+            height={24}
+            className="object-contain"
+            style={{ filter: iconFilter }}
+          />
         </Button>
 
         {/* Desktop Sign In */}

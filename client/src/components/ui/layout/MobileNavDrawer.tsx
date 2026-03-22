@@ -7,46 +7,9 @@ import {
 } from '@/components/ui/drawer'
 import { Button } from '@/components/ui/button'
 import { ChevronDown } from 'lucide-react'
-import circleHalfWhite from '@/assets/icons/circle-half-white.svg'
 import circleHalfBlack from '@/assets/icons/circle-half-black.svg'
 import { useTheme } from '@/context/ThemeContext'
-
-/**
- * MobileNavDrawer Component
- * ========================
- * Mobile navigation menu that appears as a drawer.
- * Features:
- * - Hamburger menu button that opens a drawer
- * - Collapsible menu items with dropdown support
- * - Close button and swipe-to-close gesture
- * - Maintains navigation structure from desktop menu
- */
-
-interface NavItem {
-  label: string
-  href: string
-  submenu?: NavItem[]
-}
-
-const NAV_ITEMS: NavItem[] = [
-  { label: 'Home', href: '/' },
-  { label: 'About', href: '/about' },
-  {
-    label: 'Activities',
-    href: '#',
-    submenu: [
-      { label: 'Events', href: '/activities/events' },
-    ],
-  },
-  {
-    label: 'Learn',
-    href: '#',
-    submenu: [
-      { label: 'Guilds', href: '/learn/guilds' },
-    ],
-  },
-  { label: 'Partners', href: '/partners' },
-]
+import { NAV_ITEMS, type NavItem } from '@/config/navigation'
 
 interface MobileNavDrawerProps {
   onNavigate?: () => void
@@ -60,7 +23,7 @@ function CollapsibleNavItem({
   onNavigate?: () => void
 }) {
   const [isOpen, setIsOpen] = useState(false)
-  const hasSubmenu = item.submenu && item.submenu.length > 0
+  const hasSubmenu = 'submenu' in item
 
   if (!hasSubmenu) {
     return (
@@ -87,7 +50,7 @@ function CollapsibleNavItem({
           }`}
         />
       </button>
-      {isOpen && item.submenu && (
+      {isOpen && (
         <div className="bg-muted/20 space-y-0">
           {item.submenu.map((subitem) => (
             <a
@@ -108,6 +71,7 @@ function CollapsibleNavItem({
 export function MobileNavDrawer({ onNavigate }: MobileNavDrawerProps) {
   const [isOpen, setIsOpen] = useState(false)
   const { isDarkMode, toggleDarkMode } = useTheme()
+  const iconFilter = isDarkMode ? 'brightness(0) invert(1)' : 'none'
 
   const handleNavigate = () => {
     onNavigate?.()
@@ -151,23 +115,14 @@ export function MobileNavDrawer({ onNavigate }: MobileNavDrawerProps) {
             onClick={toggleDarkMode}
             aria-label="Toggle dark mode"
           >
-            {isDarkMode ? (
-              <img
-                src={circleHalfWhite}
-                alt="Dark mode"
-                width={20}
-                height={20}
-                className="object-contain"
-              />
-            ) : (
-              <img
-                src={circleHalfBlack}
-                alt="Light mode"
-                width={20}
-                height={20}
-                className="object-contain"
-              />
-            )}
+            <img
+              src={circleHalfBlack}
+              alt="Theme toggle icon"
+              width={20}
+              height={20}
+              className="object-contain"
+              style={{ filter: iconFilter }}
+            />
           </Button>
         </div>
 

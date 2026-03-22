@@ -3,6 +3,8 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { useIsMobile } from "@/hooks/use-mobile"
+import { EventHoverCard } from "@/components/ui/custom/EventHoverCard"
 
 /**
  * Carousel Component
@@ -143,14 +145,37 @@ CarouselItem.displayName = "CarouselItem"
 interface CarouselRowProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode[]
   visibleCount?: number
+  responsive?: boolean
 }
 
 export function CarouselRow({
   children,
-  visibleCount = 4,
+  visibleCount: visibleCountProp,
+  responsive = false,
   className,
   ...props
 }: CarouselRowProps) {
+  const isMobile = useIsMobile();
+  const [isTablet, setIsTablet] = React.useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.innerWidth >= 768 && window.innerWidth < 1024;
+  })
+
+  React.useEffect(() => {
+    const checkTablet = () => {
+      setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
+    };
+    
+    checkTablet();
+    window.addEventListener('resize', checkTablet);
+    return () => window.removeEventListener('resize', checkTablet);
+  }, []);
+
+  // Calculate responsive visibleCount if enabled
+  let visibleCount = visibleCountProp ?? 4;
+  if (responsive) {
+    visibleCount = isMobile ? 1 : isTablet ? 2 : 4;
+  }
   const [index, setIndex] = React.useState(0)
   const count = React.Children.count(children)
   const maxIndex = Math.max(count - visibleCount, 0)
@@ -204,5 +229,36 @@ export function CarouselRow({
         </>
       )}
     </div>
+  )
+}
+
+/**
+ * PastActivitiesCarousel Component
+ * ================================
+ * Renders a responsive carousel of past activities/events
+ * Reusable for displaying event listings
+ */
+
+interface Activity {
+  image: string
+  tag: string
+  title: string
+  date: string
+  description: string
+}
+
+interface PastActivitiesCarouselProps extends React.HTMLAttributes<HTMLDivElement> {
+  activities: Activity[]
+}
+
+export function PastActivitiesCarousel({ activities, className, ...props }: PastActivitiesCarouselProps) {
+  return (
+    <CarouselRow responsive className={cn("max-w-[1500px] mx-auto pb-4", className)} {...props}>
+      {activities.map((activity, i) => (
+        <div key={i} className="px-3" style={{ padding: '0 12px' }}>
+          <EventHoverCard {...activity} />
+        </div>
+      ))}
+    </CarouselRow>
   )
 }
