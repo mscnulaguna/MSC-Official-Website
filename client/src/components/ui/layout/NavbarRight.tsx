@@ -6,6 +6,7 @@ import circleHalfBlack from "@/assets/icons/circle-half-black.svg"
 import { Search } from 'lucide-react'
 import { SearchDialog } from './SearchDialog'
 import { useTheme } from '@/context/ThemeContext'
+import { useNavigate } from 'react-router-dom'
 
 /**
  * NavbarRight Component
@@ -38,8 +39,9 @@ export function NavbarRight() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
+  const navigate = useNavigate()
   const handleSignIn = () => {
-    console.log('Sign in clicked')
+    navigate('/login')
   }
 
   return (
