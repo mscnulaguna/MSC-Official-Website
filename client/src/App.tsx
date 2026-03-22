@@ -1,39 +1,21 @@
-import { Routes, Route, useLocation } from 'react-router-dom'
-import Home from '@/pages/home'
-import AboutPage from '@/pages/about'
-import PartnersPage from '@/pages/partners'
-import Login from '@/pages/login'
-import { useEffect } from 'react'
-import { Footer } from "@/components/ui/layout/Footer"
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+import { useEffect, useState } from 'react'
+import { Button } from '@/components/ui/button'
 
 export default function App() {
-  const location = useLocation()
-  const isLogin = location.pathname === '/login'
+  const [message, setMessage] = useState('')
 
   const fetchMessage = async () => {
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/hello`, { cache: 'no-store' })
-      if (!res.ok) throw new Error(`Request failed: ${res.status}`)
-      await res.json()
-    } catch {
-      // Error fetching message
-    }
+    const res = await fetch('http://localhost:5000/api/hello')
+    const data = await res.json()
+    setMessage(data.message)
   }
 
   useEffect(() => { fetchMessage() }, [])
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden">
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/partners" element={<PartnersPage />} />
-      </Routes>
-
-      {!isLogin && <Footer />}
+    <div className="p-8">
+      <h1 className="text-2xl font-bold mb-4">{message}</h1>
+      <Button onClick={fetchMessage}>Refresh</Button>
     </div>
   )
 }
