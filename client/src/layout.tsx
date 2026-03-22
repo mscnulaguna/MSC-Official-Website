@@ -35,10 +35,7 @@ export default function AppLayout({
     <>
       {/* Navbar - Client Component Wrapper (fixed positioning) */}
       <NavbarWrapper />
-      {/* Add padding-top to account for fixed navbar height (64px = h-16) */}
-      <div className="pt-16">
         {children}
-      </div>
       {/*
         SONNER TOASTER
         Displays toast notifications throughout the app.
