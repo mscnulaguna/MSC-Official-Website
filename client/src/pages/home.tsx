@@ -153,7 +153,7 @@ export default function Home() {
       {/* 3. WHO WE ARE SECTION */}
       <section className="w-full bg-secondary/50 flex justify-center section-padding-lg border-b border-border/30">
         <div className="section-container">
-          <div className="text-center mb-12"><h2 className="text-3xl md:text-4xl font-bold gradient-text">WHO WE ARE</h2></div>
+          <div className="text-center mb-12"><h2 className="text-3xl md:text-4xl font-bold gradient-text" >WHO WE ARE</h2></div>
           
           <div className="w-full mb-12 relative px-4 sm:px-6 md:px-8 aspect-video rounded-2xl overflow-hidden bg-muted dark:bg-card">
             <VideoPlayer 

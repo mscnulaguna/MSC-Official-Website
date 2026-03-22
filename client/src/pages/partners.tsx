@@ -3,12 +3,10 @@ import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
 import { Label } from "../components/ui/label";
 import { Card, CardContent } from "../components/ui/card";
-import { CheckCheck, Copy } from "lucide-react";
 import { useEffect, useState, type JSX, type ChangeEvent, type CSSProperties } from "react";
 import mscLogo from "../assets/logos/msclogo.svg";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
-const MSC_EMAIL = "msc@nu-laguna.edu.ph";
 
 const gradientStyle: CSSProperties = {
     background: "linear-gradient(to right, #00A2ED 0%, #6AAC0E 33%, #FFBB00 66%, #F04E1F 100%)",
@@ -42,7 +40,7 @@ const PartnerLogo = ({ partner }: { partner: Partner }): JSX.Element => (
         target="_blank"
         rel="noopener noreferrer"
         title={partner.name}
-        className="group flex items-center justify-center p-2 sm:p-4 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-[#00A2ED] focus-visible:ring-offset-2"
+        className="group flex items-center justify-center p-2 sm:p-4 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
     >
         <img
             src={partner.logo}
@@ -61,10 +59,10 @@ const StarIcon = ({ style }: { style?: CSSProperties }): JSX.Element => (
 
 // Logo skeleton 
 const LogoSkeleton = (): JSX.Element => (
-    <div className="flex items-center justify-center p-2 sm:p-4">
-        <div className="h-14 w-24 sm:h-24 sm:w-28 md:h-28 md:w-32 lg:h-32 lg:w-36 rounded bg-gray-300 animate-pulse" />
-    </div>
-);
+  <div className="flex mt-10 items-center justify-center p-2 sm:p-4">
+    <div className="h-20 w-20 sm:h-30 sm:w-30 md:h-34 md:w-34 lg:h-38 lg:w-38 rounded bg-gray-500 animate-pulse" />
+  </div>
+)
 
 // Stat badge 
 const StatBadge = ({ bgColor, iconColor, count, label }: {
@@ -80,8 +78,8 @@ const StatBadge = ({ bgColor, iconColor, count, label }: {
         >
             <StarIcon style={{ color: iconColor }} />
         </div>
-        <span className="text-xl sm:text-2xl font-bold text-black">{count}+</span>
-        <span className="text-xs sm:text-sm text-gray-500">{label}</span>
+        <span className="text-xl sm:text-2xl font-bold ">{count}+</span>
+        <span className="text-xs sm:text-sm">{label}</span>
     </div>
 );
 
@@ -93,12 +91,12 @@ const TestimonialCard = (): JSX.Element => (
                 <path d="M0 24V14.4C0 10.08 1.12 6.56 3.36 3.84C5.6 1.12 8.64 0 12.48 0V4.8C10.56 4.8 9.04 5.44 7.92 6.72C6.8 8 6.24 9.76 6.24 12H12V24H0ZM20 24V14.4C20 10.08 21.12 6.56 23.36 3.84C25.6 1.12 28.64 0 32.48 0V4.8C30.56 4.8 29.04 5.44 27.92 6.72C26.8 8 26.24 9.76 26.24 12H32V24H20Z"
                     fill="#CBD5E1" />
             </svg>
-            <p className="text-xs sm:text-sm text-gray-600">
+            <p className="text-xs sm:text-sm ">
                 IJBOL? ano kaya meaning non, diba korean yon? tae i just burst out laughing kasi, how about rofl? ano yun? edi rolling on the floor? pano mo isspell yon?? R-U-F-L? NUYAN?! rolling un the floor? ifukuk talaga.
             </p>
             <div className="pt-2">
-                <p className="text-sm font-bold text-gray-900">Julie, Keith, and Jompi Conversation</p>
-                <p className="text-xs text-gray-500">Sa Loob ng SDAO, NU Laguna</p>
+                <p className="text-sm font-bold ">Julie, Keith, and Jompi Conversation</p>
+                <p className="text-xs">Sa Loob ng SDAO, NU Laguna</p>
             </div>
         </CardContent>
     </Card>
@@ -106,7 +104,6 @@ const TestimonialCard = (): JSX.Element => (
 
 // Contact form 
 const ContactForm = (): JSX.Element => {
-    const [copied, setCopied] = useState(false);
     const [form, setForm] = useState({
         companyName: "",
         contactName: "",
@@ -130,15 +127,8 @@ const ContactForm = (): JSX.Element => {
         setTimeout(() => setSent(false), 4000);
     };
 
-    const handleCopy = () => {
-        navigator.clipboard.writeText(MSC_EMAIL);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 3000);
-    };
-
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 text-left items-stretch">
-            {/* Left form fields */}
+        <div className="max-w-lg mx-auto w-full">
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-1">
                     <Label htmlFor="companyName">Company Name</Label>
@@ -194,38 +184,6 @@ const ContactForm = (): JSX.Element => {
                     {sending ? "Sending..." : sent ? "Message sent! We'll get back to you shortly." : "Submit"}
                 </Button>
             </form>
-
-            {/* Right contact info */}
-            <div
-                className="flex flex-col justify-start space-y-4 lg:border-l lg:pl-10"
-                style={{ borderColor: "#CBD5E1" }}
-            >
-                <h3 className="text-lg sm:text-xl font-bold" style={{ color: "#00A2ED" }}>
-                    Reach Out Directly
-                </h3>
-                <p className="text-sm text-black">
-                    Prefer to reach out directly? Send us an email and we'll get back to you as soon as possible.
-                </p>
-                <div
-                    className="flex items-center gap-3 px-4 py-3 rounded-none"
-                    style={{ border: "1px solid #CBD5E1", backgroundColor: "#F5F5F5" }}
-                >
-                    <span className="text-xs sm:text-sm text-gray-700 flex-1 font-medium break-all">
-                        {MSC_EMAIL}
-                    </span>
-                    <Button
-                        type="button"
-                        variant="secondary"
-                        onClick={handleCopy}
-                        className="flex items-center gap-1 text-xs px-2 sm:px-3 py-1 shrink-0 h-auto"
-                    >
-                        {copied
-                            ? <><CheckCheck className="w-4 h-4" /><span className="hidden sm:inline ml-1">Copied</span></>
-                            : <><Copy className="w-4 h-4" /><span className="hidden sm:inline ml-1">Copy</span></>
-                        }
-                    </Button>
-                </div>
-            </div>
         </div>
     );
 };
@@ -267,7 +225,7 @@ export default function PartnersPage(): JSX.Element {
                     <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold inline-block" style={gradientStyle}>
                         OUR PARTNERS
                     </h1>
-                    <p className="mt-3 text-gray-700 text-sm sm:text-sm     lg:text-lg max-w-4xl mx-auto">
+                    <p className="mt-3 text-sm sm:text-sm lg:text-lg max-w-4xl mx-auto">
                         We collaborate with tech companies and organizations to bring exclusive
                         benefits to our community members.
                     </p>
@@ -301,7 +259,7 @@ export default function PartnersPage(): JSX.Element {
                     <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold inline-block" style={gradientStyle}>
                         WHY PARTNER WITH US
                     </h2>
-                    <p className="mt-2 text-gray-700 text-sm max-w-4xl mx-auto">
+                    <p className="mt-2 text-sm max-w-4xl mx-auto">
                         From certifications to career connections, being part of MSC opens
                         doors you didn't know existed.
                     </p>
@@ -331,7 +289,7 @@ export default function PartnersPage(): JSX.Element {
                                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold inline-block" style={gradientStyle}>
                                     BECOME A PARTNER
                                 </h2>
-                                <p className="mt-2 text-gray-700 text-sm mx-auto">
+                                <p className="mt-2 text-sm mx-auto">
                                     Interested in partnering with MSC NU Laguna? Fill out the form
                                     below and we'll get back to you shortly.
                                 </p>

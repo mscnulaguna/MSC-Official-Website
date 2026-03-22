@@ -69,7 +69,7 @@ export function Navbar({
 }: NavbarProps) {
   return (
     <header
-      className={`fixed left-0 right-0 top-0 z-50 mx-auto  border-b border-border/40 bg-background overflow-visible ${className}`}
+      className={`sticky left-0 right-0 top-0 z-50 mx-auto  border-b border-border/40 bg-background overflow-visible ${className}`}
       suppressHydrationWarning
     >
       {/* Padding for mobile/tablet/desktop - no additional max-width wrapper needed */}
