@@ -59,7 +59,7 @@ const StarIcon = ({ style }: { style?: CSSProperties }): JSX.Element => (
 
 // Logo skeleton 
 const LogoSkeleton = (): JSX.Element => (
-  <div className="flex items-center justify-center p-2 sm:p-4">
+  <div className="flex mt-10 items-center justify-center p-2 sm:p-4">
     <div className="h-20 w-20 sm:h-30 sm:w-30 md:h-34 md:w-34 lg:h-38 lg:w-38 rounded bg-gray-500 animate-pulse" />
   </div>
 )
