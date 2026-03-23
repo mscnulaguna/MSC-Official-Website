@@ -210,7 +210,7 @@ export function Footer() {
           </div>
 
           {/* Partner with Us Button - Centered with padding */}
-          <Button className="w-[calc(100%-1rem)] mx-2 bg-orange-600 hover:bg-orange-700 text-white h-10 text-base font-medium">
+          <Button className="w-[calc(100%-1rem)] mx-2 h-10 text-base font-medium">
             Partner with Us
           </Button>
         </div>
@@ -380,11 +380,11 @@ export function Footer() {
               </div>
             </div>
           </div>
-
+          
           {/* Partner with Us Section */}
           <div className="flex items-center justify-center">
             <Link to="/partners">
-              <Button className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-1 h-auto text-sm">
+              <Button className="bg-orange-600">
                 Partner with Us
               </Button>
             </Link>
@@ -393,7 +393,7 @@ export function Footer() {
       </div>
 
       {/* Bottom Copyright Section */}
-      <div className="w-full bg-blue-600 text-white py-4 sm:py-6 md:py-7">
+      <div className="w-full bg-primary text-primary-foreground py-4 sm:py-6 md:py-7">
         <div className="mx-auto max-w-[1700px] px-2 sm:px-3 md:px-4 lg:px-6">
           <p className="text-center text-xs">
             © 2026 NU Laguna Microsoft Student Community | All Rights Reserved.
