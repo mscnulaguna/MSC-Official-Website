@@ -24,16 +24,14 @@ export default function App() {
   useEffect(() => { fetchMessage() }, [])
 
   return (
-    <BrowserRouter>
-      <div className="min-h-screen w-full overflow-x-hidden">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/partners" element={<PartnersPage />} />
-        </Routes>
+    <div className="min-h-screen w-full overflow-x-hidden">
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/partners" element={<PartnersPage />} />
+      </Routes>
 
-        <Footer />
-      </div>
-    </BrowserRouter>
+      <Footer />
+    </div>
   )
 }

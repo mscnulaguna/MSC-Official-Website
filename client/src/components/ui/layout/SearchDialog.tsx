@@ -7,8 +7,15 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import {
+  InputGroup,
+  InputGroupContent,
+  InputGroupPrefix,
+  InputGroupSuffix,
+} from '@/components/ui/input-group'
+import { Kbd } from '@/components/ui/kbd'
 import { ChevronDown, Check, Search } from 'lucide-react'
+import { Separator } from '@/components/ui/separator'
 
 /**
  * SearchDialog Component
@@ -34,21 +41,23 @@ const SEARCH_CATEGORIES = [
   { id: 'patterns', label: 'Patterns' },
 ]
 
-export function SearchDialog({ 
-  open, 
-  onOpenChange 
-}: { 
+type SearchDialogProps = Readonly<{
   open?: boolean
   onOpenChange?: (open: boolean) => void
-}) {
+}>
+
+export function SearchDialog({
+  open,
+  onOpenChange,
+}: SearchDialogProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
   // Use controlled state if provided, otherwise use internal state
-  const dialogOpen = open !== undefined ? open : isOpen
-  const setDialogOpen = onOpenChange || setIsOpen
+  const dialogOpen = open ?? isOpen
+  const setDialogOpen = onOpenChange ?? setIsOpen
 
   const dropdownRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -88,7 +97,7 @@ export function SearchDialog({
   /**
    * Handle search submit
    */
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     console.log('Search:', {
@@ -131,79 +140,62 @@ export function SearchDialog({
           Search through components, hooks, icons, and patterns
         </DialogDescription>
 
-        <div className="space-y-4">
-
+        <form onSubmit={handleSearch} className="space-y-4">
           {/* SEARCH INPUT */}
-          <form onSubmit={handleSearch}>
-            <div className="relative flex items-center h-12">
+          <InputGroup className="h-12 rounded-sm border border-input px-0 py-0 transition-colors duration-200 focus-within:border-2 focus-within:border-ring focus-within:ring-0 focus-within:ring-offset-0">
+            <InputGroupPrefix>
+              <Search className="h-4 w-4 text-muted-foreground" />
+            </InputGroupPrefix>
+            <InputGroupContent
+              ref={inputRef}
+              type="text"
+              placeholder="Search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleKeyDown}
+              autoFocus
+              className="px-0 pl-9 pr-14 text-base"
+            />
+            <InputGroupSuffix>
+              <Kbd>ESC</Kbd>
+            </InputGroupSuffix>
+          </InputGroup>
 
-              {/* Search Icon */}
-              <div className="absolute left-3 pointer-events-none flex items-center">
-                <Search className="h-5 w-5 opacity-60" />
-              </div>
-
-              {/* Input */}
-              <Input
-                ref={inputRef}
-                type="text"
-                placeholder="Search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={handleKeyDown}
-                autoFocus
-                className="w-full pl-10 pr-12 h-12 text-base border border-border/60 rounded-sm bg-background text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
-              />
-
-              {/* ESC Indicator */}
-              <div className="absolute right-3 text-xs text-muted-foreground font-medium pointer-events-none">
-                ESC
-              </div>
-            </div>
-          </form>
-
-          {/* Divider */}
-          <div className="border-t border-border/30" />
+          <Separator />
 
           {/* FILTER SECTION */}
           <div className="relative" ref={dropdownRef}>
             <button
+              type="button"
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="flex items-center gap-2 text-sm text-foreground hover:text-primary dark:text-foreground dark:hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded px-2 py-1"
+              className="flex items-center gap-2 text-sm text-foreground transition-colors duration-200 hover:text-primary cursor-pointer outline-none ring-0 ring-offset-0 focus:outline-none focus-visible:outline-none"
               aria-expanded={isDropdownOpen}
             >
               <span className="font-medium">Filter:</span>
-
-              <span className="text-muted-foreground dark:text-muted-foreground">
-                {selectedCategoryLabel}
-              </span>
-
+              <span className="text-muted-foreground font-normal">{selectedCategoryLabel}</span>
               <ChevronDown
                 size={16}
-                className={`transition-transform ${
-                  isDropdownOpen ? 'rotate-180' : ''
-                }`}
+                className={`transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
               />
             </button>
 
             {/* Dropdown */}
             {isDropdownOpen && (
-              <div className="absolute left-0 top-full mt-2 w-48 rounded-sm border border-border/60 bg-background text-foreground dark:bg-card dark:text-foreground shadow-md z-50">
+              <div className="absolute left-0 top-full z-50 mt-2 w-48 rounded-sm bg-background border border-border/40 shadow-none">
                 <div className="py-1">
                   {SEARCH_CATEGORIES.map((category) => (
                     <button
                       key={category.id}
+                      type="button"
                       onClick={() => handleCategorySelect(category.id)}
-                      className={`w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors ${
+                      className={`flex w-full items-center justify-between px-4 py-2.5 text-sm transition-colors outline-none ring-0 ring-offset-0 focus:outline-none focus-visible:outline-none ${
                         selectedCategory === category.id
-                          ? 'bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary'
-                          : 'hover:bg-muted dark:hover:bg-card dark:hover:text-foreground'
+                          ? 'text-primary font-medium'
+                          : 'text-foreground hover:text-primary'
                       }`}
                     >
                       {category.label}
-
-                      {selectedCategory === category.id && (
-                        <Check size={16} />
-                      )}
+                      {selectedCategory === category.id && <Check size={16} />}
                     </button>
                   ))}
                 </div>
@@ -212,10 +204,10 @@ export function SearchDialog({
           </div>
 
           {/* Help text */}
-          <p className="text-xs text-muted-foreground dark:text-muted-foreground pt-2">
+          <p className="pt-2 text-xs text-muted-foreground">
             Filter results by category or search across all
           </p>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   )
