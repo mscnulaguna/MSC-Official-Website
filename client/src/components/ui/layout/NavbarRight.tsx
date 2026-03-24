@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useId, useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { InputGroup, InputGroupSuffix } from '@/components/ui/input-group'
 import { Kbd } from '@/components/ui/kbd'
@@ -7,23 +7,16 @@ import circleHalfBlackSvg from '@/assets/icons/circle-half-black.svg?raw'
 import { SearchDialog } from './SearchDialog'
 import { useTheme } from '@/context/ThemeContext'
 
-/**
- * NavbarRight Component
- * ====================
- * Right section of navbar:
- * - Search input with Ctrl+K shortcut
- * - Theme toggle
- * - Sign In button
- *
- * FEATURES:
- * - Desktop: Search input with KBD shortcut
- * - Mobile: Search icon button
- * - Keyboard shortcut: Ctrl+K or Cmd+K
- */
-
 export function NavbarRight() {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const { isDarkMode, toggleDarkMode } = useTheme()
+  const instanceId = useId()
+
+  const scopedCircleHalfBlackSvg = useMemo(() => {
+    const originalId = 'path-1-inside-1_477_561'
+    const safeScope = `msc-${instanceId.replaceAll(':', '')}`
+    return circleHalfBlackSvg.replaceAll(originalId, `${safeScope}-${originalId}`)
+  }, [instanceId])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -65,17 +58,6 @@ export function NavbarRight() {
           </InputGroup>
         </button>
 
-        {/* Mobile Search Icon Button */}
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setIsSearchOpen(true)}
-          className="sm:hidden h-10 w-10"
-          aria-label="Open search"
-        >
-          <Search className="h-5 w-5" />
-        </Button>
-
         {/* Theme Toggle Button */}
         <button
           type="button"
@@ -93,20 +75,21 @@ export function NavbarRight() {
               (isDarkMode ? 'rotate-180' : 'rotate-0')
             }
             // SVG uses `currentColor` so Tailwind `text-*` tokens apply.
-            dangerouslySetInnerHTML={{ __html: circleHalfBlackSvg }}
+            dangerouslySetInnerHTML={{ __html: scopedCircleHalfBlackSvg }}
           />
         </button>
 
         {/* Desktop Sign In */}
         <Button
+          variant="default"
           onClick={handleSignIn}
-          className="cursor-pointer ml-2 hidden sm:inline-flex"
         >
           Sign In
         </Button>
 
         {/* Mobile Sign In */}
         <Button
+          variant="default"
           onClick={handleSignIn}
           size="sm"
           className="ml-1 sm:hidden"

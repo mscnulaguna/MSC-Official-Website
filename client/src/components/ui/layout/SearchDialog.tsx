@@ -134,7 +134,7 @@ export function SearchDialog({
       )}
 
       {/* Search Dialog */}
-      <DialogContent className="max-w-2xl sm:rounded-lg px-6 pb-6 pt-10">
+      <DialogContent className="max-w-2xl px-6 pb-6 pt-10">
         <DialogTitle className="sr-only">Search</DialogTitle>
         <DialogDescription className="sr-only">
           Search through components, hooks, icons, and patterns
@@ -142,7 +142,7 @@ export function SearchDialog({
 
         <form onSubmit={handleSearch} className="space-y-4">
           {/* SEARCH INPUT */}
-          <InputGroup className="h-12 rounded-sm border border-input px-0 py-0 transition-colors duration-200 focus-within:border-2 focus-within:border-ring focus-within:ring-0 focus-within:ring-offset-0">
+          <InputGroup className="h-12 border border-input px-0 py-0 transition-colors duration-200 focus-within:border-2 focus-within:border-ring focus-within:ring-0 focus-within:ring-offset-0">
             <InputGroupPrefix>
               <Search className="h-4 w-4 text-muted-foreground" />
             </InputGroupPrefix>
@@ -181,7 +181,7 @@ export function SearchDialog({
 
             {/* Dropdown */}
             {isDropdownOpen && (
-              <div className="absolute left-0 top-full z-50 mt-2 w-48 rounded-sm bg-background border border-border/40 shadow-none">
+              <div className="absolute left-0 top-full z-50 mt-2 w-48 rounded-none bg-background border border-border/40 shadow-none">
                 <div className="py-1">
                   {SEARCH_CATEGORIES.map((category) => (
                     <button
