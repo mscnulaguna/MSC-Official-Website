@@ -155,11 +155,11 @@ export default function Home() {
         <div className="section-container">
           <div className="text-center mb-12"><h2 className="text-3xl md:text-4xl font-bold gradient-text">WHO WE ARE</h2></div>
           
-          <div className="w-full mb-12 relative px-4 sm:px-6 md:px-8 aspect-video rounded-2xl overflow-hidden bg-muted dark:bg-card">
+          <div className="w-full mb-12 relative px-4 sm:px-6 md:px-8 aspect-video rounded-none overflow-hidden bg-muted dark:bg-card">
             <VideoPlayer 
               src="https://www.youtube.com/embed/dQw4w9WgXcQ"
               title="MSC NU Laguna - Who We Are"
-              className="w-full h-full rounded-2xl"
+              className="w-full h-full rounded-none"
             />
           </div>
 
@@ -180,7 +180,7 @@ export default function Home() {
       {/* 4. MEMBERS HIGHLIGHT SECTION */}
       <section className="w-full section-padding-md bg-background dark:bg-card flex justify-center border-b border-border">
         <div className="section-container grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8 items-center">
-          <div className="aspect-square md:aspect-[4/3] rounded-2xl overflow-hidden relative flex items-center justify-center">
+          <div className="aspect-square md:aspect-[4/3] rounded-none overflow-hidden relative flex items-center justify-center">
             <img src={abstracticon} alt="Abstract Icon" className="w-full h-full object-contain" />
           </div>
           <div className="space-y-3 sm:space-y-4 md:space-y-5 lg:pl-6">
