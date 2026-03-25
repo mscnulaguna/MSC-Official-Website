@@ -37,7 +37,7 @@ export function MemberPerkCard({
   className = ""
 }: MemberPerkCardProps) {
   return (
-    <Card className={`border-border dark:border-border bg-background dark:bg-card hover:shadow-xl transition-all duration-300 ease-in-out hover:scale-[1.03] rounded-xl overflow-hidden ${className}`}>
+    <Card className={`border-border dark:border-border bg-background dark:bg-card hover:shadow-xl transition-all duration-300 ease-in-out hover:scale-[1.03] rounded-none overflow-hidden ${className}`}>
       <CardHeader>
         {typeof icon === 'string' ? (
           <div className="text-2xl md:text-3xl mb-4 text-[var(--color-brand-blue)]">{icon}</div>

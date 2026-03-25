@@ -124,7 +124,7 @@ export function Carousel({
             key={index}
             onClick={() => setCurrent(index)}
             className={cn(
-              "h-2 rounded-full transition-all",
+              "h-2 rounded-none transition-all",
               index === current ? "w-8 bg-white" : "w-2 bg-white/50"
             )}
             aria-label={`Go to slide ${index + 1}`}

@@ -8,13 +8,6 @@ import mscLogo from "../assets/logos/msclogo.svg";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
-const gradientStyle: CSSProperties = {
-    background: "linear-gradient(to right, #00A2ED 0%, #6AAC0E 33%, #FFBB00 66%, #F04E1F 100%)",
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent",
-    backgroundClip: "text",
-};
-
 // Types 
 interface Partner {
     id: string;
@@ -73,7 +66,7 @@ const StatBadge = ({ bgColor, iconColor, count, label }: {
 }): JSX.Element => (
     <div className="flex flex-col items-center gap-1">
         <div
-            className="w-12 h-12 sm:w-14 sm:h-14 rounded-md flex items-center justify-center"
+            className="w-12 h-12 sm:w-14 sm:h-14 rounded-none flex items-center justify-center"
             style={{ backgroundColor: bgColor }}
         >
             <StarIcon style={{ color: iconColor }} />
@@ -222,7 +215,7 @@ export default function PartnersPage(): JSX.Element {
             {/* ── Section 1: Our Partners ── */}
             <section className="py-16 sm:py-20 text-center mb-40">
                 <div className="w-4/5 mx-auto px-4 sm:px-6 lg:px-8">
-                    <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold inline-block" style={gradientStyle}>
+                    <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold inline-block gradient-text">
                         OUR PARTNERS
                     </h1>
                     <p className="mt-3 text-sm sm:text-sm lg:text-lg max-w-4xl mx-auto">
@@ -256,7 +249,7 @@ export default function PartnersPage(): JSX.Element {
             {/* ── Section 2: Why Partner With Us ── */}
             <section className="py-32 sm:py-40 text-center" style={{ backgroundColor: "#F5F5F5" }}>
                 <div className="w-4/5 mx-auto px-4 sm:px-6 lg:px-8">
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold inline-block" style={gradientStyle}>
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold inline-block gradient-text">
                         WHY PARTNER WITH US
                     </h2>
                     <p className="mt-2 text-sm max-w-4xl mx-auto">
@@ -286,7 +279,7 @@ export default function PartnersPage(): JSX.Element {
                     <Card className="rounded-none shadow-sm" style={{ border: "1px solid #CBD5E1" }}>
                         <CardContent className="p-6 sm:p-10 lg:p-12">
                             <div className="text-center mb-6 sm:mb-8">
-                                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold inline-block" style={gradientStyle}>
+                                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold inline-block gradient-text">
                                     BECOME A PARTNER
                                 </h2>
                                 <p className="mt-2 text-sm mx-auto">

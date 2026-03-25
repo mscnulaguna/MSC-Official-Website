@@ -16,15 +16,12 @@ import { NAV_ITEMS } from '@/config/navigation'
 function SubmenuItem({
   href,
   label,
-}: {
-  href: string
-  label: string
-}) {
+}: Readonly<{ href: string; label: string }>) {
   return (
     <NavigationMenuLink asChild>
       <a
         href={href}
-        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-muted hover:text-foreground focus:bg-muted focus:text-foreground"
+        className="block select-none space-y-1 rounded-none p-3 leading-none no-underline outline-none transition-colors hover:bg-muted hover:text-foreground focus:bg-muted focus:text-foreground"
       >
         <div className="text-sm font-medium leading-none">{label}</div>
       </a>
