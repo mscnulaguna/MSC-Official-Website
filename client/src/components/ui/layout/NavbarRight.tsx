@@ -6,6 +6,7 @@ import { Search } from 'lucide-react'
 import circleHalfBlackSvg from '@/assets/icons/circle-half-black.svg?raw'
 import { SearchDialog } from './SearchDialog'
 import { useTheme } from '@/context/ThemeContext'
+import { useNavigate } from 'react-router-dom'
 
 export function NavbarRight() {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
@@ -30,8 +31,9 @@ export function NavbarRight() {
     return () => globalThis.removeEventListener('keydown', handleKeyDown)
   }, [])
 
+  const navigate = useNavigate()
   const handleSignIn = () => {
-    console.log('Sign in clicked')
+    navigate('/login')
   }
 
   return (
