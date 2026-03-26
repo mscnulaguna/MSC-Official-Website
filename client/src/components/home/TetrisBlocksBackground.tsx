@@ -1,5 +1,3 @@
-'use client'
-
 import { useState, useEffect } from 'react'
 
 type BlockColor = 'blue' | 'green' | 'yellow' | 'red'

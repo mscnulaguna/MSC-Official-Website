@@ -1,29 +1,13 @@
-/**
- * Custom MSC Components
- * =======================
- * App-specific component variants that extend or customize shadcn/ui components
- * for the MSC - NU Laguna Design System.
- *
- * These are NOT part of the base UI component library, but rather
- * pre-configured or themed components for use throughout the application.
- *
- * DIFFERENCE FROM /components/ui:
- * - UI components: Generic, reusable, framework-agnostic
- * - Custom components: MSC-specific, may include branding, business logic
- *
- * EXPORTS:
- */
+// Custom MSC Components - App-specific variants extending shadcn/ui
+// UI components: Generic, reusable | Custom components: MSC-specific with branding/logic
 
-export { AlertDialogBasic } from './AlertDialogBasic'
+export { AlertDialogBasic } from '@/components/ui/alert-dialog'
 export { EventHoverCard } from './EventHoverCard'
-export { AspectRatioPreset } from './AspectRatioPreset'
+export { AspectRatioPreset } from '@/components/ui/aspect-ratio'
 export { InputWithButton } from './InputWithButton'
 export { SignInDialog } from './SignInDialog'
 export { DatePicker } from './DatePicker'
-export { AvatarCircle } from './AvatarCircle'
+export { AvatarCircle } from '@/components/ui/avatar'
 export { GreenAlertBox } from './GreenAlertBox'
 
-/**
- * ADD NEW CUSTOM COMPONENTS HERE:
- * export { YourComponent } from './YourComponent'
- */
+// Add new custom components: export { YourComponent } from './YourComponent'

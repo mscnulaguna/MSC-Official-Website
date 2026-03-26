@@ -4,12 +4,14 @@ import { AlertDialog as AlertDialogPrimitive } from "radix-ui"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
+// RADIX-UI WRAPPER COMPONENTS - default code
 function AlertDialog({
   ...props
 }: React.ComponentProps<typeof AlertDialogPrimitive.Root>) {
   return <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />
 }
 
+// Trigger - default code
 function AlertDialogTrigger({
   ...props
 }: React.ComponentProps<typeof AlertDialogPrimitive.Trigger>) {
@@ -18,6 +20,7 @@ function AlertDialogTrigger({
   )
 }
 
+// Portal - default code
 function AlertDialogPortal({
   ...props
 }: React.ComponentProps<typeof AlertDialogPrimitive.Portal>) {
@@ -26,6 +29,9 @@ function AlertDialogPortal({
   )
 }
 
+// STYLED LAYOUT COMPONENTS - default code with customizations
+
+// Overlay - default code // added bg-black/50 for backdrop color
 function AlertDialogOverlay({
   className,
   ...props
@@ -42,6 +48,8 @@ function AlertDialogOverlay({
   )
 }
 
+
+// Content - default code // added size prop for responsive sizing, added animations
 function AlertDialogContent({
   className,
   size = "default",
@@ -65,6 +73,8 @@ function AlertDialogContent({
   )
 }
 
+
+// Header - default code // added responsive grid layout
 function AlertDialogHeader({
   className,
   ...props
@@ -81,6 +91,8 @@ function AlertDialogHeader({
   )
 }
 
+
+// Footer - default code // added flex-col-reverse for button order
 function AlertDialogFooter({
   className,
   ...props
@@ -97,6 +109,8 @@ function AlertDialogFooter({
   )
 }
 
+
+// Title - default code // added text-lg styling
 function AlertDialogTitle({
   className,
   ...props
@@ -113,6 +127,8 @@ function AlertDialogTitle({
   )
 }
 
+
+// Description - default code // added text-sm styling
 function AlertDialogDescription({
   className,
   ...props
@@ -126,6 +142,8 @@ function AlertDialogDescription({
   )
 }
 
+
+// Media - default code // added size-16 for container sizing
 function AlertDialogMedia({
   className,
   ...props
@@ -142,6 +160,10 @@ function AlertDialogMedia({
   )
 }
 
+
+// ACTION COMPONENTS - default code with customizations
+
+// Action - default code // added variant prop for button styling
 function AlertDialogAction({
   className,
   variant = "default",
@@ -160,6 +182,8 @@ function AlertDialogAction({
   )
 }
 
+
+// Cancel - default code // added variant="outline" for secondary button styling
 function AlertDialogCancel({
   className,
   variant = "outline",
@@ -178,6 +202,34 @@ function AlertDialogCancel({
   )
 }
 
+
+// PRESET VARIANT - customization example
+
+// AlertDialogBasic - customization // added profile save confirmation template
+export function AlertDialogBasic() {
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button variant="outline">Show Dialog</Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Hold up… save first?</AlertDialogTitle>
+          <AlertDialogDescription>
+            You made updates to your profile. Saving helps us recommend sessions that match your interests and goals.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction>Save changes</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  )
+}
+
+
+// EXPORTS - default code
 export {
   AlertDialog,
   AlertDialogAction,

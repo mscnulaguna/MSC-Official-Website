@@ -41,9 +41,8 @@ export const NAV_ITEMS: NavItem[] = [
     type: 'group',
     label: 'Learn',
     submenu: [
-      { label: 'Tutorials', href: '/learn/tutorials' },
-      { label: 'Documentation', href: '/learn/docs' },
-      { label: 'Resources', href: '/learn/resources' },
+      { label: 'Learn', href: '/learn' },
+      { label: 'Guilds', href: '/guilds' },
     ],
   },
   { label: 'Partners', href: '/partners' },

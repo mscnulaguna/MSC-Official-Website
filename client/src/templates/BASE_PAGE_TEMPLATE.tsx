@@ -160,19 +160,6 @@ export default function Page() {
 }
 
 /**
- * QUICK SETUP CHECKLIST
- *
- * ✓ Copy this file
- * ✓ Replace [Page Title] with your page title
- * ✓ Replace [Page description] with your description
- * ✓ Customize card titles and content
- * ✓ Add your own sections as needed
- * ✓ Test responsiveness at different breakpoints (use DevTools)
- * ✓ Remove red debug outlines when layout is finalized
- * ✓ Build with: npm run build
- */
-
-/**
  * RESPONSIVE CLASSES REFERENCE
  *
  * WIDTH & PADDING:
@@ -245,14 +232,7 @@ export default function Page() {
  * import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
  * import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
  *
- * Then use in your JSX:
- * <Accordion type="single" collapsible>
- *   <AccordionItem value="item-1">
- *     <AccordionTrigger>Is it accessible?</AccordionTrigger>
- *     <AccordionContent>Yes. It adheres to the WAI-ARIA design pattern.</AccordionContent>
- *   </AccordionItem>
- * </Accordion>
- */
+
 
 /**
  * CUSTOMIZATION TIPS

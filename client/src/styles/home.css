@@ -1,4 +1,5 @@
-/* home.css - SVG animations with instant position changes, no fading */
+/* ========== TETRIS BACKGROUND ANIMATIONS ========== */
+/* 9 shapes with instant position changes using step-start timing */
 
 /* ========== SHAPE 1 - Instant position changes ========== */
 @keyframes teleport1 {
@@ -81,32 +82,19 @@
   80%, 100% { transform: translate(-90px, -40px); }
 }
 
-/* Apply animations - DEPRECATED: Now using React state-based positioning */
-/* SVGs now instantly teleport between positions using React state management */
-/* .bg-shape-1 { animation: teleport1 24s linear infinite; }
-.bg-shape-2 { animation: teleport2 24s linear infinite; }
-.bg-shape-3 { animation: teleport3 24s linear infinite; }
-.bg-shape-4 { animation: teleport4 24s linear infinite; }
-.bg-shape-5 { animation: teleport5 24s linear infinite; }
-.bg-shape-6 { animation: teleport6 24s linear infinite; }
-.bg-shape-7 { animation: teleport7 24s linear infinite; }
-.bg-shape-8 { animation: teleport8 24s linear infinite; }
-.bg-shape-9 { animation: teleport9 24s linear infinite; } */
+/* DEPRECATED: Now using React state-based positioning */
+/* .bg-shape-1 { animation: teleport1 24s linear infinite; } ... */
 
-@keyframes spin-continuous {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* ========== TYPING ANIMATION ========== */
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
 }
-.animate-spin-slow {
-  animation: spin-continuous 12s linear infinite;
-}
+.animate-blink { animation: blink 1s step-end infinite; }
 
-
-@keyframes slide {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-100%); }
+/* ========== LOGO SCROLLER ANIMATION ========== */
+@keyframes marquee {
+  from { transform: translateX(100%); }
+  to { transform: translateX(-100%); }
 }
+.animate-marquee { animation: marquee 20s linear infinite; }

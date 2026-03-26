@@ -1,6 +1,6 @@
 # 🎨 MSC Design System - Master Guide
 
-Complete documentation for the MSC Design System. A modern, production-ready Next.js component library built with React, TypeScript, and Tailwind CSS.
+component library built with React, TypeScript, and Tailwind CSS.
 
 ---
 
@@ -84,9 +84,9 @@ msc-official-website/
 │
 ├── package.json                 # Dependencies
 ├── tsconfig.json               # TypeScript config
-├── next.config.ts              # Next.js config
 ├── tailwind.config.ts          # Tailwind CSS config
-├── postcss.config.mjs          # PostCSS config
+├── vite.config.ts
+├── tsconfig.json
 │
 ├── BASE_PAGE_TEMPLATE.tsx       # Template for new pages
 ├── COMPONENTS_README.md         # Component documentation
@@ -592,7 +592,6 @@ Discuss with the team before starting work.
 ## Learning Resources
 
 ### Official Documentation
-- [Next.js Docs](https://nextjs.org/docs)
 - [React Docs](https://react.dev)
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/)
 - [Tailwind CSS Documentation](https://tailwindcss.com/docs)
@@ -602,18 +601,6 @@ Discuss with the team before starting work.
 - BASE_TEMPLATE_README.md - Page creation
 - COMPONENTS_README.md - Component usage
 - TYPOGRAPHY_README.md - Typography system
-
----
-
-## Contact & Support
-
-For questions or issues, refer to the specific documentation guides in this project.
-
----
-
-## License
-
-This design system is proprietary to MSC.
 
 ---
 

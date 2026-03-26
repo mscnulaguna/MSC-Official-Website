@@ -2,6 +2,7 @@ import { Routes, Route, useLocation } from 'react-router-dom'
 import Home from '@/pages/home'
 import AboutPage from '@/pages/about'
 import PartnersPage from '@/pages/partners'
+import LearnPage from '@/pages/learn'
 import Login from '@/pages/login'
 import { useEffect } from 'react'
 import { Footer } from "@/components/ui/layout/Footer"
@@ -30,6 +31,7 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<AboutPage />} />
+        <Route path="/learn" element={<LearnPage />} />
         <Route path="/partners" element={<PartnersPage />} />
       </Routes>
 
