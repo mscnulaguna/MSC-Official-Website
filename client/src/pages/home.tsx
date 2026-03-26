@@ -191,11 +191,11 @@ export default function Home() {
             </h2>
           </div>
           
-          <div className="w-full mb-12 relative px-4 sm:px-6 md:px-8 aspect-video rounded-2xl overflow-hidden bg-muted dark:bg-card">
+          <div className="w-full mb-12 relative px-4 sm:px-6 md:px-8 aspect-video rounded-none overflow-hidden bg-muted dark:bg-card">
             <VideoPlayer 
               src="https://www.youtube.com/embed/dQw4w9WgXcQ"
               title="MSC NU Laguna - Who We Are"
-              className="w-full h-full rounded-2xl"
+              className="w-full h-full rounded-none"
             />
           </div>
 

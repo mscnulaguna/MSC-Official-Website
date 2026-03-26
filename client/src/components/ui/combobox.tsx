@@ -108,7 +108,7 @@ export function Combobox({
     <div
       ref={dropdownRef}
       role="listbox"
-      className="border border-border bg-white rounded-lg shadow-lg z-50 w-full"
+      className="border border-border bg-white rounded-none shadow-lg z-50 w-full"
       style={
         triggerRect
           ? {
@@ -126,7 +126,7 @@ export function Combobox({
         value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)}
         onKeyDown={handleKeyDown}
-        className="border-0 border-b border-border rounded-none m-0 rounded-t-lg"
+        className="border-0 border-b border-border rounded-none m-0"
         aria-label="Search options"
         aria-controls="combobox-options"
         aria-autocomplete="list"

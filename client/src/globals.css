@@ -11,19 +11,6 @@
   --font-sans: var(--font-inter);
   --font-mono: var(--font-inter);
   --font-inter: var(--font-inter);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -40,106 +27,88 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  /* Brand Colors */
-  --color-brand-green: #6AAC0E;
-  --color-blue-50: #f0f9ff;
-  --color-blue-100: #e0f2fe;
-  --color-blue-200: #bae6fd;
-  --color-blue-600: #0284c7;
-  --color-blue-900: #0c2340;
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
-  /* Microsoft Brand Colors */
+
+  /* MSC BRAND COLORS */
   --color-brand-blue: #00A2ED;
   --color-brand-green: #6AAC0E;
   --color-brand-yellow: #FFBB00;
   --color-brand-red: #F04E1F;
+  --color-brand-purple: #8806CE;
+  --color-brand-orange: #FEA60F;
+
+  --radius: 0
 }
 
+/* LIGHT THEME */
 :root {
   --radius: 0;
 
-  /* NEUTRALS - based on design palette */
-  --background: #ffffff; /* Neutral 0 */
-  --foreground: #000000; /* Neutral 0 black for primary text */
-  --card: #ffffff;
+/* NEUTRAL */
+  --background: #FFFFFF; 
+  --foreground: #000000; 
+  --card: #FFFFFF;
   --card-foreground: #000000;
-  --popover: #ffffff;
+  --popover: #FFFFFF;
   --popover-foreground: #000000;
 
   /* PRIMARY */
-  --primary: #00A2ED; /* Primary 500 */
-  --primary-foreground: #ffffff;
+  --primary: #00A2ED; 
+  --primary-hover: #008FCC;
+  --primary-active: #0077A8; 
+  --primary-foreground: #FFFFFF;
 
-  /* SECONDARY / MUTED SURFACES */
-  --secondary: #f5f5f5; /* Neutral 50 */
+  /* SECONDARY */
+  --secondary: #F5F5F5; 
   --secondary-foreground: #000000;
-  --muted: #f5f5f5;
-  --muted-foreground: #4b5563; /* medium gray for secondary text */
+  --muted: #F5F5F5;
+  --muted-foreground: #4B5563; 
 
-  /* ACCENT (purple from Accents 500) */
-  --accent: #8806ce;
-  --accent-foreground: #ffffff;
+  /* ACCENTS*/
+  --accent: #8806CE;
+  --accent-foreground: #FFFFFF;
 
   /* SEMANTIC */
-  --destructive: #F04E1F; /* Error 500 */
+  --destructive: #F04E1F; 
+  --success: #6AAC0E; 
+  --warning: #FFBB00; 
+  --info: #00A2ED; 
 
-  /* BORDERS / INPUTS */
-  --border: #cbd5e1; /* Neutral 50 blue-tinted */
-  --input: #cbd5e1;
-  --ring: #008FCC; /* Primary 600 for focus rings */
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  /* BORDERS/INPUT/RING */
+  --border: #CBD5E1;
+  --input: #CBD5E1;
+  --ring: #00A2ED; 
 }
 
+/* DARK THEME */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: #050505;
+  --foreground: #F8FAFC;
+  --card: #050505;
+  --card-foreground: #FAFAFA;
+  --popover: #171717;
+  --popover-foreground: #FAFAFA;
+
+  --primary: #00A2ED;
+  --primary-hover: #008FCC;
+  --primary-active: #0077A8;
+  --primary-foreground: #FFFFFF;
+
+  --secondary: #050505;
+  --secondary-foreground: #FAFAFA;
+  --muted: #262626;
+  --muted-foreground: #A1A1A1;
+
+  --accent: #262626;
+  --accent-foreground: #FAFAFA;
+  
+  --destructive: #F04E1F;
+  --success: #6AAC0E;
+  --warning: #FFBB00;
+  --info: #00A2ED;
+  
+  --border: #FFFFFF1A;
+  --input: #FFFFFF26;
+  --ring: #008FCC;
 }
 
 @layer base {
@@ -160,44 +129,44 @@
 
 .sonner-toast {
   border-radius: 0 !important;
-  border: 2px solid rgb(100, 184, 230) !important;
-  background-color: rgb(240, 249, 255) !important;
-  color: rgb(7, 68, 104) !important;
+  border: 2px solid var(--info) !important;
+  background-color: #F0F9FF !important;
+  color: #074468 !important;
   padding: 16px !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 12px #00000014 !important;
   transition: all 0.3s ease !important;
 }
 
 .sonner-toast:hover {
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 6px 16px #0000001f !important;
 }
 
 /* Success Toast */
 .sonner-toast.sonner-toast-success {
-  border-color: rgb(34, 197, 94) !important;
-  background-color: rgb(240, 253, 244) !important;
-  color: rgb(20, 83, 45) !important;
+  border-color: var(--success) !important;
+  background-color: #F0FDF4 !important;
+  color: #14532d !important;
 }
 
 /* Error Toast */
 .sonner-toast.sonner-toast-error {
-  border-color: rgb(248, 113, 72) !important;
-  background-color: rgb(254, 242, 240) !important;
-  color: rgb(127, 29, 20) !important;
+  border-color: var(--destructive) !important;
+  background-color: #FEF2F0 !important;
+  color: #7f1d14 !important;
 }
 
 /* Warning Toast */
 .sonner-toast.sonner-toast-warning {
-  border-color: rgb(251, 146, 60) !important;
-  background-color: rgb(254, 248, 240) !important;
-  color: rgb(92, 51, 23) !important;
+  border-color: var(--warning) !important;
+  background-color: #FEF8F0 !important;
+  color: #5c3317 !important;
 }
 
 /* Default/Info Toast */
 .sonner-toast.sonner-toast-default {
-  border-color: rgb(100, 184, 230) !important;
-  background-color: rgb(240, 249, 255) !important;
-  color: rgb(7, 68, 104) !important;
+  border-color: var(--info) !important;
+  background-color: #F0F9FF !important;
+  color: #074468 !important;
 }
 
 /* Toast Title */
@@ -232,9 +201,9 @@
 /* Action Button */
 .sonner-toast button {
   border-radius: 0 !important;
-  border: 2px solid rgb(59, 130, 246) !important;
+  border: 2px solid var(--info) !important;
   background-color: transparent !important;
-  color: rgb(37, 99, 235) !important;
+  color: var(--info) !important;
   padding: 8px 16px !important;
   font-size: 13px !important;
   font-weight: 700 !important;
@@ -243,8 +212,8 @@
 }
 
 .sonner-toast button:hover {
-  background-color: rgb(59, 130, 246) !important;
-  color: white !important;
+  background-color: var(--primary-hover) !important;
+  color: #FFFFFF !important;
 }
 
 .sonner-toast button:active {

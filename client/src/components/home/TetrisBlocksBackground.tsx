@@ -172,7 +172,7 @@ function SingleBlock({ color }: { color: BlockColor }) {
   const colorClass = colorClasses[color]
   return (
     <div
-      className={`rounded-sm ${colorClass}`}
+      className={`rounded-none ${colorClass}`}
       style={{
         width: `${CELL_SIZE}px`,
         height: `${CELL_SIZE}px`,
@@ -197,10 +197,10 @@ function LShapeBlock({ color }: { color: BlockColor }) {
       }}
       aria-hidden="true"
     >
-      <div className={`absolute rounded-sm ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: 0, top: 0 }} />
-      <div className={`absolute rounded-sm ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: 0, top: cellWithGap }} />
-      <div className={`absolute rounded-sm ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: 0, top: cellWithGap * 2 }} />
-      <div className={`absolute rounded-sm ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap, top: cellWithGap * 2 }} />
+      <div className={`absolute rounded-none ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: 0, top: 0 }} />
+      <div className={`absolute rounded-none ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: 0, top: cellWithGap }} />
+      <div className={`absolute rounded-none ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: 0, top: cellWithGap * 2 }} />
+      <div className={`absolute rounded-none ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap, top: cellWithGap * 2 }} />
     </div>
   )
 }
@@ -220,10 +220,10 @@ function JShapeBlock({ color }: { color: BlockColor }) {
       }}
       aria-hidden="true"
     >
-      <div className={`absolute rounded-sm ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap, top: 0 }} />
-      <div className={`absolute rounded-sm ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap, top: cellWithGap }} />
-      <div className={`absolute rounded-sm ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap, top: cellWithGap * 2 }} />
-      <div className={`absolute rounded-sm ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: 0, top: cellWithGap * 2 }} />
+      <div className={`absolute rounded-none ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap, top: 0 }} />
+      <div className={`absolute rounded-none ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap, top: cellWithGap }} />
+      <div className={`absolute rounded-none ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap, top: cellWithGap * 2 }} />
+      <div className={`absolute rounded-none ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: 0, top: cellWithGap * 2 }} />
     </div>
   )
 }
@@ -243,10 +243,10 @@ function TShapeBlock({ color }: { color: BlockColor }) {
       }}
       aria-hidden="true"
     >
-      <div className={`absolute rounded-sm ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: 0, top: 0 }} />
-      <div className={`absolute rounded-sm ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap, top: 0 }} />
-      <div className={`absolute rounded-sm ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap * 2, top: 0 }} />
-      <div className={`absolute rounded-sm ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap, top: cellWithGap }} />
+      <div className={`absolute rounded-none ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: 0, top: 0 }} />
+      <div className={`absolute rounded-none ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap, top: 0 }} />
+      <div className={`absolute rounded-none ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap * 2, top: 0 }} />
+      <div className={`absolute rounded-none ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap, top: cellWithGap }} />
     </div>
   )
 }
@@ -266,10 +266,10 @@ function ZShapeBlock({ color }: { color: BlockColor }) {
       }}
       aria-hidden="true"
     >
-      <div className={`absolute rounded-sm ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: 0, top: 0 }} />
-      <div className={`absolute rounded-sm ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap, top: 0 }} />
-      <div className={`absolute rounded-sm ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap, top: cellWithGap }} />
-      <div className={`absolute rounded-sm ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap * 2, top: cellWithGap }} />
+      <div className={`absolute rounded-none ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: 0, top: 0 }} />
+      <div className={`absolute rounded-none ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap, top: 0 }} />
+      <div className={`absolute rounded-none ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap, top: cellWithGap }} />
+      <div className={`absolute rounded-none ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap * 2, top: cellWithGap }} />
     </div>
   )
 }
@@ -289,10 +289,10 @@ function SShapeBlock({ color }: { color: BlockColor }) {
       }}
       aria-hidden="true"
     >
-      <div className={`absolute rounded-sm ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap, top: 0 }} />
-      <div className={`absolute rounded-sm ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap * 2, top: 0 }} />
-      <div className={`absolute rounded-sm ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: 0, top: cellWithGap }} />
-      <div className={`absolute rounded-sm ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap, top: cellWithGap }} />
+      <div className={`absolute rounded-none ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap, top: 0 }} />
+      <div className={`absolute rounded-none ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap * 2, top: 0 }} />
+      <div className={`absolute rounded-none ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: 0, top: cellWithGap }} />
+      <div className={`absolute rounded-none ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap, top: cellWithGap }} />
     </div>
   )
 }
@@ -312,10 +312,10 @@ function IShapeBlock({ color }: { color: BlockColor }) {
       }}
       aria-hidden="true"
     >
-      <div className={`absolute rounded-sm ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: 0, top: 0 }} />
-      <div className={`absolute rounded-sm ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap, top: 0 }} />
-      <div className={`absolute rounded-sm ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap * 2, top: 0 }} />
-      <div className={`absolute rounded-sm ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap * 3, top: 0 }} />
+      <div className={`absolute rounded-none ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: 0, top: 0 }} />
+      <div className={`absolute rounded-none ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap, top: 0 }} />
+      <div className={`absolute rounded-none ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap * 2, top: 0 }} />
+      <div className={`absolute rounded-none ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap * 3, top: 0 }} />
     </div>
   )
 }
@@ -335,10 +335,10 @@ function OShapeBlock({ color }: { color: BlockColor }) {
       }}
       aria-hidden="true"
     >
-      <div className={`absolute rounded-sm ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: 0, top: 0 }} />
-      <div className={`absolute rounded-sm ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap, top: 0 }} />
-      <div className={`absolute rounded-sm ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: 0, top: cellWithGap }} />
-      <div className={`absolute rounded-sm ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap, top: cellWithGap }} />
+      <div className={`absolute rounded-none ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: 0, top: 0 }} />
+      <div className={`absolute rounded-none ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap, top: 0 }} />
+      <div className={`absolute rounded-none ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: 0, top: cellWithGap }} />
+      <div className={`absolute rounded-none ${colorClass}`} style={{ width: CELL_SIZE, height: CELL_SIZE, left: cellWithGap, top: cellWithGap }} />
     </div>
   )
 }

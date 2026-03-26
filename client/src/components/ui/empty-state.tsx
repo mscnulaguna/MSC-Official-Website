@@ -60,7 +60,7 @@ export const EmptyStateContainer = React.forwardRef<HTMLDivElement, React.HTMLAt
     <div
       ref={ref}
       className={cn(
-        "flex items-center justify-center w-full min-h-96 border border-dashed border-border rounded-lg bg-gray-50",
+        "flex items-center justify-center w-full min-h-96 border border-dashed border-border rounded-none bg-gray-50",
         className
       )}
       {...props}

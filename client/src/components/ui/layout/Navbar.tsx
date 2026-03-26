@@ -66,7 +66,7 @@ export function Navbar({
   logoSrc = mscLogo,
   logoAlt = 'Logo',
   className = '',
-}: NavbarProps) {
+}: Readonly<NavbarProps>) {
   return (
     <header
       className={`sticky left-0 right-0 top-0 z-50 mx-auto  border-b border-border/40 bg-background overflow-visible ${className}`}
