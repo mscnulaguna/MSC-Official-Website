@@ -2,6 +2,8 @@ import { Routes, Route, useLocation } from 'react-router-dom'
 import Home from '@/pages/home'
 import AboutPage from '@/pages/about'
 import PartnersPage from '@/pages/partners'
+import Activities from './pages/activities'
+import EventDetails from '@/pages/event-details'
 import Login from '@/pages/login'
 import { useEffect } from 'react'
 import { Footer } from "@/components/ui/layout/Footer"
@@ -30,6 +32,8 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<AboutPage />} />
+        <Route path="/activities" element={<Activities />} />
+        <Route path="/activities/:eventId" element={<EventDetails />} />
         <Route path="/partners" element={<PartnersPage />} />
       </Routes>
 
