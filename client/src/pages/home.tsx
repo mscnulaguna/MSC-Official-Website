@@ -122,7 +122,7 @@ export default function Home() {
           <div className="relative z-10 max-w-4xl mx-auto space-y-6">
             <p className="text-sm md:text-base font-semibold tracking-widest text-foreground uppercase">MICROSOFT STUDENT COMMUNITY | NU LAGUNA</p>
             
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-foreground">Helping You<br /><span className="inline-flex items-center text-left"><span className={`${TYPING_WORDS[currentWordIndex].color}`}>#</span><span className={`inline-block ${TYPING_WORDS[currentWordIndex].color}`}>{displayText}</span><span className="text-foreground ml-1">More<BlinkingCursor className="ml-1" /></span></span></h1>
+            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-foreground">Helping You<br /><span className="inline-flex items-center font-extrabold text-left"><span className={`${TYPING_WORDS[currentWordIndex].color}`}>#</span><span className={`inline-block ${TYPING_WORDS[currentWordIndex].color}`}>{displayText}</span><BlinkingCursor className="ml-1" /><span className="text-foreground ml-1">More</span></span></h1>
             
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mt-6">The Microsoft Student Community at NU Laguna empowers students to learn, connect, and build the future with lorem ipsum dolor.</p>
             

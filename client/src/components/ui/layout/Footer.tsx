@@ -104,7 +104,7 @@ export function Footer() {
 
             {/* Follow Us Section - Centered */}
             <div className="flex flex-col items-center px-4">
-              <h3 className="text-base font-semibold mb-3 text-foreground">Follow Us</h3>
+              <h3 className="text-base font-semibold mb-3 text-foreground">Follow us</h3>
               <div className="flex flex-wrap gap-3 justify-center">
                 {SOCIALS.map((social) => (
                   <a
@@ -129,7 +129,7 @@ export function Footer() {
           {/* Partner with Us Button - Centered with padding */}
           <Link to="/partners">
             <Button className="w-[calc(100%-1rem)] mx-2" variant={'destructive'}  >
-              Partner with Us
+              Partner with us
             </Button>
           </Link>
         </div>
@@ -151,7 +151,7 @@ export function Footer() {
           <div className="grid grid-cols-2 gap-6">
             {/* Contact Us Column */}
             <div className="text-left">
-              <h3 className="text-base font-semibold mb-3 text-foreground">Contact Us</h3>
+              <h3 className="text-base font-semibold mb-3 text-foreground">Contact us</h3>
               <div className="space-y-2">
                 {/* Address */}
                 <a
@@ -210,7 +210,7 @@ export function Footer() {
           <div className="flex items-center justify-center">
             <Link to="/partners">
               <Button variant={'destructive'}>
-                Partner with Us
+                Partner with us
               </Button>
             </Link>
           </div>
@@ -221,7 +221,7 @@ export function Footer() {
       <div className="w-full bg-primary text-primary-foreground py-4 sm:py-6 md:py-7">
         <div className="section-container px-2 sm:px-3 md:px-4 lg:px-6">
           <p className="text-center text-xs">
-            © 2026 NU Laguna Microsoft Student Community | All Rights Reserved.
+            © 2026 Microsoft Student Community - NU Laguna | All rights reserved.
           </p>
         </div>
       </div>
