@@ -3,6 +3,8 @@ import Home from '@/pages/home'
 import AboutPage from '@/pages/about'
 import PartnersPage from '@/pages/partners'
 import LearnPage from '@/pages/learn'
+import Activities from './pages/activities'
+import EventDetails from '@/pages/event-details'
 import Login from '@/pages/login'
 import { useEffect } from 'react'
 import { Footer } from "@/components/ui/layout/Footer"
@@ -32,6 +34,8 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/learn" element={<LearnPage />} />
+        <Route path="/activities" element={<Activities />} />
+        <Route path="/activities/:eventId" element={<EventDetails />} />
         <Route path="/partners" element={<PartnersPage />} />
       </Routes>
 
