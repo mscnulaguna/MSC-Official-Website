@@ -1,4 +1,5 @@
 import { FALLBACK_CONFIG, resolveType } from '../../config/fallback-config';
+import FallbackVisual from './fallback-visual';
 
 //props
 interface FallbackPageProps {
@@ -12,10 +13,8 @@ export default function FallbackPage({ type }: FallbackPageProps) {
 
     return (
         <div className="max-h-screen flex flex-col items-center justify-center px-6 text-center overflow-hidden">
-            {/* visual indicator - svg or emoji */}
-            <span className="text-8xl select-none" role="img" aria-label={config.title}>
-                {config.accent}
-            </span>
+            {/* visual indicator - svg */}
+            <FallbackVisual type={configKey} accent={config.accent} />
 
             {/* title */}
             <h1 className="mt-8 text-3xl font-bold tracking-tight">

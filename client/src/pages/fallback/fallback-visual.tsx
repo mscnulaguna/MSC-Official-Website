@@ -8,16 +8,17 @@ export default function FallbackVisual({ type, accent }: FallbackVisualProps) {
     <div
       className="w-28 h-28 rounded-2xl flex items-center justify-center shadow-lg relative"
       style={{
-        background: `linear-gradient(135deg, ${accent}18 0%, ${accent}30 100%)`,
-        border: `1px solid ${accent}25`,
+        background: `linear-gradient(135deg, color-mix(in srgb, ${accent} 18%, transparent) 0%, color-mix(in srgb, ${accent} 30%, transparent) 100%)`,
+        border: `1px solid color-mix(in srgb, ${accent} 25%, transparent)`,
       }}
     >
       {/* ── Swap these SVGs with your own icons per type ── */}
       {type === "404" && <Icon404 accent={accent} />}
-      {type === "coming-soon" && <IconComingSoon accent={accent} />}
+      {type === "comingSoon" && <IconComingSoon accent={accent} />}
       {type === "maintenance" && <IconMaintenance accent={accent} />}
-      {type === "access-restricted" && <IconAccessRestricted accent={accent} />}
-      {type === "no-announcements" && <IconNoAnnouncements accent={accent} />}
+      {type === "accessRestricted" && <IconAccessRestricted accent={accent} />}
+      {type === "noAnnouncements" && <IconNoAnnouncements accent={accent} />}
+      {type === "somethingWentWrong" && <IconSomethingWentWrong accent={accent} />}
     </div>
   );
 }
@@ -107,6 +108,17 @@ function IconNoAnnouncements({ accent }: IconNoAnnouncementsProps ) {
       <path d="M24 37a4 4 0 0 0 8 0" stroke={accent} strokeWidth="2" />
       <line x1="22" y1="22" x2="34" y2="34" stroke={accent} strokeWidth="2" strokeLinecap="round" />
       <line x1="34" y1="22" x2="22" y2="34" stroke={accent} strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function IconSomethingWentWrong({ accent }: IconSomethingWentWrongProps) {
+  return (
+    <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+      <circle cx="28" cy="28" r="20" stroke={accent} strokeWidth="2" strokeDasharray="4 3" />
+      <text x="28" y="33" textAnchor="middle" fontSize="14" fontWeight="700" fill={accent} fontFamily="Segoe UI, sans-serif">
+        404
+      </text>
     </svg>
   );
 }

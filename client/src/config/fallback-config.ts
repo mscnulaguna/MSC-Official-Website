@@ -8,12 +8,11 @@
 // TYPES
 export type FallbackType = 
     | "404"
-    | "coming-soon"
+    | "comingSoon"
     | "maintenance"
-    | "access-restricted"
-    | "no-announcements"
-    | "something-went-wrong";
-
+    | "accessRestricted"
+    | "noAnnouncements"
+    | "somethingWentWrong";
 // CONFIG ENTRY
 export interface FallbackEntry {
     label: string; // human-readable label for the fallback type
@@ -28,38 +27,38 @@ export const FALLBACK_CONFIG: Record<FallbackType, FallbackEntry> = {
         label: "404 Not Found",
         title: "Page not found",
         message: "Looks like this page took a field trip without telling us.",
-        accent: "",
+        accent: "blue",
         
     },
-    "coming-soon": {
+    "comingSoon": {
         label: "Coming Soon",
         title: "We're cooking something...",
         message: "This page is currently in development. Our team is probably arguing over variable names right now.",
-       accent: "",
+       accent: "var(--color-brand-blue)",
     },
     "maintenance": {
         label: "Under Maintenance",
         title: "We'll be back soon",
         message: "We're upgrading this section to make it better that your last project.",
-        accent: "",
+        accent: "var(--color-brand-blue)",
     },
-    "access-restricted": {
+    "accessRestricted": {
         label: "Access Restricted",
         title: "Access restricted",
         message: "Looks like this area requires a different level of access. You need the right badge to enter. Please contact the administrator if you believe this is an error.",
-        accent: "",
+        accent: "var(--color-brand-blue)",
     },
-    "no-announcements": {
+    "noAnnouncements": {
         label: "No Announcements",
         title: "No announcements",
         message: "There are no updates at the moment. Keep an eye out — something exciting may be on the way.",
-        accent: "",
+        accent: "var(--color-brand-blue)",
     },
-    "something-went-wrong": {
+    "somethingWentWrong": {
         label: "Something went wrong",
         title: "Something went wrong",
         message: "Our servers are having a moment. The team is debugging the issue and will have things back up soon. Thanks for your patience!",
-        accent: "",
+        accent: "blue",
     },
 };
 
@@ -70,19 +69,19 @@ export const TYPE_ALIASES: Record<string, FallbackType> = {
     "page not found": "404",
     "404": "404",
     //coming soon
-    "coming soon": "coming-soon",
-    "we're cooking something": "coming-soon",
+    "coming soon": "comingSoon",
+    "we're cooking something": "comingSoon",
     //maintenance
     "under maintenance": "maintenance",
     "we'll be back soon": "maintenance",
     "maintenance": "maintenance",
     //access restricted
-    "access restricted": "access-restricted",
+    "access restricted": "accessRestricted",
     //no announcements
-    "no announcements": "no-announcements",
-    "no updates": "no-announcements",
+    "no announcements": "noAnnouncements",
+    "no updates": "noAnnouncements",
     //something went wrong
-    "something went wrong": "something-went-wrong",
+    "something went wrong": "somethingWentWrong",
 };
 
 //helper
