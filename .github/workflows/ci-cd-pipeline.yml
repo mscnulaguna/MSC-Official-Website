@@ -20,6 +20,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+        # standardizes the repository name to lowercase for all subsequent steps
+      - name: Set Environment Variables
+        run: echo "REPO_LC=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
       # logs into the registry
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -32,25 +36,30 @@ jobs:
       # Docker requires repository names to be strictly lowercase
       - name: Build and Push Server
         run: | 
-          REPO_LC=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-          docker build ./server -t ghcr.io/$REPO_LC/msc-server:latest
-          docker push ghcr.io/$REPO_LC/msc-server:latest
+          docker build ./server -t ghcr.io/${{ env.REPO_LC }}/msc-server:latest
+          docker push ghcr.io/${{ env.REPO_LC }}/msc-server:latest
 
       # injects the staging URL as a build argument when building the client image
       - name: Build and Push Client
         run: | 
-          REPO_LC=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
           docker build ./client \
             --build-arg VITE_API_BASE_URL=https://msc-dev-test.azurewebsites.net \
-            -t ghcr.io/$REPO_LC/msc-client:latest
-          docker push ghcr.io/$REPO_LC/msc-client:latest
+            -t ghcr.io/${{ env.REPO_LC }}/msc-client:latest
+          docker push ghcr.io/${{ env.REPO_LC }}/msc-client:latest
 
+      # deploys to Azure Web App using the publish profile secret, but only on the dev branch
       - name: Deploy to Azure Web App
         if: github.ref == 'refs/heads/dev' # only deploy to staging on dev branch
         uses: azure/webapps-deploy@v2
         with:
-          app-name: msc-dev-test
+          app-name: msc-app-plan
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }} # add your publish profile as a secret
-          images: |
-            ghcr.io/${{ github.repository }}/msc-server:latest
-            ghcr.io/${{ github.repository }}/msc-client:latest
+          images: ghcr.io/${{ env.REPO_LC }}/msc-server:latest
+
+      - name: Deploy Client to Azure Web Apps
+        if: github.ref == 'refs/heads/dev'
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: msc-dev-test-client # Replace with your actual frontend App Service name
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_CLIENT }} 
+          images: ghcr.io/${{ env.REPO_LC }}/msc-client:latest
