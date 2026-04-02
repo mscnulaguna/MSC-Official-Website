@@ -1,66 +1,28 @@
-import { useState } from 'react'
-import { Menu, Search } from 'lucide-react'
-import {
-  Drawer,
-  DrawerContent,
-  DrawerClose,
-} from '@/components/ui/drawer'
+import { useId, useMemo, useState } from 'react'
+import { ChevronDown, Menu, Search } from 'lucide-react'
+import { Drawer, DrawerContent, DrawerClose } from '@/components/ui/drawer'
 import { Button } from '@/components/ui/button'
-import { ChevronDown } from 'lucide-react'
-import circleHalfWhite from '@/assets/icons/circle-half-white.svg'
-import circleHalfBlack from '@/assets/icons/circle-half-black.svg'
+import circleHalfBlackSvg from '@/assets/icons/circle-half-black.svg?raw'
 import { useTheme } from '@/context/ThemeContext'
-
-/**
- * MobileNavDrawer Component
- * ========================
- * Mobile navigation menu that appears as a drawer.
- * Features:
- * - Hamburger menu button that opens a drawer
- * - Collapsible menu items with dropdown support
- * - Close button and swipe-to-close gesture
- * - Maintains navigation structure from desktop menu
- */
-
-interface NavItem {
-  label: string
-  href: string
-  submenu?: NavItem[]
-}
-
-const NAV_ITEMS: NavItem[] = [
-  { label: 'Home', href: '/' },
-  { label: 'About', href: '/about' },
-  {
-    label: 'Activities',
-    href: '#',
-    submenu: [
-      { label: 'Events', href: '/activities/events' },
-    ],
-  },
-  {
-    label: 'Learn',
-    href: '#',
-    submenu: [
-      { label: 'Guilds', href: '/learn/guilds' },
-    ],
-  },
-  { label: 'Partners', href: '/partners' },
-]
+import { NAV_ITEMS, type NavItem } from '@/config/navigation'
+import { Separator } from '@/components/ui/separator'
+import { InputGroup, InputGroupContent, InputGroupPrefix } from '../input-group'
 
 interface MobileNavDrawerProps {
   onNavigate?: () => void
 }
 
+type CollapsibleNavItemProps = Readonly<{
+  item: NavItem
+  onNavigate?: () => void
+}>
+
 function CollapsibleNavItem({
   item,
   onNavigate,
-}: {
-  item: NavItem
-  onNavigate?: () => void
-}) {
+}: CollapsibleNavItemProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const hasSubmenu = item.submenu && item.submenu.length > 0
+  const hasSubmenu = 'submenu' in item
 
   if (!hasSubmenu) {
     return (
@@ -87,7 +49,7 @@ function CollapsibleNavItem({
           }`}
         />
       </button>
-      {isOpen && item.submenu && (
+      {isOpen && (
         <div className="bg-muted/20 space-y-0">
           {item.submenu.map((subitem) => (
             <a
@@ -105,9 +67,16 @@ function CollapsibleNavItem({
   )
 }
 
-export function MobileNavDrawer({ onNavigate }: MobileNavDrawerProps) {
+export function MobileNavDrawer({ onNavigate }: Readonly<MobileNavDrawerProps>) {
   const [isOpen, setIsOpen] = useState(false)
   const { isDarkMode, toggleDarkMode } = useTheme()
+  const instanceId = useId()
+
+  const scopedCircleHalfBlackSvg = useMemo(() => {
+    const originalId = 'path-1-inside-1_477_561'
+    const safeScope = `msc-${instanceId.replaceAll(':', '')}`
+    return circleHalfBlackSvg.replaceAll(originalId, `${safeScope}-${originalId}`)
+  }, [instanceId])
 
   const handleNavigate = () => {
     onNavigate?.()
@@ -128,47 +97,36 @@ export function MobileNavDrawer({ onNavigate }: MobileNavDrawerProps) {
       </Button>
 
       {/* Drawer Content with built-in animation */}
-      <DrawerContent showOverlay={false} className="fixed !inset-y-auto !top-16 !left-0 !h-[calc(100vh-64px)] !w-full !max-w-none rounded-none flex flex-col !border-l-0 border-t border-border bg-background">
-        {/* Visible Separator at top */}
-        <div className="h-px bg-border/60" />
+      <DrawerContent
+        showOverlay={false}
+        className="fixed !inset-y-auto !top-16 !left-0 !h-[calc(100vh-64px)] !w-full !max-w-none rounded-none flex flex-col !border-l-0 border-t border-border bg-background"
+      >
+        <Separator />
         {/* Search and Theme Toggle Row */}
         <div className="flex items-center gap-3 p-4 border-b border-border/40">
           {/* Search bar - 3/4 width */}
-          <div className="flex-1 bg-muted/50 rounded-lg px-3 py-2 flex items-center gap-2">
-            <Search className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-            <input 
-              type="text" 
-              placeholder="Search..." 
-              className="bg-transparent outline-none text-sm flex-1 placeholder-muted-foreground"
-            />
-          </div>
+          <InputGroup className="flex-1 bg-muted/50 border border-border/40">
+            <InputGroupPrefix>
+              <Search className="h-4 w-4 text-muted-foreground" />
+            </InputGroupPrefix>
+            <InputGroupContent placeholder="Search..." aria-label="Search" />
+          </InputGroup>
           
-          {/* Dark/Light toggle - 1/4 width */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-10 w-10 flex-shrink-0"
+          {/* Dark/Light toggle */}
+          <button
+            type="button"
             onClick={toggleDarkMode}
             aria-label="Toggle dark mode"
+            className="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center cursor-pointer bg-transparent text-foreground transition-colors duration-200"
           >
-            {isDarkMode ? (
-              <img
-                src={circleHalfWhite}
-                alt="Dark mode"
-                width={20}
-                height={20}
-                className="object-contain"
-              />
-            ) : (
-              <img
-                src={circleHalfBlack}
-                alt="Light mode"
-                width={20}
-                height={20}
-                className="object-contain"
-              />
-            )}
-          </Button>
+            <span
+              className={
+                `inline-flex transition-transform duration-300 [&_svg]:h-5 [&_svg]:w-5 ` +
+                (isDarkMode ? 'rotate-180' : 'rotate-0')
+              }
+              dangerouslySetInnerHTML={{ __html: scopedCircleHalfBlackSvg }}
+            />
+          </button>
         </div>
 
         {/* Navigation Items */}
@@ -187,7 +145,7 @@ export function MobileNavDrawer({ onNavigate }: MobileNavDrawerProps) {
         {/* Sign Up Button - Bottom */}
         <div className="p-4 border-t border-border/40">
           <DrawerClose asChild>
-            <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium h-10 text-base">
+            <Button className="w-full" onClick={handleNavigate}>
               Sign Up
             </Button>
           </DrawerClose>

@@ -24,11 +24,13 @@ const badgeVariants = cva(
         outline:
           "text-foreground border-border bg-background hover:bg-muted",
         success:
-          "border-transparent bg-emerald-600 text-white hover:bg-emerald-700",
+          "border-transparent bg-[var(--success)] text-white hover:brightness-90",
         warning:
-          "border-transparent bg-amber-500 text-white hover:bg-amber-600",
+          "border-transparent bg-warning text-white hover:bg-warning/90",
         info:
-          "border-transparent bg-sky-500 text-white hover:bg-sky-600",
+          "border-transparent bg-info text-white hover:bg-info/90",
+        accent:
+          "border-transparent bg-accent text-white hover:bg-accent/90",
       },
     },
     defaultVariants: {
@@ -41,7 +43,7 @@ export interface BadgeProps
   extends React.HTMLAttributes<HTMLSpanElement>,
     VariantProps<typeof badgeVariants> {}
 
-function Badge({ className, variant, ...props }: BadgeProps) {
+function Badge({ className, variant, ...props }: Readonly<BadgeProps>) {
   return (
     <span className={cn(badgeVariants({ variant }), className)} {...props} />
   )

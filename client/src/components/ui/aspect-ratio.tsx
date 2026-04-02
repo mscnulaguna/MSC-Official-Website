@@ -32,7 +32,7 @@ const AspectRatio = React.forwardRef<HTMLDivElement, AspectRatioProps>(
     return (
       <div
         ref={ref}
-        className={cn("overflow-hidden rounded-lg bg-muted", aspectClass, className)}
+        className={cn("overflow-hidden rounded-none bg-muted", aspectClass, className)}
         {...props}
       />
     )
