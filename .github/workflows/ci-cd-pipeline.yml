@@ -43,7 +43,7 @@ jobs:
       - name: Build and Push Client
         run: | 
           docker build ./client \
-            --build-arg VITE_API_BASE_URL=https://msc-dev-test.azurewebsites.net \
+            --build-arg VITE_API_BASE_URL=https://msc-server-duggfme6cgb0bzc4.southeastasia-01.azurewebsites.net \
             -t ghcr.io/${{ env.REPO_LC }}/msc-client:latest
           docker push ghcr.io/${{ env.REPO_LC }}/msc-client:latest
 
