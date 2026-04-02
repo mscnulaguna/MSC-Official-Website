@@ -28,9 +28,10 @@ export default function App() {
     try {
       const res = await fetch(`${API_BASE_URL}/api/hello`, { cache: 'no-store' })
       if (!res.ok) throw new Error(`Request failed: ${res.status}`)
-      await res.json()
-    } catch {
-      // Error fetching message
+      const data = await res.json()
+      console.log('Backend response:', data?.message ?? data)
+    } catch (error) {
+      console.error('Backend connection failed:', error)
     }
   }
 
@@ -38,7 +39,6 @@ export default function App() {
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden">
-        <div className="bg-slate-900 text-white p-2 text-center text-sm font-mono"> Backend Status: {message || 'Connecting...'}</div>
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
