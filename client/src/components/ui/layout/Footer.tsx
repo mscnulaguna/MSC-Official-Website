@@ -154,7 +154,7 @@ export function Footer() {
           {/* Partner with Us Button - Centered with padding */}
           <Link to="/partners">
             <Button className="w-[calc(100%-1rem)] mx-2" variant={'destructive'}  >
-              Partner with Us
+              Partner with us
             </Button>
           </Link>
         </div>
@@ -232,7 +232,7 @@ export function Footer() {
           <div className="flex items-center justify-center">
             <Link to="/partners">
               <Button variant={'destructive'}>
-                Partner with Us
+                Partner with us
               </Button>
             </Link>
           </div>
@@ -243,7 +243,7 @@ export function Footer() {
       <div className="w-full bg-primary text-primary-foreground py-4 sm:py-6 md:py-7">
         <div className="section-container px-2 sm:px-3 md:px-4 lg:px-6">
           <p className="text-center text-xs">
-            © 2026 NU Laguna Microsoft Student Community | All Rights Reserved.
+            © 2026 Microsoft Student Community - NU Laguna | All rights reserved.
           </p>
         </div>
       </div>
