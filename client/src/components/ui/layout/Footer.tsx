@@ -167,7 +167,7 @@ export function Footer() {
               <img
                 src={footerLogo}
                 alt="MSC Logo"
-                className="footer-logo object-contain h-30 md:h-25 w-56"
+                className="footer-logo object-contain h-[7.5rem] md:h-[6.25rem] w-56"
               />
             </div>
           </div>

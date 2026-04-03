@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils"
  */
 
 const badgeVariants = cva(
-  "inline-flex items-center rounded-none border px-3 py-1 text-xs font-sans font-normal capitalize tracking-normal transition-[filter,colors]",
+  "inline-flex items-center rounded-none border px-3 py-1 text-xs font-sans font-normal capitalize tracking-normal transition-[filter,color,background-color,border-color]",
   {
     variants: {
       variant: {

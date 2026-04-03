@@ -51,7 +51,9 @@ const STATIC_BADGES = [
 // ───────────────── GUILD BANNER ─────────────────
 const GuildBanner = ({ guild }: { guild: Guild }): JSX.Element => {
   const initials = guild.name
-    .split(" ")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
     .map((word) => word[0].toUpperCase())
     .join("")
 
@@ -164,7 +166,13 @@ export default function LearnPage(): JSX.Element {
         }
 
         const json = await res.json()
-        setGuilds(json.data || json)
+        const guildData = json.data ?? json
+
+        if (!Array.isArray(guildData)) {
+          throw new Error("API returned an invalid guild list")
+        }
+
+        setGuilds(guildData)
       } catch (err: unknown) {
         const errorMsg = err instanceof Error ? err.message : "Failed to load guilds"
         setError(errorMsg)
@@ -180,7 +188,7 @@ export default function LearnPage(): JSX.Element {
   return (
     <main className="bg-background">
       {/* ── HERO SECTION ── */}
-      <section className="section-padding pt-8 sm:pt-10 md:pt-12 pb-20 sm:pb-21 md:pb-20 flex justify-center border-b border-border/10">
+      <section className="section-padding pt-8 sm:pt-10 md:pt-12 pb-20 sm:pb-20 md:pb-20 flex justify-center border-b border-border/10">
         <div className="section-container text-center">
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold inline-block gradient-text">
             LEARN

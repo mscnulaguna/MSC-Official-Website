@@ -338,7 +338,7 @@ export default function Home(): JSX.Element {
                   key={`${p.id}-${i}`}
                   src={p.logo}
                   alt={p.name}
-                  className="h-20 sm:h-25 md:h-30 lg:h-34 lg:min-w-[150px] xl:min-w-[180px] object-contain opacity-80 hover:opacity-100 transition"
+                  className="h-16 sm:h-25 md:h-30 lg:h-34 lg:min-w-[150px] xl:min-w-[180px] object-contain opacity-80 hover:opacity-100 transition"
                 />
               ))}
             </div>

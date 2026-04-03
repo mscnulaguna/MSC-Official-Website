@@ -42,7 +42,6 @@ export const NAV_ITEMS: NavItem[] = [
     label: 'Learn',
     submenu: [
       { label: 'Learn', href: '/learn' },
-      { label: 'Guilds', href: '/guilds' },
     ],
   },
   { label: 'Partners', href: '/partners' },
