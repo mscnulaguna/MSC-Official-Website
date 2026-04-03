@@ -21,7 +21,7 @@ export default function App() {
     '/access-restricted',
     '/no-announcements',
   ]
-  const mainRoutes = ['/', '/about', '/partners']
+  const mainRoutes = ['/', '/about', '/partners', '/learn']
   const is404 = !mainRoutes.includes(location.pathname) && !hideFooterPaths.includes(location.pathname)
   const showFooter = !hideFooterPaths.includes(location.pathname) && !is404
 
