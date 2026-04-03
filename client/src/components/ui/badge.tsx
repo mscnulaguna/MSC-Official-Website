@@ -11,26 +11,26 @@ import { cn } from "@/lib/utils"
  */
 
 const badgeVariants = cva(
-  "inline-flex items-center rounded-none border px-3 py-1 text-xs font-semibold uppercase tracking-wide transition-colors",
+  "inline-flex items-center rounded-none border px-3 py-1 text-xs font-sans font-normal capitalize tracking-normal transition-[filter,colors]",
   {
     variants: {
       variant: {
         default:
-          "border-transparent bg-primary text-primary-foreground hover:bg-primary/90",
+          "border-transparent bg-primary text-primary-foreground hover:brightness-90",
         secondary:
-          "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/90",
+          "border-transparent bg-secondary text-secondary-foreground hover:brightness-90",
         destructive:
-          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/90",
+          "border-transparent bg-destructive text-destructive-foreground hover:brightness-90",
         outline:
           "text-foreground border-border bg-background hover:bg-muted",
         success:
-          "border-transparent bg-[var(--success)] text-white hover:brightness-90",
+          "border-transparent bg-success text-white hover:brightness-90",
         warning:
-          "border-transparent bg-warning text-white hover:bg-warning/90",
+          "border-transparent bg-warning text-white hover:brightness-90",
         info:
-          "border-transparent bg-info text-white hover:bg-info/90",
+          "border-transparent bg-info text-white hover:brightness-90",
         accent:
-          "border-transparent bg-accent text-white hover:bg-accent/90",
+          "border-transparent bg-accent text-white hover:brightness-90",
       },
     },
     defaultVariants: {

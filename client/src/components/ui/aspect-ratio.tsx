@@ -72,9 +72,9 @@ export function AspectRatioPreset({
       {...props}
     >
       <div className="text-center space-y-1">
-        <p className="body-small font-semibold text-foreground">{label}</p>
+        <p className="text-sm leading-[24px] font-semibold text-foreground">{label}</p>
         {sizeHint && (
-          <p className="body-small text-muted-foreground">{sizeHint}</p>
+          <p className="text-sm leading-[24px] text-muted-foreground">{sizeHint}</p>
         )}
       </div>
     </AspectRatio>
