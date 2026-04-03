@@ -1,0 +1,23 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "msc-alert-dialog",
+  "title": "MSC - NU Laguna | Alert Dialog",
+  "description": "Ready-to-use alert dialog with our theme.",
+  "dependencies": [
+    "@radix-ui/react-alert-dialog"
+  ],
+  "registryDependencies": [
+    "utils",
+    "button",
+    "alert-dialog"
+  ],
+  "files": [
+    {
+      "path": "registry/ui/msc-alert-dialog.tsx",
+      "content": "import {\r\n  AlertDialog,\r\n  AlertDialogAction,\r\n  AlertDialogCancel,\r\n  AlertDialogContent,\r\n  AlertDialogDescription,\r\n  AlertDialogFooter,\r\n  AlertDialogHeader,\r\n  AlertDialogTitle,\r\n  AlertDialogTrigger,\r\n} from \"@/components/ui/alert-dialog\"\r\nimport { Button } from \"@/components/ui/button\"\r\n\r\nexport function AlertDialogBasic() {\r\n  return (\r\n    <AlertDialog>\r\n      <AlertDialogTrigger asChild>\r\n        <Button variant=\"outline\">Show Dialog</Button>\r\n      </AlertDialogTrigger>\r\n      <AlertDialogContent>\r\n        <AlertDialogHeader>\r\n          <AlertDialogTitle>Hold up… save first?</AlertDialogTitle>\r\n          <AlertDialogDescription>\r\n            You made updates to your profile. Saving helps us recommend sessions that match your interests and goals.\r\n          </AlertDialogDescription>\r\n        </AlertDialogHeader>\r\n        <AlertDialogFooter>\r\n          <AlertDialogCancel>Cancel</AlertDialogCancel>\r\n          <AlertDialogAction>Save changes</AlertDialogAction>\r\n        </AlertDialogFooter>\r\n      </AlertDialogContent>\r\n    </AlertDialog>\r\n  )\r\n}",
+      "type": "registry:ui"
+    }
+  ],
+  "tailwind": {},
+  "type": "registry:ui"
+}

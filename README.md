@@ -1,278 +1,163 @@
-# MSC NU Laguna — Backend API
+# MSC Official Website
 
-REST API for the MSC NU Laguna student portal. Built with **Node.js**, **Express 5**, and **MySQL**.
+Monorepo for the MSC website, containing:
 
----
+- A React + TypeScript frontend (`client`)
+- An Express backend API (`server`)
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Runtime | Node.js |
-| Framework | Express 5 |
-| Database | MySQL (via mysql2 + connection pool) |
-| Auth | JWT (access + refresh tokens) |
-| File uploads | Multer |
-| Email | Nodemailer (Gmail / M365 SMTP) |
-| QR codes | qrcode |
+### Frontend (`client`)
 
----
+- React 19
+- TypeScript 5
+- Vite 7
+- React Router 7
+- Tailwind CSS 4
+- shadcn-style UI component architecture
 
-## Project Structure
+### Backend (`server`)
 
-```
-msc_api/
-├── server.js              # Entry point
-├── app.js                 # Express app setup (CORS, routes, error handler)
-├── setup-db.js            # One-time DB setup & seed script
-├── schema.sql             # Raw SQL schema (reference copy)
-├── config/
-│   ├── db.js              # MySQL connection pool
-│   ├── multer.js          # Profile photo upload config
-│   └── roles.config.js    # Role hierarchy & permission map
-├── controllers/           # Route handler logic
-├── middlewares/           # auth, admin, role, rateLimit
-├── models/                # DB query functions
-├── routes/                # Express routers
-├── services/
-│   ├── email.service.js   # Nodemailer email helpers
-│   └── sharepoint.service.js # SharePoint sync
-├── utils/                 # Shared helpers
-├── docs/                  # Full API documentation (Markdown)
-├── public/
-│   ├── avatars/           # Preset SVG avatars (committed)
-│   └── uploads/
-│       └── profile-photos/ # User-uploaded photos (git-ignored)
-└── uploads/
-    └── event-covers/      # Event cover images (git-ignored)
+- Node.js (ES modules)
+- Express 5
+- CORS + dotenv
+
+## Repository Structure
+
+```text
+MSC/
+|-- client/               # React frontend
+|   |-- src/
+|   |   |-- pages/        # Route-level pages
+|   |   |-- components/   # UI components and layout primitives
+|   |   `-- ...
+|   `-- package.json
+|-- server/               # Express API
+|   |-- index.js          # API entrypoint
+|   `-- package.json
+`-- README.md
 ```
 
----
-
-## Setup
-
-> 📋 **New to this repo?** See the full step-by-step guide → **[SETUP.md](SETUP.md)**
-
-### 1. Prerequisites
+## Prerequisites
 
 - Node.js 18+
-- MySQL (XAMPP or standalone)
+- npm 9+
 
-### 2. Install dependencies
+## Quick Start
 
-```bash
+Install dependencies in both workspaces:
+
+```powershell
+cd client
+npm install
+
+cd ..\server
 npm install
 ```
 
-### 3. Configure environment
+Run backend (Terminal 1):
 
-```bash
-cp .env.example .env
-```
-
-Edit `.env` and fill in your database credentials, JWT secrets, and SMTP settings. See `.env.example` for all required variables and instructions.
-
-### 4. Create database and seed
-
-```bash
-node setup-db.js
-```
-
-This creates the `msc_nulaguna` database, all tables, and a default **admin** account:
-
-| Field | Value |
-|---|---|
-| Email | `cabasec@students.nu-laguna.edu.ph` |
-| Password | `Password123` |
-
-> ⚠️ Change this password immediately after first login in production.
-
-### 5. Run the server
-
-```bash
-# Development (auto-restart with nodemon)
+```powershell
+cd server
 npm run dev
-
-# Production
-npm start
 ```
 
-Server runs at `http://localhost:5000`.
+Run frontend (Terminal 2):
 
----
-
-## API Modules
-
-**MSC NU Laguna Official Website — API Contract**
-Version 1.0 | February 2026
-
-| Property | Value |
-|---|---|
-| Base URL | `https://api.msc-nulaguna.org/v1` |
-| API Version | 1.0 |
-| Protocol | HTTPS only |
-| Auth Method | JWT Bearer Token |
-| Content Type | `application/json` |
-| Rate Limiting | 100 req/min per IP (authenticated); 20 req/min (public) |
-
-> 🛠️ **Local development:** use `http://localhost:5000/api/v1`
-
----
-
-### 🔐 Authentication — `/auth`
-📄 [docs/API_AUTHENTICATION.md](docs/API_AUTHENTICATION.md)
-
-Handles all login, token management, and password operations.
-
-- No public self-registration — **accounts are created by admins only**
-- On first login, users receive a temp password and are forced to set a new one (`requiresPasswordChange`)
-- Issues a short-lived **JWT access token** (24h) and a long-lived **refresh token** (30d)
-- Users can update their own profile (name, contact, emergency contact) via `PUT /auth/profile`
-
----
-
-### 🛠️ Admin — `/admin`
-📄 [docs/API_ADMIN.md](docs/API_ADMIN.md)
-
-Admin-only endpoints for managing the full user roster.
-
-- Create individual users with an auto-generated temporary password (`MSCxxxxXxxx` format)
-- **Bulk import** students from CSV — paste the whole class list at once
-- View, search, and filter all users with pagination
-- Reset passwords for one or many users at once
-- **Send credentials email** — fires off a welcome email to selected users with their login details
-- All requests require `role: admin` in the JWT
-
----
-
-### 👤 Users — `/users`
-📄 [docs/API_USERS.md](docs/API_USERS.md)
-
-Let logged-in members manage their own profile.
-
-- `GET /users/me` — fetch your own profile data
-- `PATCH /users/me` — update name, contact number, emergency contact
-- `POST /users/me/photo` — upload a profile photo (max 5MB, images only)
-- `GET /users/avatars` + `POST /users/me/avatar` — pick from 12 preset SVG avatars instead of uploading a photo
-- Officers and admins can also `GET /users` to list all members
-
----
-
-### 📅 Events — `/events`
-📄 [docs/API_EVENTS.md](docs/API_EVENTS.md)
-
-Full event lifecycle — from creation to QR-based attendance tracking.
-
-- Anyone can browse events and view details (no login needed)
-- Members register for events and receive a **confirmation email with a QR code**
-- Officers/admins create events (with cover image upload, agenda, speakers, capacity)
-- Attendance is marked by scanning the QR code — the JWT inside the QR is verified server-side
-- Supports types: `workshop`, `seminar`, `competition`, `social`
-- Events can be scoped to a specific guild or organization-wide
-
----
-
-### 🏛️ Guilds — `/guilds`
-📄 [docs/API_GUILDS.md](docs/API_GUILDS.md)
-
-Learning guilds are the core community groups (e.g. Web Dev Guild, Design Guild).
-
-- Anyone can browse guilds and view their details/roadmap (no login needed)
-- Members apply to join a guild by submitting a motivation letter + portfolio
-- Admins approve or reject applications
-- Guild members get access to **learning resources** (videos, PDFs, quizzes, links) filtered by level (beginner/intermediate/advanced)
-- Each guild has a `slug` (URL-friendly name) used in all routes (e.g. `/guilds/web-dev`)
-
----
-
-### 📢 Announcements — `/announcements`
-📄 [docs/API_ANNOUNCEMENTS.md](docs/API_ANNOUNCEMENTS.md)
-
-Organization-wide and guild-specific announcements.
-
-- Public read — anyone can view announcements without logging in
-- Officers and admins can create announcements
-- Announcements can be **pinned** to appear at the top
-- Can be scoped to a specific guild or posted org-wide (`guild_id: null`)
-- Supports an optional image attachment
-
----
-
-### 🤝 Partners — `/partners`
-📄 [docs/API_PARTNERS.md](docs/API_PARTNERS.md)
-
-Manages the organization's industry and community partners.
-
-- Public read — anyone can view the partners list
-- Admins can add new partners
-- Partners have a **tier system**: `bronze`, `silver`, `gold`, `platinum`
-- Stores partner logo, website, contact email, and description
-- Paginated list with optional tier filter
-
----
-
-### 🔗 SharePoint Sync — `/integrations`
-📄 [docs/API_SHAREPOINT.md](docs/API_SHAREPOINT.md)
-
-Syncs user data between the portal and the organization's Microsoft SharePoint.
-
-- Admin-only — uses Microsoft Graph API (Azure AD app registration required)
-- Sync a single user or bulk-sync all members
-- Async job system — trigger a sync job, then poll for its status
-- Useful for keeping SharePoint member lists in sync with the portal database
-- Requires `SP_TENANT_ID`, `SP_CLIENT_ID`, `SP_CLIENT_SECRET` in `.env`
-
----
-
-### 📋 Roles & Permissions
-📄 [docs/API_ROLES.md](docs/API_ROLES.md)
-
-Three-tier role system enforced via JWT middleware:
-
-| Role | What they can do |
-|---|---|
-| `member` | Browse public data, register for events, apply to guilds, manage own profile |
-| `officer` | Everything members can + create events and announcements |
-| `admin` | Everything officers can + manage users, approve applications, access admin panel |
-
----
-
-### ⚠️ Error Codes
-📄 [docs/API_ERRORS.md](docs/API_ERRORS.md)
-
-All errors follow a consistent format:
-
-```json
-{
-  "error": {
-    "code": "UNAUTHORIZED",
-    "message": "Missing or invalid JWT token"
-  }
-}
+```powershell
+cd client
+npm run dev
 ```
 
-See `API_ERRORS.md` for the full list of error codes, HTTP status mappings, and what causes each one.
-
----
-
-## Rate Limiting
-
-| Limiter | Limit | Applied To |
-|---|---|---|
-| `authLimiter` | 100 req/min | All `/api/v1` routes |
-| `publicLimiter` | 20 req/min | `POST /auth/login`, `POST /auth/refresh` |
-
----
+Open the app at `http://localhost:5173`.
 
 ## Environment Variables
 
-See [`.env.example`](.env.example) for the full list with descriptions.
+### Backend (`server/.env`)
 
-Key variables:
+- `PORT` (optional): API port. Defaults to `5000`.
 
+Example:
+
+```env
+PORT=5000
 ```
-PORT, NODE_ENV
-DB_HOST, DB_USER, DB_PASSWORD, DB_NAME
-JWT_SECRET, JWT_REFRESH_SECRET
-SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM
+
+### Frontend (`client/.env`)
+
+- `VITE_API_BASE_URL`: backend base URL used by frontend API calls.
+
+Example:
+
+```env
+VITE_API_BASE_URL=http://localhost:5000
 ```
+
+## Scripts
+
+### Frontend scripts (`client/package.json`)
+
+- `npm run dev` - Start Vite dev server
+- `npm run build` - Type-check and build production bundle
+- `npm run lint` - Run ESLint
+- `npm run preview` - Preview production build
+
+### Backend scripts (`server/package.json`)
+
+- `npm run dev` - Start server with nodemon
+- `npm start` - Start server with Node.js
+
+## Frontend Routes
+
+Defined in `client/src/App.tsx`.
+
+Main routes:
+
+- `/` - Home
+- `/about` - About
+- `/activities` - Activities listing
+- `/activities/:eventId` - Event details
+- `/partners` - Partners
+- `/login` - Login
+
+Fallback/demo routes:
+
+- `/coming-soon`
+- `/maintenance`
+- `/access-restricted`
+- `/no-announcements`
+- `/*` - 404 fallback
+
+## Backend API
+
+Defined in `server/index.js`.
+
+- `GET /api/hello` -> `{ message: "Hello from the server!" }`
+
+The server enables CORS for `http://localhost:5173`.
+
+## Development Notes
+
+- Frontend app is mounted with `BrowserRouter`, global theme provider, and app layout in `client/src/main.tsx`.
+- Ensure `VITE_API_BASE_URL` points to the running backend before testing API-connected UI.
+- Footer visibility and fallback behavior are route-dependent in `client/src/App.tsx`.
+
+## Troubleshooting
+
+- Frontend starts but API fails:
+	- Verify backend is running on the expected port.
+	- Verify `client/.env` contains the correct `VITE_API_BASE_URL`.
+- CORS errors in browser:
+	- Ensure frontend runs on `http://localhost:5173` or update CORS config in `server/index.js`.
+- Port already in use:
+	- Change backend `PORT` in `server/.env` and update `VITE_API_BASE_URL` accordingly.
+
+## Contributing
+
+1. Create a feature branch.
+2. Keep changes scoped and consistent with existing project patterns.
+3. Run lint/build checks in affected workspace before opening a PR.
+
+---
+
+For frontend-specific details, see `client/README.md`.
