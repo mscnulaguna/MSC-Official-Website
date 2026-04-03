@@ -1,6 +1,6 @@
 # 🎨 MSC Design System - Master Guide
 
-component library built with React, TypeScript, and Tailwind CSS.
+A comprehensive component library built with **Vite + React**, **TypeScript**, and **Tailwind CSS v4**. Modern, responsive, and fully accessible.
 
 ---
 
@@ -21,12 +21,12 @@ component library built with React, TypeScript, and Tailwind CSS.
 
 **MSC Design System** is a comprehensive, modular component library for building modern web applications. It features:
 
-- ✅ **20+ Pre-built Components** - Buttons, cards, dialogs, forms, navigation, etc.
-- ✅ **Responsive Design** - Mobile-first approach with Tailwind CSS
-- ✅ **Dark Mode Support** - Theme toggle integrated into navbar
-- ✅ **Accessibility First** - WCAG 2.1 compliance, semantic HTML
-- ✅ **Production Ready** - Type-safe TypeScript, comprehensive testing
-- ✅ **Developer Friendly** - Clear documentation, consistent patterns
+- ✅ **30+ Pre-built Components** - Buttons, cards, dialogs, forms, navigation, carousels, etc.
+- ✅ **Responsive Design** - Mobile-first with custom breakpoints (860px footer, 1024px navbar)
+- ✅ **Dark Mode Support** - Theme toggle integrated into navbar with context API
+- ✅ **Accessibility First** - WCAG 2.1 compliance, semantic HTML, proper ARIA labels
+- ✅ **Production Ready** - Type-safe TypeScript, comprehensive error handling
+- ✅ **Developer Friendly** - Clear documentation, consistent patterns, single source of truth for navigation
 
 ---
 
@@ -34,27 +34,22 @@ component library built with React, TypeScript, and Tailwind CSS.
 
 ```
 msc-official-website/
-├── src/
-│   ├── globals.css              # Global styles & CSS variables
-│   ├── index.css                # Entry point styles
-│   ├── main.tsx                 # Vite app entry point
-│   ├── App.tsx                  # Main app component with routes
-│   ├── layout.tsx               # Global layout wrapper (AppLayout)
-│   │
-│   ├── components/
-│   │   └── ui/                  # MSC Design System components
-│   │       ├── layout/          # Layout components
-│   │       │   ├── Navbar.tsx   # Main navigation
-│   │       │   ├── NavbarLeft.tsx   # Logo
-│   │       │   ├── NavbarCenter.tsx # Menu
-│   │       │   ├── NavbarRight.tsx  # Search, theme, sign-in
-│   │       │   ├── Footer.tsx       # Footer section
-│   │       │   ├── MobileNavDrawer.tsx
-│   │       │   └── SearchDialog.tsx
-│   │       ├── custom/          # Custom composed components
-│   │       │   ├── DatePicker.tsx
-│   │       │   ├── AvatarCircle.tsx
-│   │       │   ├── AspectRatioPreset.tsx
+├── client/                       # React + Vite frontend
+│   ├── src/
+│   │   ├── globals.css          # Global styles & CSS variables (Tailwind @layer)
+│   │   ├── main.tsx             # Vite entry point - mounts React app
+│   │   ├── App.tsx              # Main app router with all page routes
+│   │   ├── layout.tsx           # GlobalAppLayout - wraps entire app with Navbar & Toaster
+│   │   │
+│   │   ├── components/
+│   │   │   └── ui/              # MSC Design System components
+│   │   │       ├── layout/
+│   │   │       │   ├── Navbar.tsx         # Top sticky navigation
+│   │   │       │   ├── NavbarWrapper.tsx  # Navbar container
+│   │   │       │   ├── Footer.tsx         # Page footer (imported per-page)
+│   │   │       │   └── ... (other layout components)
+│   │   │       ├── custom/      # Custom composed components
+│   │   │       └── ... (30+ UI components)
 │   │       │   ├── ToastManager.tsx
 │   │       │   ├── AlertDialogBasic.tsx
 │   │       │   ├── EventHoverCard.tsx
@@ -105,16 +100,16 @@ msc-official-website/
 ```bash
 # Clone repository
 git clone <repo-url>
-cd design-system
+cd msc-official-website/client
 
 # Install dependencies
 npm install
 
-# Start development server
+# Start development server (Vite)
 npm run dev
 
 # Open browser
-open http://localhost:3000
+open http://localhost:5173
 ```
 
 ### Creating Your First Page
