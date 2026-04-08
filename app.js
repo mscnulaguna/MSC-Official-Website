@@ -17,7 +17,7 @@ app.use(cors({
     'http://localhost:5173', // Vite default (client/ in MSC-Official-Website repo)
     'http://localhost:3000', // Alternative dev port
     'http://localhost:3001',
-    'http://localhost:8080',
+    'http://localhost:80',
     'http://127.0.0.1:5173',
     'http://127.0.0.1:3000',
   ],
@@ -26,13 +26,13 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Serve static files (HTML, CSS, JS) from root directory
-app.use(express.static(__dirname));
+// Serve static files only from the dedicated public directory
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Serve public files (uploads, avatars) with SVG MIME type
-app.use('/uploads', express.static(__dirname + '/public/uploads'));
-app.use('/event-covers', express.static(__dirname + '/uploads/event-covers'));
-app.use('/avatars', express.static(__dirname + '/public/avatars', {
+// Explicitly expose only intended upload/public asset directories
+app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
+app.use('/event-covers', express.static(path.join(__dirname, 'uploads', 'event-covers')));
+app.use('/avatars', express.static(path.join(__dirname, 'public', 'avatars'), {
   setHeaders: (res, filepath) => {
     if (filepath.endsWith('.svg')) {
       res.setHeader('Content-Type', 'image/svg+xml');
