@@ -12,18 +12,36 @@ import FallbackPage from "./pages/fallback/fallback-page"
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '') || "http://localhost:5000"
 
+const FOOTER_HIDE_PATHS = new Set([
+  '/login',
+  '/coming-soon',
+  '/maintenance',
+  '/access-restricted',
+  '/no-announcements',
+  '/something-went-wrong',
+])
+
+const KNOWN_PATHS = new Set([
+  '/',
+  '/about',
+  '/learn',
+  '/activities',
+  '/partners',
+  '/login',
+  '/coming-soon',
+  '/maintenance',
+  '/access-restricted',
+  '/no-announcements',
+  '/something-went-wrong',
+])
+
 export default function App() {
   const location = useLocation()
-  const hideFooterPaths = [
-    '/login',
-    '/coming-soon',
-    '/maintenance',
-    '/access-restricted',
-    '/no-announcements',
-  ]
-  const mainRoutes = ['/', '/about', '/partners', '/learn']
-  const is404 = !mainRoutes.includes(location.pathname) && !hideFooterPaths.includes(location.pathname)
-  const showFooter = !hideFooterPaths.includes(location.pathname) && !is404
+  
+  const isDynamicKnown = /^\/activities\/[^/]+$/.test(location.pathname)
+  const isKnownPath = KNOWN_PATHS.has(location.pathname) || isDynamicKnown
+
+  const showFooter = !FOOTER_HIDE_PATHS.has(location.pathname) && isKnownPath
 
   const fetchMessage = async () => {
     try {
@@ -50,12 +68,13 @@ export default function App() {
         <Route path="/partners" element={<PartnersPage />} />
 
         {/* fallback demos  */}
-        <Route path="/coming-soon" element={<FallbackPage type="coming-soon"/>}/>
-        <Route path="/maintenance" element={<FallbackPage type="maintenance"/>}/>
-        <Route path="/access-restricted" element={<FallbackPage type="access-restricted"/>}/>
-        <Route path="/no-announcements" element={<FallbackPage type="no-announcements"/>}/>
-
-        <Route path="/*" element={<FallbackPage type="404"/>}/>
+        <Route path="/coming-soon"         element={<FallbackPage type="coming-soon" />} />
+        <Route path="/maintenance"         element={<FallbackPage type="maintenance" />} />
+        <Route path="/access-restricted"   element={<FallbackPage type="access-restricted" />} />
+        <Route path="/no-announcements"    element={<FallbackPage type="no-announcements" />} />
+        <Route path="/something-went-wrong" element={<FallbackPage type="something went wrong" />} />
+ 
+        <Route path="*" element={<FallbackPage type="404" />} />
       </Routes>
 
       {showFooter && <Footer />}
