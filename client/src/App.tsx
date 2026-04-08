@@ -27,7 +27,6 @@ const KNOWN_PATHS = new Set([
   '/learn',
   '/activities',
   '/partners',
-  '/activities',
   '/login',
   '/coming-soon',
   '/maintenance',

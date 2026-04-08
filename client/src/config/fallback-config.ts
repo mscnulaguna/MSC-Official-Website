@@ -94,7 +94,7 @@ export const TYPE_ALIASES: Record<string, FallbackType> = {
 // ─── Helper ───────────────────────────────────────────────────────────────────
 
 export function resolveType(rawType: string | undefined): FallbackType {
-  if (!rawType) return "404";
+  if (!rawType) return "somethingWentWrong"; // default fallback for missing type
 
   // Normalize: lowercase, trim, collapse multiple spaces.
   // We do NOT replace hyphens here — hyphenated slugs have their own alias

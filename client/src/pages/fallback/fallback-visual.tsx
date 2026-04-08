@@ -2,15 +2,15 @@ import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import type { FallbackType } from '../../config/fallback-config';
 
 const LOTTIE_URLS: Record<FallbackType, string> = {
-  "404":                "/lottie/UFO%20animation.lottie",
+  "404":                "/lottie/ufo.lottie",
   "comingSoon":         "/lottie/Fire.lottie",
   "maintenance":        "/lottie/maintenance.lottie",
   "accessRestricted":   "/lottie/access-restricted.lottie",
-  "noAnnouncements":    "/lottie/UFO%20animation.lottie",
-  "somethingWentWrong": "/lottie/UFO%20animation.lottie",
+  "noAnnouncements":    "/lottie/ufo.lottie",
+  "somethingWentWrong": "/lottie/ufo.lottie",
 };
 
-// Ambient/ongoing states loop; terminal error states play once.
+// Ambient/ongoing states loop
 const LOOP_CONFIG: Record<FallbackType, boolean> = {
   "404":                true,
   "comingSoon":         true,
@@ -29,19 +29,18 @@ type FallbackVisualProps = {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function FallbackVisual({ type, accent }: FallbackVisualProps) {
+export default function FallbackVisual({ type }: FallbackVisualProps) {
   const src = LOTTIE_URLS[type];
 
   return (
     <div
-      className="w-60 h-60 rounded-full"
-      style={{ background: `color-mix(in srgb, ${accent} 0%, transparent)` }}
+      className="w-90 h-90"
     >
       <DotLottieReact
         src={src}
         loop={LOOP_CONFIG[type]}
         autoplay
-        style={{ width: 260, height: 260 }}
+        style={{ width: 360, height: 360 }}
       />
     </div>
   );
