@@ -28,7 +28,7 @@ function CollapsibleNavItem({
     return (
       <a
         href={item.href}
-        className="block w-full px-4 py-3 text-base font-medium border-b border-border/40 hover:bg-muted/50 transition-colors"
+        className="block w-full px-4 py-3 text-base font-normal border-b border-border/40 hover:bg-muted/50 transition-colors"
         onClick={onNavigate}
       >
         {item.label}
@@ -40,7 +40,7 @@ function CollapsibleNavItem({
     <div className="border-b border-border/40">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex w-full items-center justify-between px-4 py-3 text-base font-medium hover:bg-muted/50 transition-colors"
+        className="flex w-full items-center justify-between px-4 py-3 text-base font-normal hover:bg-muted/50 transition-colors"
       >
         {item.label}
         <ChevronDown
@@ -55,7 +55,7 @@ function CollapsibleNavItem({
             <a
               key={subitem.href}
               href={subitem.href}
-              className="block w-full pl-8 pr-4 py-3 text-sm font-medium text-foreground/80 hover:bg-muted/50 hover:text-foreground transition-colors border-b border-border/40 last:border-b-0"
+              className="block w-full pl-8 pr-4 py-3 text-sm font-normal text-foreground/80 hover:bg-muted/50 hover:text-foreground transition-colors border-b border-border/40 last:border-b-0"
               onClick={onNavigate}
             >
               {subitem.label}
