@@ -1,4 +1,5 @@
 # Environment Variables (.env is pushed intentionally — dummy Gmail account for team testing)
+.env
 .env.local
 .env.*.local
 
