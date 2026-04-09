@@ -72,10 +72,10 @@ async function getAllEventsHandler(req, res) {
         type: event.type,
       };
       
-      // Debug first event
-      if (result.data[0] === event) {
-        console.log('DEBUG: First event after mapping:', JSON.stringify(mapped, null, 2));
-      }
+      // // Debug first event
+      // if (result.data[0] === event) {
+      //   console.log('DEBUG: First event after mapping:', JSON.stringify(mapped, null, 2));
+      // }
       
       return mapped;
     });
