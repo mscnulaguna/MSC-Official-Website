@@ -93,7 +93,6 @@ async function login(req, res) {
     // If regular password doesn't match, check if it's a temporary password
     if (!passwordMatch && user.temporaryPassword) {
       const tempPasswordMatch = await bcrypt.compare(password, user.temporaryPassword);
-      console.log(`[AUTH] Temporary password verification result: ${tempPasswordMatch}`);
       if (tempPasswordMatch) {
         passwordMatch = true;
         console.log(`[AUTH] Login with temporary password for user ${email}`);
