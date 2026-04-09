@@ -77,7 +77,6 @@ async function login(req, res) {
     }
 
     const user = await findUserByEmail(email);
-    console.log(`[AUTH] User lookup result:`, user ? `Found user with ID ${user.id}` : 'User not found');
     if (!user) {
       console.log(`[AUTH] Login failed: User ${email} not found in database`);
       return res.status(401).json({
