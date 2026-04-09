@@ -66,7 +66,6 @@ function validatePassword(password) {
 async function login(req, res) {
   try {
     const { email, password } = req.body;
-    console.log(`[AUTH] Login attempt for email: ${email}`);
 
     if (!email || !password) {
       return res.status(400).json({
