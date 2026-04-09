@@ -83,6 +83,7 @@ async function createUserWithTempPassword(req, res) {
     // Generate temporary password
     const tempPassword = generateTemporaryPassword();
     const hashedPassword = await bcrypt.hash(tempPassword, 10);
+    const hashedTemporaryPassword = await bcrypt.hash(tempPassword, 10);
 
     // Create user
     const user = await createUser({
@@ -93,7 +94,7 @@ async function createUserWithTempPassword(req, res) {
       yearLevel,
       course,
       role: userRole,
-      temporaryPassword: tempPassword,
+      temporaryPassword: hashedTemporaryPassword,
     });
 
     res.status(201).json({
@@ -347,6 +348,7 @@ async function bulkCreateUsers(req, res) {
         // Generate temporary password
         const tempPassword = generateTemporaryPassword();
         const hashedPassword = await bcrypt.hash(tempPassword, 10);
+        const hashedTemporaryPassword = await bcrypt.hash(tempPassword, 10);
 
         // Create user
         const user = await createUser({
@@ -357,7 +359,7 @@ async function bulkCreateUsers(req, res) {
           yearLevel: parseInt(yearLevel),
           course,
           role: role || 'member',
-          temporaryPassword: tempPassword,
+          temporaryPassword: hashedTemporaryPassword,
         });
 
         results.push({
