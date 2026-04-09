@@ -110,7 +110,6 @@ async function login(req, res) {
       });
     }
 
-    console.log(`[AUTH] Login successful for user ${email}`);
     const { accessToken, refreshToken } = generateTokens(user);
 
     // Convert requiresPasswordChange from MySQL boolean (0/1) to JavaScript boolean
