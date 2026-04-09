@@ -22,31 +22,55 @@ REST API for the MSC NU Laguna student portal. Built with **Node.js**, **Express
 
 ```
 repo-root/
-├── client/                # Frontend application
-└── server/                # Backend API
-  ├── server.js          # Entry point
-  ├── app.js             # Express app setup (CORS, routes, error handler)
-  ├── setup-db.js        # One-time DB setup & seed script
-  ├── schema.sql         # Raw SQL schema (reference copy)
-  ├── config/
-  │   ├── db.js          # MySQL connection pool
-  │   ├── multer.js      # Profile photo upload config
-  │   └── roles.config.js # Role hierarchy & permission map
-  ├── controllers/       # Route handler logic
-  ├── middlewares/       # auth, admin, role, rateLimit
-  ├── models/            # DB query functions
-  ├── routes/            # Express routers
-  ├── services/
-  │   ├── email.service.js # Nodemailer email helpers
-  │   └── sharepoint.service.js # SharePoint sync
-  ├── utils/             # Shared helpers
-  ├── docs/              # Full API documentation (Markdown)
-  ├── public/
-  │   ├── avatars/       # Preset SVG avatars (committed)
-  │   └── uploads/
-  │       └── profile-photos/ # User-uploaded photos (git-ignored)
-  └── uploads/
-    └── event-covers/  # Event cover images (git-ignored)
+├── client/                    # Frontend application (React + Vite)
+├── server.js                  # Entry point — server initialization
+├── app.js                     # Express app setup (CORS, middleware, routes, error handler)
+├── setup-db.js                # One-time DB setup & seed script
+├── schema.sql                 # Raw SQL schema (reference copy)
+├── config/
+│   ├── db.js                  # MySQL connection pool
+│   ├── multer.js              # Profile photo upload config
+│   └── roles.config.js        # Role hierarchy & permission map
+├── controllers/               # Route handler logic
+│   ├── admin.controller.js
+│   ├── auth.controller.js
+│   ├── event.controller.js
+│   ├── guild.controller.js
+│   └── ... (more controllers)
+├── middlewares/               # Express middleware (auth, admin, role, rateLimit)
+├── models/                    # DB query functions
+│   ├── event.model.js
+│   ├── guild.model.js
+│   ├── user.model.js
+│   └── ... (more models)
+├── routes/                    # Express routers
+│   ├── admin.routes.js
+│   ├── auth.routes.js
+│   ├── event.routes.js
+│   ├── guild.routes.js
+│   └── ... (more routes)
+├── services/                  # Business logic & integrations
+│   ├── email.service.js       # Nodemailer email helpers
+│   └── sharepoint.service.js  # SharePoint sync service
+├── utils/                     # Shared helpers & utilities
+├── docs/                      # Full API documentation (Markdown)
+│   ├── API_AUTHENTICATION.md
+│   ├── API_EVENTS.md
+│   ├── API_GUILDS.md
+│   └── ... (more API docs)
+├── public/
+│   ├── avatars/               # Preset SVG avatars (committed)
+│   └── uploads/
+│       └── profile-photos/    # User-uploaded photos (git-ignored)
+├── uploads/
+│   └── event-covers/          # Event cover images (git-ignored)
+├── server/                    # Docker & containerization config
+│   ├── Dockerfile
+│   ├── package.json           # Server container dependencies
+│   └── index.js               # Server container entry point
+├── docker-compose.yml         # Docker Compose for local dev
+├── docker-compose.prod.yml    # Docker Compose for production
+└── package.json               # Root project dependencies
 ```
 
 ---
