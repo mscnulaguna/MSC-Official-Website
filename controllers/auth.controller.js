@@ -89,7 +89,6 @@ async function login(req, res) {
 
     // Check if password matches regular password
     let passwordMatch = await verifyPassword(password, user.password);
-    console.log(`[AUTH] Regular password verification result: ${passwordMatch}`);
 
     // If regular password doesn't match, check if it's a temporary password
     if (!passwordMatch && user.temporaryPassword) {
