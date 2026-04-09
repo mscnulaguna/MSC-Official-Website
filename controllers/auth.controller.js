@@ -12,9 +12,13 @@ const {
   clearTemporaryPassword,
 } = require('../models/user.model');
 
-// JWT secrets for token signing
-const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production';
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'your-super-secret-refresh-key-change-in-production';
+// JWT secrets for token signing (required)
+const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
+
+if (!JWT_SECRET || !JWT_REFRESH_SECRET) {
+  throw new Error('JWT_SECRET and JWT_REFRESH_SECRET must be configured');
+}
 
 // Generate access and refresh tokens for authenticated user
 function generateTokens(user) {
