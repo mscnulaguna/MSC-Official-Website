@@ -15,7 +15,11 @@ const {
 } = require('../models/event.model');
 
 // JWT secret for signing QR code payloads
-const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET must be configured');
+}
 
 // Get paginated list of events with filtering
 async function getAllEventsHandler(req, res) {
