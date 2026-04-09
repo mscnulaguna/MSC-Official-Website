@@ -4,8 +4,8 @@ require('dotenv').config();
 // Import Express app
 const app = require('./app');
 
-// Set port from env or use default 5000
-const PORT = process.env.PORT || 5000;
+// Use port 80 by default in production, 5000 otherwise
+const PORT = process.env.NODE_ENV === 'production' ? (process.env.PORT || 80) : (process.env.PORT || 5000);
 
 // Start server and log startup info
 const server = app.listen(PORT, () => {
