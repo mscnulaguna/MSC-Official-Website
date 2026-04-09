@@ -212,12 +212,12 @@ async function bulkResetPasswords(updates) {
   }
 }
 
-// Clear temp password and reset the requiresPasswordChange flag after first login
+// Clear temp password after first successful temporary-password login
 async function clearTemporaryPassword(userId) {
   const connection = await pool.getConnection();
   try {
     await connection.execute(
-      `UPDATE users SET temporaryPassword = NULL, requiresPasswordChange = FALSE, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+      `UPDATE users SET temporaryPassword = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
       [userId]
     );
     return await findUserById(userId);
