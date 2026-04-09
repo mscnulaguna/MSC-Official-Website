@@ -136,6 +136,57 @@ async function getGuildResources(guildId, filters = {}) {
   }
 }
 
+// Get paginated resources for a guild with optional filtering
+async function getPaginatedGuildResources(guildId, filters = {}, limit = 10, offset = 0) { // change default limit to 10 and add offset parameter
+  const connection = await pool.getConnection();
+  try {
+    let query = `SELECT * FROM guild_resources WHERE guild_id = ?`;
+    const params = [guildId];
+
+    if (filters.level) {
+      query += ` AND level = ?`;
+      params.push(filters.level);
+    }
+
+    if (filters.type) {
+      query += ` AND type = ?`;
+      params.push(filters.type);
+    }
+
+    query += ` ORDER BY created_at DESC LIMIT ? OFFSET ?`;
+    params.push(limit, offset);
+
+    const [rows] = await connection.query(query, params);
+    return rows;
+  } finally {
+    connection.release();
+  }
+}
+
+// Get resource count for a guild with optional filtering
+async function getGuildResourceCount(guildId, filters = {}) {
+  const connection = await pool.getConnection();
+  try {
+    let query = `SELECT COUNT(*) as total FROM guild_resources WHERE guild_id = ?`;
+    const params = [guildId];
+
+    if (filters.level) {
+      query += ` AND level = ?`;
+      params.push(filters.level);
+    }
+
+    if (filters.type) {
+      query += ` AND type = ?`;
+      params.push(filters.type);
+    }
+
+    const [rows] = await connection.query(query, params);
+    return rows[0].total;
+  } finally {
+    connection.release();
+  }
+}
+
 // Get existing application for a user to a guild
 async function getGuildApplication(guildId, userId) {
   const connection = await pool.getConnection();
@@ -209,6 +260,8 @@ module.exports = {
   getGuildMembers,
   isGuildMember,
   getGuildResources,
+  getPaginatedGuildResources,
+  getGuildResourceCount,
   getGuildApplication,
   createGuildApplication,
   addGuildMember,

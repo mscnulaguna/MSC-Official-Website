@@ -8,6 +8,8 @@ const {
   getGuildMembers,
   isGuildMember,
   getGuildResources,
+  getPaginatedGuildResources, // added pagination parameters to function signature | check guild.model.js for implementation
+  getGuildResourceCount,
   getGuildApplication,
   createGuildApplication,
   addGuildMember,
@@ -192,9 +194,10 @@ async function getGuildResourcesHandler(req, res) {
       });
     }
 
-    const allResources = await getGuildResources(guild.id, filters);
-    const total = allResources.length;
-    const resources = allResources.slice(offset, offset + limit);
+    const [resources, total] = await Promise.all([
+      getPaginatedGuildResources(guild.id, filters, limit, offset),
+      getGuildResourceCount(guild.id, filters),
+    ]);
 
     res.status(200).json({
       data: resources.map((r) => {
