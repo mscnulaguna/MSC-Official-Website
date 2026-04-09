@@ -422,12 +422,11 @@ async function resetUserTemporaryPassword(req, res) {
       });
     }
 
-    // Generate a fresh temporary password
+    // Generate a fresh temporary password, store only its hash, and return the plaintext once.
+    // This avoids returning a stored bcrypt hash and ensures the plaintext is never persisted.
     const tempPassword = generateTemporaryPassword();
     const hashedPassword = await bcrypt.hash(tempPassword, 10);
-    const hashedTemporaryPassword = await bcrypt.hash(tempPassword, 10);
-
-    await bulkResetPasswords([{ userId, hashedTemporaryPassword, hashedPassword }]);
+    await bulkResetPasswords([{ userId, tempPassword, hashedPassword }]);
 
     res.status(200).json({
       success: true,
@@ -438,7 +437,7 @@ async function resetUserTemporaryPassword(req, res) {
         fullName: user.fullName,
       },
       temporaryPassword: tempPassword,
-      note: 'Share this temporary password with the user immediately. It is shown only once. They must change it on first login.',
+      note: 'Share this temporary password with the user. They will be required to change it on first login.',
     });
   } catch (error) {
     console.error('Reset temporary password error:', error.message);
@@ -529,21 +528,16 @@ async function sendCredentialsToUsers(req, res) {
           continue;
         }
 
-        // If user doesn't have a temporary password, generate a fresh one.
-        // Note: we cannot retrieve stored temp passwords since they are hashed for security.
-        if (!user.temporaryPassword) {
-          const tempPassword = generateTemporaryPassword();
-          const hashedPassword = await bcrypt.hash(tempPassword, 10);
-          const hashedTemporaryPassword = await bcrypt.hash(tempPassword, 10);
-          await bulkResetPasswords([{ userId, hashedTemporaryPassword, hashedPassword }]);
-          
-          // Await so we can accurately report per-user success vs failure
-          await sendWelcomeEmail(user, tempPassword);
-          
-          sent.push({ userId: String(user.id), email: user.email, fullName: user.fullName });
-        } else {
-          throw new Error('User already has temporary password set. Cannot send credentials for user with existing temp password.');
-        }
+        // Always generate a fresh temp password: stored value is a bcrypt hash and
+        // cannot be recovered as plaintext. Reset the account and email the new plaintext once.
+        const tempPassword = generateTemporaryPassword();
+        const hashedPassword = await bcrypt.hash(tempPassword, 10);
+        await bulkResetPasswords([{ userId, tempPassword, hashedPassword }]);
+
+        // Await so we can accurately report per-user success vs failure
+        await sendWelcomeEmail(user, tempPassword);
+
+        sent.push({ userId: String(user.id), email: user.email, fullName: user.fullName });
       } catch (err) {
         failed.push({ userId: String(userId), error: err.message || 'Failed to send email' });
       }
