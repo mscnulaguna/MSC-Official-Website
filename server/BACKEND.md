@@ -2,6 +2,8 @@
 
 REST API for the MSC NU Laguna student portal. Built with **Node.js**, **Express 5**, and **MySQL**.
 
+> Source layout note: backend runtime code lives at the repository root (`server.js`, `app.js`, `routes/`, `controllers/`, etc.). The `server/` folder contains Docker/container-specific files.
+
 ---
 
 ## Tech Stack
@@ -77,7 +79,7 @@ repo-root/
 
 ## Setup
 
-> 📋 **New to this repo?** See the full step-by-step guide → **[SETUP.md](SETUP.md)**
+> 📋 **New to this repo?** See the full step-by-step guide → **[../SETUP.md](../SETUP.md)**
 
 ### 1. Prerequisites
 
@@ -146,7 +148,7 @@ Version 1.0 | February 2026
 ---
 
 ### 🔐 Authentication — `/auth`
-📄 [docs/API_AUTHENTICATION.md](docs/API_AUTHENTICATION.md)
+📄 [../docs/API_AUTHENTICATION.md](../docs/API_AUTHENTICATION.md)
 
 Handles all login, token management, and password operations.
 
@@ -158,7 +160,7 @@ Handles all login, token management, and password operations.
 ---
 
 ### 🛠️ Admin — `/admin`
-📄 [docs/API_ADMIN.md](docs/API_ADMIN.md)
+📄 [../docs/API_ADMIN.md](../docs/API_ADMIN.md)
 
 Admin-only endpoints for managing the full user roster.
 
@@ -172,7 +174,7 @@ Admin-only endpoints for managing the full user roster.
 ---
 
 ### 👤 Users — `/users`
-📄 [docs/API_USERS.md](docs/API_USERS.md)
+📄 [../docs/API_USERS.md](../docs/API_USERS.md)
 
 Let logged-in members manage their own profile.
 
@@ -185,7 +187,7 @@ Let logged-in members manage their own profile.
 ---
 
 ### 📅 Events — `/events`
-📄 [docs/API_EVENTS.md](docs/API_EVENTS.md)
+📄 [../docs/API_EVENTS.md](../docs/API_EVENTS.md)
 
 Full event lifecycle — from creation to QR-based attendance tracking.
 
@@ -199,7 +201,7 @@ Full event lifecycle — from creation to QR-based attendance tracking.
 ---
 
 ### 🏛️ Guilds — `/guilds`
-📄 [docs/API_GUILDS.md](docs/API_GUILDS.md)
+📄 [../docs/API_GUILDS.md](../docs/API_GUILDS.md)
 
 Learning guilds are the core community groups (e.g. Web Dev Guild, Design Guild).
 
@@ -212,7 +214,7 @@ Learning guilds are the core community groups (e.g. Web Dev Guild, Design Guild)
 ---
 
 ### 📢 Announcements — `/announcements`
-📄 [docs/API_ANNOUNCEMENTS.md](docs/API_ANNOUNCEMENTS.md)
+📄 [../docs/API_ANNOUNCEMENTS.md](../docs/API_ANNOUNCEMENTS.md)
 
 Organization-wide and guild-specific announcements.
 
@@ -225,7 +227,7 @@ Organization-wide and guild-specific announcements.
 ---
 
 ### 🤝 Partners — `/partners`
-📄 [docs/API_PARTNERS.md](docs/API_PARTNERS.md)
+📄 [../docs/API_PARTNERS.md](../docs/API_PARTNERS.md)
 
 Manages the organization's industry and community partners.
 
@@ -238,7 +240,7 @@ Manages the organization's industry and community partners.
 ---
 
 ### 🔗 SharePoint Sync — `/integrations`
-📄 [docs/API_SHAREPOINT.md](docs/API_SHAREPOINT.md)
+📄 [../docs/API_SHAREPOINT.md](../docs/API_SHAREPOINT.md)
 
 Syncs user data between the portal and the organization's Microsoft SharePoint.
 
@@ -251,7 +253,7 @@ Syncs user data between the portal and the organization's Microsoft SharePoint.
 ---
 
 ### 📋 Roles & Permissions
-📄 [docs/API_ROLES.md](docs/API_ROLES.md)
+📄 [../docs/API_ROLES.md](../docs/API_ROLES.md)
 
 Three-tier role system enforced via JWT middleware:
 
@@ -264,7 +266,7 @@ Three-tier role system enforced via JWT middleware:
 ---
 
 ### ⚠️ Error Codes
-📄 [docs/API_ERRORS.md](docs/API_ERRORS.md)
+📄 [../docs/API_ERRORS.md](../docs/API_ERRORS.md)
 
 All errors follow a consistent format:
 
@@ -292,7 +294,7 @@ See `API_ERRORS.md` for the full list of error codes, HTTP status mappings, and 
 
 ## Environment Variables
 
-See [`.env.example`](.env.example) for the full list with descriptions.
+See [`.env.example`](../.env.example) for the full list with descriptions.
 
 Key variables:
 
