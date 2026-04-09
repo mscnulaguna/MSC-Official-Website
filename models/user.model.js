@@ -190,8 +190,8 @@ async function verifyPassword(plainPassword, hashedPassword) {
 }
 
 // Bulk update temporary passwords for multiple users
+// updates = [{ userId, hashedTemporaryPassword, hashedPassword }]
 async function bulkResetPasswords(updates) {
-  // updates = [{ userId, tempPassword, hashedPassword }]
   const connection = await pool.getConnection();
   try {
     for (const update of updates) {
@@ -203,7 +203,7 @@ async function bulkResetPasswords(updates) {
          tempPasswordCreatedAt = NOW(),
          updated_at = CURRENT_TIMESTAMP 
          WHERE id = ?`,
-        [update.tempPassword, update.hashedPassword, update.userId]
+        [update.hashedTemporaryPassword, update.hashedPassword, update.userId] // Note: always pass hashedTemporaryPassword (bcrypt hash), never plaintext
       );
     }
     return true;

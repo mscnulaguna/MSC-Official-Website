@@ -395,8 +395,10 @@ async function bulkCreateUsers(req, res) {
   }
 }
 
-// Get temporary password for a user (Admin only) - for users who need password change
-async function getTemporaryPassword(req, res) {
+// Reset temporary password for a user (Admin only)
+// Generates a new temporary password and returns it plaintext (one time only).
+// Callers should immediately send this to the user via email or secure channel.
+async function resetUserTemporaryPassword(req, res) {
   try {
     const userId = req.params.userId;
 
@@ -420,49 +422,30 @@ async function getTemporaryPassword(req, res) {
       });
     }
 
-    // Check if user has a temporary password
-    if (!user.temporaryPassword) {
-      return res.status(400).json({
-        error: {
-          code: 'NO_TEMP_PASSWORD',
-          message: 'No temporary password available for this user. User may have already changed their password.',
-        },
-      });
-    }
+    // Generate a fresh temporary password
+    const tempPassword = generateTemporaryPassword();
+    const hashedPassword = await bcrypt.hash(tempPassword, 10);
+    const hashedTemporaryPassword = await bcrypt.hash(tempPassword, 10);
 
-    // Check if temporary password is still valid (within 24 hours)
-    if (user.tempPasswordCreatedAt) {
-      const createdTime = new Date(user.tempPasswordCreatedAt).getTime();
-      const currentTime = new Date().getTime();
-      const hoursDiff = (currentTime - createdTime) / (1000 * 60 * 60);
-
-      if (hoursDiff > 24) {
-        return res.status(400).json({
-          error: {
-            code: 'TEMP_PASSWORD_EXPIRED',
-            message: 'Temporary password has expired. Please create a new user or reset password.',
-          },
-        });
-      }
-    }
+    await bulkResetPasswords([{ userId, hashedTemporaryPassword, hashedPassword }]);
 
     res.status(200).json({
       success: true,
-      message: 'Temporary password retrieved successfully',
+      message: 'Temporary password reset successfully',
       user: {
         id: user.id,
         email: user.email,
         fullName: user.fullName,
       },
-      temporaryPassword: user.temporaryPassword,
-      note: 'Share this temporary password with the user. They will be required to change it on first login.',
+      temporaryPassword: tempPassword,
+      note: 'Share this temporary password with the user immediately. It is shown only once. They must change it on first login.',
     });
   } catch (error) {
-    console.error('Get temporary password error:', error.message);
+    console.error('Reset temporary password error:', error.message);
     res.status(500).json({
       error: {
         code: 'INTERNAL_ERROR',
-        message: 'Failed to retrieve temporary password',
+        message: 'Failed to reset temporary password',
       },
     });
   }
@@ -492,8 +475,9 @@ async function bulkPasswordReset(req, res) {
 
         const tempPassword = generateTemporaryPassword();
         const hashedPassword = await bcrypt.hash(tempPassword, 10);
+        const hashedTemporaryPassword = await bcrypt.hash(tempPassword, 10);
 
-        await bulkResetPasswords([{ userId, tempPassword, hashedPassword }]);
+        await bulkResetPasswords([{ userId, hashedTemporaryPassword, hashedPassword }]);
 
         results.push({
           userId: user.id,
@@ -545,19 +529,21 @@ async function sendCredentialsToUsers(req, res) {
           continue;
         }
 
-        // Use the stored temp password if the user hasn't logged in yet,
-        // otherwise generate a fresh one and reset their account
-        let tempPassword = user.temporaryPassword;
-        if (!tempPassword) {
-          tempPassword = generateTemporaryPassword();
+        // If user doesn't have a temporary password, generate a fresh one.
+        // Note: we cannot retrieve stored temp passwords since they are hashed for security.
+        if (!user.temporaryPassword) {
+          const tempPassword = generateTemporaryPassword();
           const hashedPassword = await bcrypt.hash(tempPassword, 10);
-          await bulkResetPasswords([{ userId, tempPassword, hashedPassword }]);
+          const hashedTemporaryPassword = await bcrypt.hash(tempPassword, 10);
+          await bulkResetPasswords([{ userId, hashedTemporaryPassword, hashedPassword }]);
+          
+          // Await so we can accurately report per-user success vs failure
+          await sendWelcomeEmail(user, tempPassword);
+          
+          sent.push({ userId: String(user.id), email: user.email, fullName: user.fullName });
+        } else {
+          throw new Error('User already has temporary password set. Cannot send credentials for user with existing temp password.');
         }
-
-        // Await so we can accurately report per-user success vs failure
-        await sendWelcomeEmail(user, tempPassword);
-
-        sent.push({ userId: String(user.id), email: user.email, fullName: user.fullName });
       } catch (err) {
         failed.push({ userId: String(userId), error: err.message || 'Failed to send email' });
       }
@@ -585,7 +571,7 @@ module.exports = {
   getUserDetails,
   updateUserDetails,
   bulkCreateUsers,
-  getTemporaryPassword,
+  resetUserTemporaryPassword,
   bulkPasswordReset,
   sendCredentialsToUsers,
 };

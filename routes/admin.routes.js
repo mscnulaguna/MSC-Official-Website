@@ -6,7 +6,7 @@ const {
   getUserDetails,
   updateUserDetails,
   bulkCreateUsers,
-  getTemporaryPassword,
+  resetUserTemporaryPassword,
   bulkPasswordReset,
   sendCredentialsToUsers,
 } = require('../controllers/admin.controller');
@@ -32,8 +32,8 @@ router.get('/users/:userId', authMiddleware, adminMiddleware, getUserDetails);
 // Update user details
 router.put('/users/:userId', authMiddleware, adminMiddleware, updateUserDetails);
 
-// Get temporary password for a user (for password change reminder)
-router.get('/users/:userId/temporary-password', authMiddleware, adminMiddleware, getTemporaryPassword);
+// Reset temporary password for a user (generates fresh temp password)
+router.post('/users/:userId/reset-temporary-password', authMiddleware, adminMiddleware, resetUserTemporaryPassword);
 
 // Bulk reset passwords for multiple users
 router.post('/users/bulk-reset', authMiddleware, adminMiddleware, bulkPasswordReset);
