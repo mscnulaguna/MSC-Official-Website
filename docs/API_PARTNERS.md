@@ -61,7 +61,7 @@ Results are ordered alphabetically by name.
 
 | Field  | Type   | Description                                        |
 |--------|--------|----------------------------------------------------|
-| `id`   | string | Partner UUID                                       |
+| `id`   | string | Partner identifier (numeric, returned as string)   |
 | `name` | string | Partner organization name                          |
 | `logo` | string | Logo URL or base64-encoded image                   |
 | `url`  | string | Partner website URL                                |
