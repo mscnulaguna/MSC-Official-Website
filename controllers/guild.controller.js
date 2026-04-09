@@ -95,17 +95,31 @@ async function getGuild(req, res) {
         role: m.guildRole,
       }));
 
-    // Map resources to spec shape with parsed tags
-    const mappedResources = resources.map((r) => ({
-      id: String(r.id),
-      title: r.title,
-      type: r.type,
-      url: r.url,
-      level: r.level,
-      tags: r.tags
-        ? (typeof r.tags === 'string' ? JSON.parse(r.tags) : r.tags)
-        : [],
-    }));
+    // Map resources to spec shape with safe tag parsing
+    const mappedResources = resources.map((r) => {
+      let tags = [];
+
+      if (r.tags) {
+        if (typeof r.tags === 'string') {
+          try {
+            tags = JSON.parse(r.tags);
+          } catch (e) {
+            tags = [];
+          }
+        } else {
+          tags = r.tags;
+        }
+      }
+
+      return {
+        id: String(r.id),
+        title: r.title,
+        type: r.type,
+        url: r.url,
+        level: r.level,
+        tags: tags,
+      };
+    });
 
     res.status(200).json({
       id: String(guild.id),
