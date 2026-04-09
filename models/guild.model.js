@@ -21,6 +21,39 @@ async function getAllGuilds() {
   }
 }
 
+// Get paginated guilds with member count and leader info
+async function getPaginatedGuilds(limit, offset) {
+  const connection = await pool.getConnection();
+  try {
+    const [rows] = await connection.query(
+      `SELECT g.*,
+              COUNT(DISTINCT gm.user_id) as memberCount,
+              u.fullName as leaderName
+       FROM guilds g
+       LEFT JOIN guild_members gm ON g.id = gm.guild_id
+       LEFT JOIN users u ON g.created_by = u.id
+       GROUP BY g.id
+       ORDER BY g.name
+       LIMIT ? OFFSET ?`,
+      [limit, offset]
+    );
+    return rows;
+  } finally {
+    connection.release();
+  }
+}
+
+// Get total number of guilds
+async function getGuildCount() {
+  const connection = await pool.getConnection();
+  try {
+    const [rows] = await connection.query('SELECT COUNT(*) as total FROM guilds');
+    return rows[0].total;
+  } finally {
+    connection.release();
+  }
+}
+
 // Get guild by slug with member count and leader info
 async function getGuildBySlug(slug) {
   const connection = await pool.getConnection();
@@ -56,6 +89,20 @@ async function getGuildMembers(guildId) {
       [guildId]
     );
     return rows;
+  } finally {
+    connection.release();
+  }
+}
+
+// Check whether a specific user is a member of a specific guild
+async function isGuildMember(guildId, userId) {
+  const connection = await pool.getConnection();
+  try {
+    const [rows] = await connection.query(
+      `SELECT 1 FROM guild_members WHERE guild_id = ? AND user_id = ? LIMIT 1`,
+      [guildId, userId]
+    );
+    return rows.length > 0;
   } finally {
     connection.release();
   }
@@ -155,9 +202,12 @@ async function getGuildById(guildId) {
 // Export all guild database functions
 module.exports = {
   getAllGuilds,
+  getPaginatedGuilds,
+  getGuildCount,
   getGuildBySlug,
   getGuildById,
   getGuildMembers,
+  isGuildMember,
   getGuildResources,
   getGuildApplication,
   createGuildApplication,

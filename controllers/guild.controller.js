@@ -2,8 +2,11 @@
 const { syncInBackground } = require('../services/sharepoint.service');
 const {
   getAllGuilds,
+  getPaginatedGuilds,
+  getGuildCount,
   getGuildBySlug,
   getGuildMembers,
+  isGuildMember,
   getGuildResources,
   getGuildApplication,
   createGuildApplication,
@@ -18,9 +21,10 @@ async function listGuilds(req, res) {
     const pageSize = Math.min(parseInt(req.query.pageSize) || 10, 100);
     const offset = (page - 1) * pageSize;
 
-    const allGuilds = await getAllGuilds();
-    const total = allGuilds.length;
-    const guilds = allGuilds.slice(offset, offset + pageSize);
+    const [guilds, total] = await Promise.all([
+      getPaginatedGuilds(pageSize, offset),
+      getGuildCount(),
+    ]);
 
     res.status(200).json({
       data: guilds.map((guild) => ({
@@ -168,8 +172,7 @@ async function getGuildResourcesHandler(req, res) {
 
     // Check if user is a guild member or officer/admin
     if (req.user) {
-      const members = await getGuildMembers(guild.id);
-      const isMember = members.some((m) => m.user_id === req.user.id);
+      const isMember = await isGuildMember(guild.id, req.user.id);
       const isOfficer = req.user.role === 'officer' || req.user.role === 'admin';
 
       if (!isMember && !isOfficer) {

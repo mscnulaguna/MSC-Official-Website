@@ -1,5 +1,6 @@
 // Import Express and event controller functions
 const express = require('express');
+const fs = require('fs');
 const multer = require('multer');
 const path = require('path');
 const {
@@ -14,10 +15,15 @@ const {
 const authMiddleware = require('../middlewares/auth.middleware');
 const roleMiddleware = require('../middlewares/role.middleware');
 
+const eventCoversDir = path.join(__dirname, '../uploads/event-covers');
+if (!fs.existsSync(eventCoversDir)) {
+  fs.mkdirSync(eventCoversDir, { recursive: true });
+}
+
 // Setup multer for event cover images
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../uploads/event-covers'));
+    cb(null, eventCoversDir);
   },
   filename: (req, file, cb) => {
     const uniqueName = `cover-${Date.now()}-${Math.random().toString(36).substr(2, 9)}${path.extname(file.originalname)}`;
