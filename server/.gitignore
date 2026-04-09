@@ -2,8 +2,6 @@
 .env
 .env.*
 !.env.example
-client/.env
-server/.env
 
 # Dependencies
 node_modules/
