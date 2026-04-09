@@ -16,9 +16,19 @@ const authMiddleware = (req, res, next) => {
       });
     }
 
+    // Fail fast if JWT secret is not configured
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({
+        error: {
+          code: 'INTERNAL_ERROR',
+          message: 'JWT secret is not configured',
+        },
+      });
+    }
+
     // Extract token and verify it
     const token = authHeader.substring(7);
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // Store decoded user info in request object
     req.user = decoded;
