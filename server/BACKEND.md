@@ -21,30 +21,32 @@ REST API for the MSC NU Laguna student portal. Built with **Node.js**, **Express
 ## Project Structure
 
 ```
-msc_api/
-├── server.js              # Entry point
-├── app.js                 # Express app setup (CORS, routes, error handler)
-├── setup-db.js            # One-time DB setup & seed script
-├── schema.sql             # Raw SQL schema (reference copy)
-├── config/
-│   ├── db.js              # MySQL connection pool
-│   ├── multer.js          # Profile photo upload config
-│   └── roles.config.js    # Role hierarchy & permission map
-├── controllers/           # Route handler logic
-├── middlewares/           # auth, admin, role, rateLimit
-├── models/                # DB query functions
-├── routes/                # Express routers
-├── services/
-│   ├── email.service.js   # Nodemailer email helpers
-│   └── sharepoint.service.js # SharePoint sync
-├── utils/                 # Shared helpers
-├── docs/                  # Full API documentation (Markdown)
-├── public/
-│   ├── avatars/           # Preset SVG avatars (committed)
-│   └── uploads/
-│       └── profile-photos/ # User-uploaded photos (git-ignored)
-└── uploads/
-    └── event-covers/      # Event cover images (git-ignored)
+repo-root/
+├── client/                # Frontend application
+└── server/                # Backend API
+  ├── server.js          # Entry point
+  ├── app.js             # Express app setup (CORS, routes, error handler)
+  ├── setup-db.js        # One-time DB setup & seed script
+  ├── schema.sql         # Raw SQL schema (reference copy)
+  ├── config/
+  │   ├── db.js          # MySQL connection pool
+  │   ├── multer.js      # Profile photo upload config
+  │   └── roles.config.js # Role hierarchy & permission map
+  ├── controllers/       # Route handler logic
+  ├── middlewares/       # auth, admin, role, rateLimit
+  ├── models/            # DB query functions
+  ├── routes/            # Express routers
+  ├── services/
+  │   ├── email.service.js # Nodemailer email helpers
+  │   └── sharepoint.service.js # SharePoint sync
+  ├── utils/             # Shared helpers
+  ├── docs/              # Full API documentation (Markdown)
+  ├── public/
+  │   ├── avatars/       # Preset SVG avatars (committed)
+  │   └── uploads/
+  │       └── profile-photos/ # User-uploaded photos (git-ignored)
+  └── uploads/
+    └── event-covers/  # Event cover images (git-ignored)
 ```
 
 ---
