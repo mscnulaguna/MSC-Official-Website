@@ -197,16 +197,30 @@ async function getGuildResourcesHandler(req, res) {
     const resources = allResources.slice(offset, offset + limit);
 
     res.status(200).json({
-      data: resources.map((r) => ({
-        id: String(r.id),
-        title: r.title,
-        type: r.type,
-        url: r.url,
-        level: r.level,
-        tags: r.tags
-          ? (typeof r.tags === 'string' ? JSON.parse(r.tags) : r.tags)
-          : [],
-      })),
+      data: resources.map((r) => {
+        let tags = [];
+
+        if (r.tags) {
+          if (typeof r.tags === 'string') {
+            try {
+              tags = JSON.parse(r.tags);
+            } catch (e) {
+              tags = [];
+            }
+          } else {
+            tags = r.tags;
+          }
+        }
+
+        return {
+          id: String(r.id),
+          title: r.title,
+          type: r.type,
+          url: r.url,
+          level: r.level,
+          tags: tags,
+        };
+      }),
       total: total,
     });
   } catch (error) {
