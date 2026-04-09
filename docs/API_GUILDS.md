@@ -189,7 +189,7 @@ Requires `Authorization: Bearer <token>`.
 | `status`        | string | `pending` \| `approved` \| `rejected`   |
 | `submittedAt`   | string | ISO 8601 submission timestamp           |
 
-> **Note:** Applications start in `pending` status. An admin reviews and approves/rejects via `POST /admin/:userId/approve`.
+> **Note:** Applications start in `pending` status. An admin reviews and approves/rejects via `POST /guilds/:userId/approve`.
 
 #### Error Responses
 
@@ -276,7 +276,7 @@ User submits application  ──▶  POST /guilds/:slug/apply
                                 Returns: applicationId, status = "pending"
           │
           ▼
-Admin reviews application ──▶  POST /admin/:userId/approve
+Admin reviews application ──▶  POST /guilds/:userId/approve
                                 Body: { guildId }
           │
           ▼

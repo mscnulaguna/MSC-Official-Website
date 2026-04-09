@@ -5,14 +5,12 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 const app = express()
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || (process.env.NODE_ENV === 'production' ? 80 : 5000)
 
 const defaultAllowedOrigins = [
   'http://localhost:5173',
-  'http://localhost:5000',
   'http://localhost',
   'http://127.0.0.1:5173',
-  'http://127.0.0.1:5000',
   'http://127.0.0.1',
 ]
 

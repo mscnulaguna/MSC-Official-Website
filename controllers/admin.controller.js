@@ -420,41 +420,21 @@ async function getTemporaryPassword(req, res) {
       });
     }
 
-    // Check if user has a temporary password
-    if (!user.temporaryPassword) {
-      return res.status(400).json({
-        error: {
-          code: 'NO_TEMP_PASSWORD',
-          message: 'No temporary password available for this user. User may have already changed their password.',
-        },
-      });
-    }
-
-    // Check if temporary password is still valid (within 24 hours)
-    if (user.tempPasswordCreatedAt) {
-      const createdTime = new Date(user.tempPasswordCreatedAt).getTime();
-      const currentTime = new Date().getTime();
-      const hoursDiff = (currentTime - createdTime) / (1000 * 60 * 60);
-
-      if (hoursDiff > 24) {
-        return res.status(400).json({
-          error: {
-            code: 'TEMP_PASSWORD_EXPIRED',
-            message: 'Temporary password has expired. Please create a new user or reset password.',
-          },
-        });
-      }
-    }
+    // Generate a fresh temporary password, store only its hash, and return the plaintext once.
+    // This avoids returning a stored bcrypt hash and ensures the plaintext is never persisted.
+    const tempPassword = generateTemporaryPassword();
+    const hashedPassword = await bcrypt.hash(tempPassword, 10);
+    await bulkResetPasswords([{ userId, tempPassword, hashedPassword }]);
 
     res.status(200).json({
       success: true,
-      message: 'Temporary password retrieved successfully',
+      message: 'Temporary password reset successfully',
       user: {
         id: user.id,
         email: user.email,
         fullName: user.fullName,
       },
-      temporaryPassword: user.temporaryPassword,
+      temporaryPassword: tempPassword,
       note: 'Share this temporary password with the user. They will be required to change it on first login.',
     });
   } catch (error) {
@@ -545,14 +525,11 @@ async function sendCredentialsToUsers(req, res) {
           continue;
         }
 
-        // Use the stored temp password if the user hasn't logged in yet,
-        // otherwise generate a fresh one and reset their account
-        let tempPassword = user.temporaryPassword;
-        if (!tempPassword) {
-          tempPassword = generateTemporaryPassword();
-          const hashedPassword = await bcrypt.hash(tempPassword, 10);
-          await bulkResetPasswords([{ userId, tempPassword, hashedPassword }]);
-        }
+        // Always generate a fresh temp password: stored value is a bcrypt hash and
+        // cannot be recovered as plaintext. Reset the account and email the new plaintext once.
+        const tempPassword = generateTemporaryPassword();
+        const hashedPassword = await bcrypt.hash(tempPassword, 10);
+        await bulkResetPasswords([{ userId, tempPassword, hashedPassword }]);
 
         // Await so we can accurately report per-user success vs failure
         await sendWelcomeEmail(user, tempPassword);

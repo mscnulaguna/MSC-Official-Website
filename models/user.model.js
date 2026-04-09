@@ -192,9 +192,11 @@ async function verifyPassword(plainPassword, hashedPassword) {
 // Bulk update temporary passwords for multiple users
 async function bulkResetPasswords(updates) {
   // updates = [{ userId, tempPassword, hashedPassword }]
+  // tempPassword is the plaintext value; it is hashed before storage
   const connection = await pool.getConnection();
   try {
     for (const update of updates) {
+      const hashedTempPassword = await bcrypt.hash(update.tempPassword, 10);
       await connection.execute(
         `UPDATE users SET 
          temporaryPassword = ?, 
@@ -203,7 +205,7 @@ async function bulkResetPasswords(updates) {
          tempPasswordCreatedAt = NOW(),
          updated_at = CURRENT_TIMESTAMP 
          WHERE id = ?`,
-        [update.tempPassword, update.hashedPassword, update.userId]
+        [hashedTempPassword, update.hashedPassword, update.userId]
       );
     }
     return true;
