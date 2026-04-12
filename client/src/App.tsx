@@ -9,6 +9,8 @@ import Login from '@/pages/login'
 import { useEffect } from 'react'
 import { Footer } from "@/components/ui/layout/Footer"
 import FallbackPage from "./pages/fallback/fallback-page"
+import ProfilePage from "@/pages/profile"
+import { sampleMember } from '@/data/mockMember'
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '') || "http://localhost:5000"
 
@@ -28,6 +30,7 @@ const KNOWN_PATHS = new Set([
   '/activities',
   '/partners',
   '/login',
+  '/profile',
   '/coming-soon',
   '/maintenance',
   '/access-restricted',
@@ -66,13 +69,14 @@ export default function App() {
         <Route path="/activities" element={<Activities />} />
         <Route path="/activities/:eventId" element={<EventDetails />} />
         <Route path="/partners" element={<PartnersPage />} />
+        <Route path='/profile' element={<ProfilePage member={sampleMember}/>} />
 
         {/* fallback demos  */}
         <Route path="/coming-soon"         element={<FallbackPage type="coming-soon" />} />
         <Route path="/maintenance"         element={<FallbackPage type="maintenance" />} />
         <Route path="/access-restricted"   element={<FallbackPage type="access-restricted" />} />
         <Route path="/no-announcements"    element={<FallbackPage type="no-announcements" />} />
-        <Route path="/something-went-wrong" element={<FallbackPage type="something went wrong" />} />
+        <Route path="/something-went-wrong" element={<FallbackPage type="something-went-wrong" />} />
  
         <Route path="*" element={<FallbackPage type="404" />} />
       </Routes>
