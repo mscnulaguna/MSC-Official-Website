@@ -3,12 +3,16 @@ import { Button } from '@/components/ui/button'
 import { InputGroup, InputGroupSuffix } from '@/components/ui/input-group'
 import { Kbd } from '@/components/ui/kbd'
 import { Search } from 'lucide-react'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import circleHalfBlackSvg from '@/assets/icons/circle-half-black.svg?raw'
 import { SearchDialog } from './SearchDialog'
 import { useTheme } from '@/context/ThemeContext'
 import { useNavigate } from 'react-router-dom'
 
-export function NavbarRight() {
+export function NavbarRight({
+  isLoggedIn = false,
+  userName = '',
+}: Readonly<{ isLoggedIn?: boolean; userName?: string }>) {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const { isDarkMode, toggleDarkMode } = useTheme()
   const instanceId = useId()
@@ -34,6 +38,15 @@ export function NavbarRight() {
   const navigate = useNavigate()
   const handleSignIn = () => {
     navigate('/login')
+  }
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0].toUpperCase())
+      .join('')
   }
 
   return (
@@ -81,23 +94,32 @@ export function NavbarRight() {
           />
         </button>
 
-        {/* Desktop Sign In */}
-        <Button
-          variant="default"
-          onClick={handleSignIn}
-        >
-          Sign In
-        </Button>
+        {/* Desktop Sign In / User Avatar */}
+        {!isLoggedIn ? (
+          <>
+            <Button
+              variant="default"
+              onClick={handleSignIn}
+            >
+              Sign In
+            </Button>
 
-        {/* Mobile Sign In */}
-        <Button
-          variant="default"
-          onClick={handleSignIn}
-          size="sm"
-          className="ml-1 sm:hidden"
-        >
-          Sign In
-        </Button>
+            {/* Mobile Sign In */}
+            <Button
+              variant="default"
+              onClick={handleSignIn}
+              size="sm"
+              className="ml-1 sm:hidden"
+            >
+              Sign In
+            </Button>
+          </>
+        ) : (
+          /* User Avatar Circle - Shows when logged in */
+          <Avatar className="h-10 w-10 border-2 border-primary cursor-pointer">
+            <AvatarFallback className="font-semibold">{getInitials(userName)}</AvatarFallback>
+          </Avatar>
+        )}
       </div>
     </>
   )

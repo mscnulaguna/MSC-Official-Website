@@ -3,8 +3,8 @@ import { NavbarLeft } from './NavbarLeft'
 import { NavbarCenter } from './NavbarCenter'
 import { NavbarRight } from './NavbarRight'
 import { MobileNavDrawer } from './MobileNavDrawer'
-// import { Button } from '@/components/ui/button'
-// build fails  because of unused import - will add back when we add more controls to the right section
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { useState } from 'react'
 
 
   /*** Logo source path (default: MSC logo asset)*/
@@ -81,6 +81,17 @@ export function Navbar({
   logoAlt = 'Logo',
   className = '',
 }: Readonly<NavbarProps>) {
+  const [isLoggedIn, setIsLoggedIn] = useState(false) // TODO: Connect to auth context/backend
+  const [userName, setUserName] = useState('') // TODO: Get from auth context/backend
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0].toUpperCase())
+      .join('')
+  }
   return (
     <header
       className={`sticky left-0 right-0 top-0 z-50 mx-auto  border-b border-border/40 bg-background overflow-visible ${className}`}
@@ -91,7 +102,7 @@ export function Navbar({
         <nav className="relative flex h-16 w-full items-center justify-between gap-2 lg:gap-4">
           {/* MOBILE/TABLET: Hamburger Menu Drawer - Left */}
           <div className="lg:hidden z-20 flex-shrink-0">
-            <MobileNavDrawer />
+            <MobileNavDrawer isLoggedIn={isLoggedIn} />
           </div>
 
           {/* DESKTOP: Logo Left, MOBILE: Logo Right */}
@@ -99,8 +110,17 @@ export function Navbar({
             <NavbarLeft logoSrc={logoSrc} logoAlt={logoAlt} />
           </div>
 
+          {/* MOBILE/TABLET: User Avatar in Center when logged in */}
+          <div className="lg:hidden flex-1 flex justify-center z-10">
+            {isLoggedIn && (
+              <Avatar className="h-10 w-10 border-2 border-primary cursor-pointer">
+                <AvatarFallback className="font-semibold">{getInitials(userName)}</AvatarFallback>
+              </Avatar>
+            )}
+          </div>
+
           {/* MOBILE/TABLET: Logo on Right */}
-          <div className="lg:hidden flex-1 flex justify-end z-10 pr-2">
+          <div className="lg:hidden flex-shrink-0 z-10 pr-2">
             <NavbarLeft logoSrc={logoSrc} logoAlt={logoAlt} />
           </div>
 
@@ -109,9 +129,9 @@ export function Navbar({
             <NavbarCenter />
           </div>
 
-          {/* RIGHT: Search, Theme Toggle, Sign In */}
+          {/* RIGHT: Search, Theme Toggle, Sign In (Desktop) / Avatar (Mobile logged in) */}
           <div className="flex items-center gap-1 ml-auto z-10 hidden lg:flex justify-end pr-4">
-            <NavbarRight />
+            <NavbarRight isLoggedIn={isLoggedIn} userName={userName} />
           </div>
         </nav>
       </div>
