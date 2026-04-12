@@ -16,30 +16,56 @@ import {
 import { Kbd } from '@/components/ui/kbd'
 import { ChevronDown, Check, Search } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
+import { NAV_ITEMS } from '@/config/navigation'
 
 /**
  * SearchDialog Component
  * =======================
- * Minimal search dialog with category filtering.
+ * Search dialog with navigation-aligned filtering.
+ *
+ * Filter categories are dynamically generated from navbar navigation items,
+ * including all top-level links and submenu items.
  *
  * Layout:
  * 1. Search Input
  * 2. Divider
- * 3. Filter Dropdown
+ * 3. Filter Dropdown (synced with navbar)
  * 4. Help Text
- *
- * Fix Applied:
- * - Added top padding to avoid overlap with Dialog close button
- * - Improved spacing and alignment
  */
 
-const SEARCH_CATEGORIES = [
-  { id: 'all', label: 'All' },
-  { id: 'blocks', label: 'Blocks' },
-  { id: 'hooks', label: 'Hooks' },
-  { id: 'icons', label: 'Icons' },
-  { id: 'patterns', label: 'Patterns' },
-]
+// Generate filter categories from navigation items
+const generateFilterCategories = () => {
+  const categories: Array<{ id: string; label: string }> = [
+    { id: 'all', label: 'All' },
+  ]
+
+  NAV_ITEMS.forEach((item) => {
+    if (item.type === 'group') {
+      // Add group label
+      categories.push({
+        id: item.label.toLowerCase(),
+        label: item.label,
+      })
+      // Add submenu items
+      item.submenu.forEach((subitem) => {
+        categories.push({
+          id: subitem.label.toLowerCase(),
+          label: subitem.label,
+        })
+      })
+    } else {
+      // Add simple link
+      categories.push({
+        id: item.label.toLowerCase(),
+        label: item.label,
+      })
+    }
+  })
+
+  return categories
+}
+
+const SEARCH_CATEGORIES = generateFilterCategories()
 
 type SearchDialogProps = Readonly<{
   open?: boolean
@@ -134,10 +160,10 @@ export function SearchDialog({
       )}
 
       {/* Search Dialog */}
-      <DialogContent className="max-w-2xl px-6 pb-6 pt-10">
+      <DialogContent className="max-w-2xl px-6 sm:px-8 md:px-10 pb-6 pt-10 w-[calc(100%-48px)]">
         <DialogTitle className="sr-only">Search</DialogTitle>
         <DialogDescription className="sr-only">
-          Search through components, hooks, icons, and patterns
+          Search and filter by navigation categories
         </DialogDescription>
 
         <form onSubmit={handleSearch} className="space-y-4">
@@ -181,11 +207,11 @@ export function SearchDialog({
 
             {/* Dropdown */}
             {isDropdownOpen && (
-              <div className="absolute left-0 top-full z-50 mt-2 w-48 rounded-none bg-background border border-border/40 shadow-none">
+              <div className="absolute left-0 top-full z-50 mt-2 w-56 rounded-none bg-background border border-border/40 shadow-none max-h-64 overflow-y-auto">
                 <div className="py-1">
-                  {SEARCH_CATEGORIES.map((category) => (
+                  {SEARCH_CATEGORIES.map((category, index) => (
                     <button
-                      key={category.id}
+                      key={`${category.id}-${index}`}
                       type="button"
                       onClick={() => handleCategorySelect(category.id)}
                       className={`flex w-full items-center justify-between px-4 py-2.5 text-sm transition-colors outline-none ring-0 ring-offset-0 focus:outline-none focus-visible:outline-none ${
@@ -205,7 +231,7 @@ export function SearchDialog({
 
           {/* Help text */}
           <p className="pt-2 text-xs text-muted-foreground">
-            Filter results by category or search across all
+            Filter results by navigation section or search across all categories
           </p>
         </form>
       </DialogContent>
