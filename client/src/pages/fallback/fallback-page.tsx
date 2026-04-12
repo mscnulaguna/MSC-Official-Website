@@ -1,5 +1,9 @@
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FALLBACK_CONFIG, resolveType } from '../../config/fallback-config';
 import FallbackVisual from './fallback-visual';
+import { Button } from '../../components/ui/button';
+
 
 //props
 interface FallbackPageProps {
@@ -7,25 +11,57 @@ interface FallbackPageProps {
 }
 
 export default function FallbackPage({ type }: FallbackPageProps) {
-    //ersolve the raw prop == guaranteed fallback type = typed config entry
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+
+        return () => {
+            document.body.style.overflow = previousOverflow;
+        };
+    }, []);
+
+    //resolve the raw type to a config key (with alias support and fallback to "somethingWentWrong")
     const configKey = resolveType(type);
-    const config = FALLBACK_CONFIG[configKey]; //fallback entry - always defined
+    const config = FALLBACK_CONFIG[configKey];
+    //hard errors get a back to home button, while softer ones just show the animation and message
+    const isHardError = configKey === "somethingWentWrong";
 
     return (
-        <div className="max-h-screen flex flex-col items-center justify-center px-6 text-center overflow-hidden">
-            {/* visual indicator - svg */}
-            <FallbackVisual type={configKey} accent={config.accent} />
+        <div className="h-[calc(100dvh-65px)] flex items-center justify-center px-6 text-center overflow-hidden">
+            <div className="flex flex-col items-center -translate-y-6 sm:-translate-y-10">
+                {/* Lottie Visual */}
+                <FallbackVisual type={configKey} accent={config.accent} />
 
-            {/* title */}
-            <h1 className="mt-8 text-3xl font-bold tracking-tight">
-                {config.title}
-            </h1>
+                {/* Title */}
+                <h1 className="mt-8 text-3xl font-bold tracking-tight">
+                    {config.title}
+                </h1>
 
-            {/* message */}
-            <p className="mt-3 text-sm tracking-tight">
-                {config.message}
-            </p>
+                {/* Message */}
+                <p className="mt-3 text-sm tracking-tight max-w-sm text-muted-foreground">
+                    {config.message}
+                </p>
+
+                {isHardError ? (
+                    <Button 
+                        variant="outline" 
+                        className="mt-6" 
+                        onClick={() => navigate('/')}
+                    >
+                        Back to Home
+                    </Button>
+                    ) : (
+                    <Button 
+                        variant="outline" 
+                        className="mt-6" 
+                        onClick={() => navigate(-1)}
+                    >
+                        Go Back
+                    </Button>
+                )}
+            </div>
         </div>
     )
-    
 }
