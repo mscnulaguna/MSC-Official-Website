@@ -8,6 +8,7 @@ import circleHalfBlackSvg from '@/assets/icons/circle-half-black.svg?raw'
 import { SearchDialog } from './SearchDialog'
 import { useTheme } from '@/context/ThemeContext'
 import { useNavigate } from 'react-router-dom'
+import { getInitials } from '@/lib/utils'
 
 export function NavbarRight({
   isLoggedIn = false,
@@ -38,15 +39,6 @@ export function NavbarRight({
   const navigate = useNavigate()
   const handleSignIn = () => {
     navigate('/login')
-  }
-
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((part) => part[0].toUpperCase())
-      .join('')
   }
 
   return (

@@ -33,32 +33,53 @@ import { NAV_ITEMS } from '@/config/navigation'
  * 4. Help Text
  */
 
-// Generate filter categories from navigation items
+// Normalize category keys for consistent ID generation
+const normalizeCategoryKey = (value: string) =>
+  value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+
+// Build unique category IDs by type (group, link, submenu)
+const buildCategoryId = (
+  kind: 'group' | 'link' | 'submenu',
+  label: string,
+  href?: string
+) => {
+  const source = href ?? label
+  return `${kind}:${normalizeCategoryKey(source)}`
+}
+
+// Generate filter categories from navigation items with duplicate prevention
 const generateFilterCategories = () => {
   const categories: Array<{ id: string; label: string }> = [
     { id: 'all', label: 'All' },
   ]
+  const seenCategoryIds = new Set(categories.map((category) => category.id))
+
+  const pushCategory = (id: string, label: string) => {
+    if (seenCategoryIds.has(id)) {
+      return
+    }
+    seenCategoryIds.add(id)
+    categories.push({ id, label })
+  }
 
   NAV_ITEMS.forEach((item) => {
     if (item.type === 'group') {
-      // Add group label
-      categories.push({
-        id: item.label.toLowerCase(),
-        label: item.label,
-      })
-      // Add submenu items
+      // Add group label with unique ID
+      pushCategory(buildCategoryId('group', item.label), item.label)
+      // Add submenu items with unique IDs
       item.submenu.forEach((subitem) => {
-        categories.push({
-          id: subitem.label.toLowerCase(),
-          label: subitem.label,
-        })
+        pushCategory(
+          buildCategoryId('submenu', subitem.label, subitem.href),
+          subitem.label
+        )
       })
     } else {
-      // Add simple link
-      categories.push({
-        id: item.label.toLowerCase(),
-        label: item.label,
-      })
+      // Add simple link with unique ID
+      pushCategory(buildCategoryId('link', item.label, item.href), item.label)
     }
   })
 

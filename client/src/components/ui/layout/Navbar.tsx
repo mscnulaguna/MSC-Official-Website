@@ -4,6 +4,7 @@ import { NavbarCenter } from './NavbarCenter'
 import { NavbarRight } from './NavbarRight'
 import { MobileNavDrawer } from './MobileNavDrawer'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { getInitials } from '@/lib/utils'
 import { useState } from 'react'
 
 
@@ -84,14 +85,6 @@ export function Navbar({
   const [isLoggedIn, setIsLoggedIn] = useState(false) // TODO: Connect to auth context/backend
   const [userName, setUserName] = useState('') // TODO: Get from auth context/backend
 
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((part) => part[0].toUpperCase())
-      .join('')
-  }
   return (
     <header
       className={`sticky left-0 right-0 top-0 z-50 mx-auto  border-b border-border/40 bg-background overflow-visible ${className}`}
