@@ -146,20 +146,46 @@ const JoinGuildDialog = ({
     }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log("Join Guild Form Submitted:", {
-      guildId: guild?.id,
-      guildSlug: guild?.slug,
-      ...formData,
-    })
-    setFormData({
-      whyJoin: "",
-      motivation: "",
-      experience: "",
-      portfolioUrl: "",
-    })
-    onOpenChange(false)
+    try {
+      const payload = {
+        guildId: guild?.id,
+        guildSlug: guild?.slug,
+        ...formData,
+      }
+
+      if (USE_API) {
+        const response = await fetch(`${API_BASE}/guilds/join`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        })
+
+        if (!response.ok) {
+          throw new Error("Failed to submit join request")
+        }
+      }
+
+      // Success feedback
+      console.log("Join Guild Form Submitted:", payload)
+      window.alert("Your join request has been submitted successfully!")
+
+      // Reset form and close dialog
+      setFormData({
+        whyJoin: "",
+        motivation: "",
+        experience: "",
+        portfolioUrl: "",
+      })
+      onOpenChange(false)
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : "An error occurred"
+      console.error("Join submission error:", errorMsg)
+      window.alert("We couldn't submit your join request. Please try again.")
+    }
   }
 
   if (!guild) return null

@@ -5,6 +5,7 @@ import { Button } from "../components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar"
 import { Link } from "react-router-dom"
 import { Users } from "lucide-react"
+import { getInitials } from "../lib/utils"
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api"
 const USE_API = false // Set to true when backend is ready
@@ -58,12 +59,7 @@ const STATIC_BADGES = [
 
 // Visual header banner with guild name avatar
 const GuildBanner = ({ guild }: { guild: Guild }): JSX.Element => {
-  const initials = guild.name
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-    .map((word) => word[0].toUpperCase())
-    .join("")
+  const initials = getInitials(guild.name)
 
   return (
     <div className="relative h-40 w-full overflow-hidden rounded-none">
