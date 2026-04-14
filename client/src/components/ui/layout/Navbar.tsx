@@ -82,8 +82,8 @@ export function Navbar({
   logoAlt = 'Logo',
   className = '',
 }: Readonly<NavbarProps>) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false) // TODO: Connect to auth context/backend
-  const [userName, setUserName] = useState('') // TODO: Get from auth context/backend
+  const [isLoggedIn] = useState(false) // TODO: Connect to auth context/backend
+  const [userName] = useState('') // TODO: Get from auth context/backend
 
   return (
     <header

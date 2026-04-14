@@ -22,7 +22,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { getInitials } from "@/lib/utils"
-import { Users, ExternalLink, ChevronLeft, Search } from "lucide-react"
+import { Users, ExternalLink, ChevronLeft } from "lucide-react"
 import purplesnow from "@/assets/shapes/purplesnow.svg"
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api"
