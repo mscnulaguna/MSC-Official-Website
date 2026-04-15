@@ -3,7 +3,7 @@ import ProfileSidebar from "@/components/ui/profile/profile-sidebar";
 import FlippableIDCard from "@/components/ui/profile/flip-id";
 import EnlargeModal from "@/components/ui/profile/enlarge-modal";
 import { Button } from "@/components/ui/button";
-import { Maximize2, QrCode } from "lucide-react";
+import { QrCode } from "lucide-react";
 import type { Member } from "@/types/member";
 
 interface ProfilePageProps {

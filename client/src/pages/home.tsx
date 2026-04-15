@@ -314,8 +314,8 @@ export default function Home(): JSX.Element {
           <div className="relative z-10 max-w-4xl mx-auto space-y-6">
             <p className="text-xs sm:text-sm md:text-base font-semibold">MICROSOFT STUDENT COMMUNITY | NU LAGUNA</p>
             
-            <h1 className="text-5xl sm:text-5xl md:text-6xl lg:text-8xl font-bold tracking-tight">Helping You<br /><span className="inline-flex items-center text-left"><span className={`${TYPING_WORDS[currentWordIndex].color}`}>#</span><span className={`inline-block ${TYPING_WORDS[currentWordIndex].color}`}>{displayText}</span><span className="text-foreground ml-1">More
-            <span className="inline-block h-[0.8em] w-[2px] animate-blink bg-foreground ml-1" /></span></span></h1>
+            <h1 className="text-5xl sm:text-5xl md:text-6xl lg:text-8xl font-bold tracking-tight">Helping You<br /><span className="inline-flex items-center text-left"><span className={`${TYPING_WORDS[currentWordIndex].color}`}>#</span><span className={`inline-block ${TYPING_WORDS[currentWordIndex].color}`}>{displayText}</span><span className="inline-block h-[0.8em] w-[2px] animate-blink bg-foreground ml-1" /><span className="text-foreground ml-1">More
+            </span></span></h1>
             
             <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto mt-6 px-4 sm:px-0">The Microsoft Student Community at NU Laguna empowers students to learn, connect, and build the future.</p>
             

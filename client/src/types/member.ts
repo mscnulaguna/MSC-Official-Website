@@ -11,7 +11,7 @@ export interface Member {
   program: string;
   year: string;
   tier: "General" | "Officer" | "Core" | "Executive";
-  guild: [string] | [string, string] | null;
+  guild: string[] | null;
   memberSince: string;
   membershipStatus: string;
   email: string;

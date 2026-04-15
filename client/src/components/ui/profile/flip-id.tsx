@@ -24,7 +24,12 @@ export default function FlippableIDCard({ member, enlarged = false }: FlippableI
         role="button"
         aria-label="Flip ID card"
         tabIndex={0}
-        onKeyDown={(e) => e.key === "Enter" && setFlipped((f) => !f)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            if (e.key === " ") e.preventDefault();
+            setFlipped((f) => !f);
+          }
+        }}
       >
         {/* Flip container — absolutely fills the ratio box */}
         <div

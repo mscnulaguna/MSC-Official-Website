@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, type ChangeEvent, type ReactNode } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,7 +19,7 @@ export default function ProfileSidebar({ member, onPhotoChange }: ProfileSidebar
     .map((n) => n[0])
     .join("");
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       onPhotoChange?.(file);
