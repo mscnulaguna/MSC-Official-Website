@@ -111,11 +111,11 @@ export default function LoginPage(): JSX.Element {
 
             {apiError && (
               <Alert
-                variant="destructive"
+                variant="warning"
                 className="mb-5 border-danger bg-danger-bg rounded-none [&>svg]:text-danger animate-in fade-in slide-in-from-top-1 duration-200"
               >
-                <AlertCircle className="w-4 h-4" />
-                <AlertDescription className="text-danger-text">
+                <AlertCircle className="w-4 h-4 text-foreground" />
+                <AlertDescription className="text-foreground">
                   {apiError}
                 </AlertDescription>
               </Alert>
