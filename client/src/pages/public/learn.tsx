@@ -1,11 +1,11 @@
 import { useEffect, useState, type JSX } from "react"
-import { Card, CardContent } from "../components/ui/card"
-import { Badge } from "../components/ui/badge"
-import { Button } from "../components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar"
+import { Card, CardContent } from "../../components/ui/card"
+import { Badge } from "../../components/ui/badge"
+import { Button } from "../../components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar"
 import { Link } from "react-router-dom"
 import { Users } from "lucide-react"
-import { getInitials } from "../lib/utils"
+import { getInitials } from "../../lib/utils"
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api"
 const USE_API = false // Set to true when backend is ready
