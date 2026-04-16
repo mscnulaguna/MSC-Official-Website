@@ -27,6 +27,8 @@ const mscButtonVariants = cva(baseButtonStyles, {
           "border-[var(--info)] bg-transparent text-[var(--info)] hover:bg-[var(--info)] hover:text-white",
       outlineDestructive:
           "border-[var(--destructive)] bg-transparent text-[var(--destructive)] hover:bg-[var(--destructive)] hover:text-white",
+      outlineGrey:
+          "border-input bg-transparent text-muted-foreground hover:bg-input hover:text-foreground",
       
       secondary: "bg-secondary text-secondary-foreground hover:brightness-90",
       ghost: "hover:bg-muted hover:text-foreground dark:hover:bg-muted/50",

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Label } from "@/components/ui/label"
 import { DatePicker } from "@/components/ui/custom"
-import { Link } from "react-router-dom"
+import { Link, useSearchParams } from "react-router-dom"
 import type { Event } from "@/types/events"
 import { getPastEvents, getUpcomingEvents } from "@/data/mockEvents"
 import { formatEventDate, formatEventTime } from "@/lib/event-datetime"
@@ -112,6 +112,9 @@ function EventsGrid({
 
 // event tabs
 export default function Activities() {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tabParam = searchParams.get('tab') || 'upcoming'
+  
   // mock data for now - replace w API calls
   const upcomingEvents = getUpcomingEvents()
   const pastEvents = getPastEvents()
@@ -129,7 +132,7 @@ export default function Activities() {
           </p>
         </header>
 
-        <Tabs defaultValue="upcoming" className="mt-8">
+        <Tabs value={tabParam} onValueChange={(val) => setSearchParams({ tab: val })} className="mt-8">
           <TabsList className="mx-auto flex h-auto w-fit">
             <TabsTrigger value="upcoming">Upcoming Events</TabsTrigger>
             <TabsTrigger value="past">Past Events</TabsTrigger>

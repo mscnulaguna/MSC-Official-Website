@@ -3,6 +3,7 @@ import Home from '@/pages/home'
 import AboutPage from '@/pages/about'
 import PartnersPage from '@/pages/partners'
 import LearnPage from '@/pages/learn'
+import GuildJoin from '@/pages/guild-join'
 import Activities from './pages/activities'
 import EventDetails from '@/pages/event-details'
 import Login from '@/pages/login'
@@ -66,6 +67,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/learn" element={<LearnPage />} />
+        <Route path="/learn/:guildId" element={<GuildJoin />} />
         <Route path="/activities" element={<Activities />} />
         <Route path="/activities/:eventId" element={<EventDetails />} />
         <Route path="/partners" element={<PartnersPage />} />
