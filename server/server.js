@@ -2,7 +2,7 @@
 require('dotenv').config();
 
 // Import Express app
-const app = require('./app');
+const app = require('../app');
 
 // Use port 80 by default in production, 5000 otherwise
 const PORT = process.env.NODE_ENV === 'production' ? (process.env.PORT || 80) : (process.env.PORT || 5000);
