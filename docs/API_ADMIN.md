@@ -210,10 +210,10 @@ Update a user's details (fullName, yearLevel, course).
 
 ---
 
-### `GET /admin/users/:userId/temporary-password`
+### `POST /admin/users/:userId/reset-temporary-password`
 
-Retrieve the current temporary password for a user who has not yet logged in.  
-Temporary passwords **expire after 24 hours**.
+Generate a fresh temporary password for a user and return it once in the response.  
+The system stores only hashed password values in the database.
 
 #### Response `200 OK`
 
@@ -232,17 +232,20 @@ Temporary passwords **expire after 24 hours**.
 
 #### Error Responses
 
-| Status | Code                   | Reason                                          |
-|--------|------------------------|-------------------------------------------------|
-| `400`  | `NO_TEMP_PASSWORD`     | User already changed their password             |
-| `400`  | `TEMP_PASSWORD_EXPIRED`| Temporary password older than 24h, reset needed |
+| Status | Code               | Reason                          |
+|--------|--------------------|---------------------------------|
+| `400`  | `VALIDATION_ERROR` | Missing `userId`                |
+| `401`  | `UNAUTHORIZED`     | Missing or invalid token        |
+| `403`  | `FORBIDDEN`        | Authenticated user is not admin |
+| `404`  | `NOT_FOUND`        | User not found                  |
+| `500`  | `INTERNAL_ERROR`   | Server error                    |
 
 ---
 
 ### `POST /admin/users/send-credentials`
 
 Send a welcome email containing login credentials to one or more selected users.  
-Uses the user's existing temporary password if they have not logged in yet; generates a fresh one if they already changed it.  
+Always generates a fresh temporary password, stores only hashes, and emails the new plaintext password once.  
 Emails are delivered to the student's `@students.nu-laguna.edu.ph` Outlook inbox via the configured SMTP sender.
 
 > Requires `SMTP_HOST`, `SMTP_USER`, and `SMTP_PASS` to be set in `.env`. Silently skips if SMTP is not configured.
