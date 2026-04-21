@@ -13,7 +13,7 @@ import FallbackPage from "./pages/fallback/fallback-page"
 import ProfilePage from "@/pages/profile"
 import { sampleMember } from '@/data/mockMember'
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '') || "http://localhost:5000"
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
 
 const FOOTER_HIDE_PATHS = new Set([
   '/login',
