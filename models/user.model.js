@@ -189,14 +189,43 @@ async function verifyPassword(plainPassword, hashedPassword) {
   return bcrypt.compare(plainPassword, hashedPassword);
 }
 
-// Bulk update temporary passwords for multiple users
-// updates = [{ userId, tempPassword, hashedPassword }]
+// Bulk update temporary passwords for multiple users.
+// Contract: updates = [{ userId, tempPassword, hashedPassword }]
 async function bulkResetPasswords(updates) {
-  // updates = [{ userId, tempPassword, hashedPassword }]
-  // tempPassword is the plaintext value; it is hashed before storage
+  if (!Array.isArray(updates) || updates.length === 0) {
+    throw new TypeError('bulkResetPasswords expects a non-empty updates array');
+  }
+
+  // Validate/normalize payload so wrong callsites fail fast with a clear error.
+  const normalizedUpdates = updates.map((update, index) => {
+    if (!update || typeof update !== 'object') {
+      throw new TypeError(`bulkResetPasswords: updates[${index}] must be an object`);
+    }
+
+    const { userId, tempPassword, hashedPassword } = update;
+
+    if (userId === undefined || userId === null || userId === '') {
+      throw new TypeError(`bulkResetPasswords: updates[${index}].userId is required`);
+    }
+
+    if (typeof tempPassword !== 'string' || tempPassword.trim().length === 0) {
+      throw new TypeError(`bulkResetPasswords: updates[${index}].tempPassword must be a non-empty string`);
+    }
+
+    if (typeof hashedPassword !== 'string' || hashedPassword.trim().length === 0) {
+      throw new TypeError(`bulkResetPasswords: updates[${index}].hashedPassword must be a non-empty string`);
+    }
+
+    return {
+      userId,
+      tempPassword,
+      hashedPassword,
+    };
+  });
+
   const connection = await pool.getConnection();
   try {
-    for (const update of updates) {
+    for (const update of normalizedUpdates) {
       const hashedTempPassword = await bcrypt.hash(update.tempPassword, 10);
       await connection.execute(
         `UPDATE users SET 
