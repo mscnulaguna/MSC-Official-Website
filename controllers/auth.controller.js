@@ -91,18 +91,10 @@ async function login(req, res) {
       });
     }
 
-    // Check if password matches regular password
-    let passwordMatch = await verifyPassword(password, user.password);
-
-    // If regular password doesn't match, check if it's a temporary password
-    if (!passwordMatch && user.temporaryPassword) {
-      const tempPasswordMatch = await bcrypt.compare(password, user.temporaryPassword);
-      if (tempPasswordMatch) {
-        passwordMatch = true;
-        console.log(`[AUTH] Login with temporary password for user ${email}`);
-        await clearTemporaryPassword(user.id);
-      }
-    }
+    // Authenticate using the primary password hash only.
+    // Temp passwords are treated as the initial account password,
+    // while requiresPasswordChange remains the gate to force rotation.
+    const passwordMatch = await verifyPassword(password, user.password);
 
     if (!passwordMatch) {
       console.log(`[AUTH] Login failed: Password mismatch for user ${email}`);
