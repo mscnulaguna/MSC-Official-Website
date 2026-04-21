@@ -1,15 +1,17 @@
 import { useId, useMemo, useState } from 'react'
-import { ChevronDown, Menu, Search } from 'lucide-react'
+import { ChevronDown, Menu, Search, LogOut } from 'lucide-react'
 import { Drawer, DrawerContent, DrawerClose } from '@/components/ui/drawer'
 import { Button } from '@/components/ui/button'
 import circleHalfBlackSvg from '@/assets/icons/circle-half-black.svg?raw'
 import { useTheme } from '@/context/ThemeContext'
 import { NAV_ITEMS, type NavItem } from '@/config/navigation'
 import { Separator } from '@/components/ui/separator'
-import { InputGroup, InputGroupContent, InputGroupPrefix } from '../input-group'
+import { InputGroup } from '../input-group'
+import { SearchDialog } from './SearchDialog'
 
 interface MobileNavDrawerProps {
   onNavigate?: () => void
+  isLoggedIn?: boolean
 }
 
 type CollapsibleNavItemProps = Readonly<{
@@ -28,7 +30,7 @@ function CollapsibleNavItem({
     return (
       <a
         href={item.href}
-        className="block w-full px-4 py-3 text-base font-medium border-b border-border/40 hover:bg-muted/50 transition-colors"
+        className="block w-full px-4 py-3 text-base font-normal border-b border-border/40 hover:bg-muted/50 transition-colors"
         onClick={onNavigate}
       >
         {item.label}
@@ -40,7 +42,7 @@ function CollapsibleNavItem({
     <div className="border-b border-border/40">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex w-full items-center justify-between px-4 py-3 text-base font-medium hover:bg-muted/50 transition-colors"
+        className="flex w-full items-center justify-between px-4 py-3 text-base font-normal hover:bg-muted/50 transition-colors"
       >
         {item.label}
         <ChevronDown
@@ -55,7 +57,7 @@ function CollapsibleNavItem({
             <a
               key={subitem.href}
               href={subitem.href}
-              className="block w-full pl-8 pr-4 py-3 text-sm font-medium text-foreground/80 hover:bg-muted/50 hover:text-foreground transition-colors border-b border-border/40 last:border-b-0"
+              className="block w-full pl-8 pr-4 py-3 text-sm font-normal text-foreground/80 hover:bg-muted/50 hover:text-foreground transition-colors border-b border-border/40 last:border-b-0"
               onClick={onNavigate}
             >
               {subitem.label}
@@ -67,8 +69,12 @@ function CollapsibleNavItem({
   )
 }
 
-export function MobileNavDrawer({ onNavigate }: Readonly<MobileNavDrawerProps>) {
+export function MobileNavDrawer({
+  onNavigate,
+  isLoggedIn = false,
+}: Readonly<MobileNavDrawerProps>) {
   const [isOpen, setIsOpen] = useState(false)
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
   const { isDarkMode, toggleDarkMode } = useTheme()
   const instanceId = useId()
 
@@ -96,21 +102,30 @@ export function MobileNavDrawer({ onNavigate }: Readonly<MobileNavDrawerProps>) 
         <Menu className="h-5 w-5" />
       </Button>
 
+      {/* Search Dialog - Same as desktop */}
+      <SearchDialog open={isSearchOpen} onOpenChange={setIsSearchOpen} />
+
       {/* Drawer Content with built-in animation */}
       <DrawerContent
-        showOverlay={false}
-        className="fixed !inset-y-auto !top-16 !left-0 !h-[calc(100vh-64px)] !w-full !max-w-none rounded-none flex flex-col !border-l-0 border-t border-border bg-background"
+        className="flex flex-col"
       >
         <Separator />
         {/* Search and Theme Toggle Row */}
         <div className="flex items-center gap-3 p-4 border-b border-border/40">
-          {/* Search bar - 3/4 width */}
-          <InputGroup className="flex-1 bg-muted/50 border border-border/40">
-            <InputGroupPrefix>
-              <Search className="h-4 w-4 text-muted-foreground" />
-            </InputGroupPrefix>
-            <InputGroupContent placeholder="Search..." aria-label="Search" />
-          </InputGroup>
+          {/* Search Input - Same as desktop, opens SearchDialog */}
+          <button
+            type="button"
+            className="flex-1"
+            onClick={() => setIsSearchOpen(true)}
+            aria-label="Open search"
+          >
+            <InputGroup className="w-full bg-muted/50 border border-border/40 cursor-pointer">
+              <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
+              <span className="w-full flex-1 pl-9 pr-3 text-left text-sm text-muted-foreground select-none">
+                Search...
+              </span>
+            </InputGroup>
+          </button>
           
           {/* Dark/Light toggle */}
           <button
@@ -142,12 +157,23 @@ export function MobileNavDrawer({ onNavigate }: Readonly<MobileNavDrawerProps>) 
           </nav>
         </div>
 
-        {/* Sign Up Button - Bottom */}
+        {/* Sign Up / Log Out Button - Bottom */}
         <div className="p-4 border-t border-border/40">
           <DrawerClose asChild>
-            <Button className="w-full" onClick={handleNavigate}>
-              Sign Up
-            </Button>
+            {!isLoggedIn ? (
+              <Button className="w-full" onClick={handleNavigate}>
+                Sign Up
+              </Button>
+            ) : (
+              <Button
+                variant="destructive"
+                className="w-full flex items-center gap-2"
+                onClick={handleNavigate}
+              >
+                <LogOut className="h-4 w-4" />
+                Log Out
+              </Button>
+            )}
           </DrawerClose>
         </div>
       </DrawerContent>

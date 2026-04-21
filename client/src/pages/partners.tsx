@@ -3,7 +3,7 @@ import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
 import { Label } from "../components/ui/label";
 import { Card, CardContent } from "../components/ui/card";
-import { useEffect, useState, type JSX, type ChangeEvent, type CSSProperties } from "react";
+import { useEffect, useState, type JSX, type ChangeEvent, type CSSProperties, type SyntheticEvent } from "react";
 import mscLogo from "../assets/logos/msclogo.svg";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
@@ -106,17 +106,24 @@ const ContactForm = (): JSX.Element => {
     const [sending, setSending] = useState(false);
     const [sent, setSent] = useState(false);
 
+    // Using type-only imports and removing the React. prefix
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        setForm((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    // Removed the deprecated generic <HTMLFormElement> from FormEvent
+    const handleSubmit = async (e: SyntheticEvent) => {
         e.preventDefault();
         setSending(true);
+
+        // Mock API call
         await new Promise((r) => setTimeout(r, 1000));
+
         setSending(false);
         setSent(true);
         setForm({ companyName: "", contactName: "", email: "", message: "" });
+        
         setTimeout(() => setSent(false), 4000);
     };
 
@@ -166,7 +173,7 @@ const ContactForm = (): JSX.Element => {
                         value={form.message}
                         onChange={handleChange}
                         placeholder="Tell us about your partnership interests..."
-                        className="resize-none"
+                        className="resize-y"
                     />
                 </div>
                 <Button
@@ -174,7 +181,12 @@ const ContactForm = (): JSX.Element => {
                     disabled={sending || sent}
                     className="w-full text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    {sending ? "Sending..." : sent ? "Message sent! We'll get back to you shortly." : "Submit"}
+                    {sending 
+                        ? "Sending..." 
+                        : sent 
+                            ? "Message sent! We'll get back to you shortly." 
+                            : "Submit"
+                    }
                 </Button>
             </form>
         </div>

@@ -323,30 +323,34 @@ export default function AboutPage() {
   return (
     <div className="min-h-[70vh] w-full overflow-x-hidden pb-24 font-sans">
       {/* Section 1: Vision and Mission */}
-      <section className="relative min-h-screen w-full overflow-hidden">
+      <section className="relative w-full overflow-hidden">
         
-        <img
-          src={bulbBg}
-          aria-hidden="true"
-          alt=""
-          className="pointer-events-none absolute -left-5 -top-3 z-0 w-[180px] md:w-[260px] lg:w-[400px]"
-        />
-        <img
-          src={targetBg}
-          aria-hidden="true"
-          alt=""
-          className="pointer-events-none absolute right-0 -bottom-7 z-0 w-[180px] md:w-[260px] lg:w-[400px]"
-        />
+        <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none">
+          <div className="relative w-full max-w-7xl h-full">
+            <img
+              src={bulbBg}
+              aria-hidden="true"
+              alt=""
+              className="absolute -left-5 -top-3 w-[180px] md:w-[260px] lg:w-[400px]"
+            />
+            <img
+              src={targetBg}
+              aria-hidden="true"
+              alt=""
+              className="absolute right-0 -bottom-7 w-[180px] md:w-[260px] lg:w-[400px]"
+            />
+          </div>
+        </div>
 
-    		<div className="relative z-10 section-container px-4 flex min-h-screen items-center justify-center">
-          <div className="grid w-full max-w-7xl grid-cols-1 gap-8 md:max-w-4xl md:grid-cols-2">
-            <Card>
+    		<div className="relative z-10 section-container px-4 flex items-center justify-center py-24 sm:py-28 md:py-40 lg:py-48">
+          <div className="grid w-full max-w-4xl grid-cols-1 gap-8 md:grid-cols-2">
+            <Card className="min-h-80">
               <CardHeader>
-                <img src={visionIcon} alt="" aria-hidden="true" className="h-7 w-7" />
-                <CardTitle className="text-lg font-bold">VISION</CardTitle>
+                <img src={visionIcon} alt="" aria-hidden="true" className="h-8 w-8" />
+                <CardTitle className="text-xl font-bold">VISION</CardTitle>
               </CardHeader>
-              <CardContent>
-                <CardDescription>
+              <CardContent className="flex-grow">
+                <CardDescription className="md:text-base">
                   The organization envisions a community where students are
                   empowered with technical knowledge, equipped with
                   problem-solving skills, and driven to use technology as a tool
@@ -355,13 +359,13 @@ export default function AboutPage() {
               </CardContent>
             </Card>
 
-            <Card className="dark:bg-muted/30">
+            <Card className="dark:bg-muted/30 min-h-80">
               <CardHeader>
-                <img src={missionIcon} alt="" aria-hidden="true" className="h-7 w-7" />
-                <CardTitle className="text-lg font-bold">MISSION</CardTitle>
+                <img src={missionIcon} alt="" aria-hidden="true" className="h-8 w-8" />
+                <CardTitle className="text-xl font-bold">MISSION</CardTitle>
               </CardHeader>
-              <CardContent>
-                <CardDescription>
+              <CardContent className="flex-grow">
+                <CardDescription className="md:text-base">
                   The mission of MSC – NU Laguna is to provide a platform for
                   students to learn, grow, and connect with others who share an
                   interest in technology. The organization aims to support
@@ -382,15 +386,15 @@ export default function AboutPage() {
           <h1 className={`pb-8 text-5xl sm:text-6xl lg:text-7xl font-bold inline-block gradient-text`}>
             WHAT WE DO
           </h1>
-          <p className="sm:text-sm lg:text-lg max-w-4xl mx-auto text-sm font-medium -mt-2 text-foreground">We're not just doing things to fill up our calendar</p>
-          <p className="sm:text-sm lg:text-lg max-w-4xl mx-auto text-sm mt-2 text-muted-foreground">
+          <p className="sm:text-sm lg:text-lg max-w-6xl mx-auto text-sm font-medium -mt-2 text-foreground">We're not just doing things to fill up our calendar</p>
+          <p className="sm:text-sm lg:text-lg max-w-6xl mx-auto text-sm mt-2 text-muted-foreground">
             Here, we don’t believe in busywork. Everything we do has a reason — and that reason is, well, 
             "so our members stop saying they’re not ready for the real world." 
             We create space for students to learn, experiment, connect, and build things that matter 
             (and look cool on a resume, too).
           </p>
 
-          <div className="mx-auto mt-10 w-full max-w-4xl space-y-5 text-left">
+          <div className="mx-auto mt-10 w-full max-w-6xl space-y-5 text-left">
             {WHAT_WE_DO.map((item, index) => (
               <WhatWeDoCard key={item.title} item={item} index={index} />
             ))}
@@ -411,7 +415,7 @@ export default function AboutPage() {
             onValueChange={setActiveTeam}
             className="w-full items-center"
           >
-            <TabsList className="mx-auto h-auto w-full max-w-6xl flex-wrap justify-center gap-2">
+            <TabsList className="h-auto w-fit mx-auto flex-wrap justify-center gap-2">
               {teamKeys.map((key) => (
                 <TabsTrigger key={key} value={key} className="whitespace-nowrap">
                   {TEAMS[key].label}
@@ -419,13 +423,13 @@ export default function AboutPage() {
               ))}
             </TabsList>
 
-            <p className="mx-auto mt-6 max-w-3xl text-3xl font-bold text-primary sm:text-4xl">
+            <p className="mx-auto mt-6 max-w-5xl text-3xl font-bold text-primary sm:text-4xl">
               {(activeTeamData?.label ?? "").toUpperCase()}
             </p>
 
             {activeTeamData?.description ? (
-              <div className="mx-auto mt-2 flex min-h-[52px] max-w-3xl items-center justify-center">
-                <p className="sm:text-sm lg:text-lg max-w-4xl mx-auto text-sm mt-2 text-muted-foreground">
+              <div className="mx-auto mt-2 flex min-h-[52px] max-w-5xl items-center justify-center">
+                <p className="sm:text-sm lg:text-lg max-w-5xl mx-auto text-sm mt-2 text-muted-foreground">
                   {activeTeamData.description}
                 </p>
               </div>
