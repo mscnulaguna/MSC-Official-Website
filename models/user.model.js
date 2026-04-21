@@ -190,7 +190,7 @@ async function verifyPassword(plainPassword, hashedPassword) {
 }
 
 // Bulk update temporary passwords for multiple users
-// updates = [{ userId, hashedTemporaryPassword, hashedPassword }]
+// updates = [{ userId, tempPassword, hashedPassword }]
 async function bulkResetPasswords(updates) {
   // updates = [{ userId, tempPassword, hashedPassword }]
   // tempPassword is the plaintext value; it is hashed before storage

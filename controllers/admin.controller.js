@@ -474,9 +474,8 @@ async function bulkPasswordReset(req, res) {
 
         const tempPassword = generateTemporaryPassword();
         const hashedPassword = await bcrypt.hash(tempPassword, 10);
-        const hashedTemporaryPassword = await bcrypt.hash(tempPassword, 10);
 
-        await bulkResetPasswords([{ userId, hashedTemporaryPassword, hashedPassword }]);
+        await bulkResetPasswords([{ userId, tempPassword, hashedPassword }]);
 
         results.push({
           userId: user.id,
