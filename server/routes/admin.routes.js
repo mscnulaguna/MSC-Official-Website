@@ -1,6 +1,5 @@
 // Import Express and admin controller functions
-// const express = require('express');
-import express from 'express';
+const express = require('express');
 const {
   createUserWithTempPassword,
   getAllUsersList,

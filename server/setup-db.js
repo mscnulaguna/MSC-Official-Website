@@ -1,7 +1,7 @@
 // Database setup: creates DB, tables, and seeds admin user
-import mysql from 'mysql2/promise';
-import bcrypt from 'bcryptjs';
-import dotenv from 'dotenv';
+const mysql = require('mysql2/promise');
+const bcrypt = require('bcryptjs');
+const dotenv = require('dotenv');
 
 dotenv.config();
 

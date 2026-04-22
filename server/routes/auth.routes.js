@@ -1,6 +1,5 @@
 // Import Express and auth controller functions
-// const express = require('express');
-import express from 'express';
+const express = require('express');
 const { login, refresh, logout, changePassword, updateProfile } = require('../controllers/auth.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
 const { publicLimiter } = require('../middlewares/rateLimit');

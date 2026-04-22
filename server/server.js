@@ -1,7 +1,7 @@
 // Load environment variables
-import dotenv from 'dotenv';
-import app from './app.js';
+const dotenv = require('dotenv');
 dotenv.config();
+const app = require('./app');
 
 // Use port 80 by default in production, 5000 otherwise
 const PORT = process.env.NODE_ENV === 'production' ? (process.env.PORT || 80) : (process.env.PORT || 5000);

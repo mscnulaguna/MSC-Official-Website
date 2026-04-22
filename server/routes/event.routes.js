@@ -1,6 +1,5 @@
 // Import Express and event controller functions
-// const express = require('express');
-import express from 'express';
+const express = require('express');
 const fs = require('fs');
 const multer = require('multer');
 const path = require('path');

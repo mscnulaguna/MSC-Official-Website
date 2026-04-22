@@ -1,6 +1,5 @@
 // Import Express and partner controller functions
-// const express = require('express');
-import express from 'express';
+const express = require('express');
 const { listPartners, createNewPartner } = require('../controllers/partner.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
 const roleMiddleware = require('../middlewares/role.middleware');

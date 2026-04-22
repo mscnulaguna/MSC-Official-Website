@@ -1,12 +1,17 @@
 // Import dependencies
-// const express = require('express');
+const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const { publicLimiter, authLimiter } = require('../middlewares/rateLimit');
-import express from 'express';
-// import cors from 'cors';
-// import path from 'path';
-// import { publicLimiter, authLimiter } from './middlewares/rateLimit.js';
+const { publicLimiter, authLimiter } = require('./middlewares/rateLimit');
+
+const authRoutes = require('./routes/auth.routes');
+const adminRoutes = require('./routes/admin.routes');
+const userRoutes = require('./routes/user.routes');
+const eventRoutes = require('./routes/event.routes');
+const guildRoutes = require('./routes/guild.routes');
+const announcementRoutes = require('./routes/announcement.routes');
+const partnerRoutes = require('./routes/partner.routes');
+const integrationRoutes = require('./routes/integration.routes');
 
 // Create Express app
 const app = express();
@@ -63,14 +68,14 @@ app.get('/health', (req, res) => {
 app.use('/api/v1', authLimiter);
 
 // Mount all API route modules
-app.use('/api/v1/auth', require('./routes/auth.routes'));
-app.use('/api/v1/admin', require('./routes/admin.routes'));
-app.use('/api/v1/users', require('./routes/user.routes.js'));
-app.use('/api/v1/events', require('./routes/event.routes'));
-app.use('/api/v1/guilds', require('./routes/guild.routes'));
-app.use('/api/v1/announcements', require('./routes/announcement.routes'));
-app.use('/api/v1/partners', require('./routes/partner.routes'));
-app.use('/api/v1/integrations', require('./routes/integration.routes'));
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/admin', adminRoutes);
+app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/events', eventRoutes);
+app.use('/api/v1/guilds', guildRoutes);
+app.use('/api/v1/announcements', announcementRoutes);
+app.use('/api/v1/partners', partnerRoutes);
+app.use('/api/v1/integrations', integrationRoutes);
 
 // Catch-all 404 handler for undefined routes
 app.use((req, res) => {
@@ -94,4 +99,4 @@ app.use((err, req, res, next) => {
 });
 
 // Export the configured Express app
-export default app;
+module.exports = app;
