@@ -55,7 +55,7 @@ router.get('/:id', getEventByIdHandler);
 // Event creation (officers/admins only)
 router.post('/', authMiddleware, roleMiddleware(['officer', 'admin']), createNewEvent);
 
-// Event cover image upload (officers/admins only) - MUST be before /:id route
+// Event cover image upload (officers/admins only)
 router.post('/upload/cover', authMiddleware, roleMiddleware(['officer', 'admin']), upload.single('coverImage'), uploadEventCoverImage);
 
 // Event registration (members only)
