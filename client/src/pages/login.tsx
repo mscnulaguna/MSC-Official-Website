@@ -6,6 +6,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react"
 import abstractIcon from '@/assets/shapes/abstracticons.svg'
 
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
 const NU_EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@students\.nu-laguna\.edu\.ph$/
 
 function validate(email: string, password: string) {
@@ -65,7 +66,7 @@ export default function LoginPage(): JSX.Element {
     setApiError("")
 
     try {
-      const res = await fetch("https://api.msc-nulaguna.org/v1/auth/login", {
+      const res = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
         body:    JSON.stringify({ email, password }),

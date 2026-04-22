@@ -5,6 +5,15 @@ services:
       dockerfile: Dockerfile
     environment:
       - NODE_ENV=production
+      - DB_HOST=db       # Points to the local Docker database
+      - DB_USER=root
+      - DB_PASSWORD=AkiCooperMochi2304
+      - DB_NAME=msc_nulaguna
+    ports:
+      - "5000:80"        # Expose port 80 from the container to port 5000 on the host
+    volumes:
+      - ./server:/app    # Mount the server code for development
+      - /app/node_modules   # Ensure node_modules is not overwritten
     networks:
       - internal
     
