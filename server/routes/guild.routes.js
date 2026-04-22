@@ -1,5 +1,6 @@
 // Import Express and guild controller functions
-const express = require('express');
+// const express = require('express');
+import express from 'express';
 const {
   listGuilds,
   getGuild,

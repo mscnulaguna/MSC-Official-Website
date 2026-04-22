@@ -1,5 +1,6 @@
 // Import Express and user controller functions
-const express = require('express');
+// const express = require('express');
+import express from 'express';
 const { getMe, updateMe, uploadProfilePhoto, getAvatarPresets, selectAvatar, listAllMembers, updateUserRole, deactivateUser } = require('../controllers/user.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
 const roleMiddleware = require('../middlewares/role.middleware');

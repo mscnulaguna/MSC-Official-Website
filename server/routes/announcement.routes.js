@@ -1,5 +1,6 @@
 // Import Express and announcement controller functions
-const express = require('express');
+// const express = require('express');
+import express from 'express';
 const { listAnnouncements, createNewAnnouncement } = require('../controllers/announcement.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
 const roleMiddleware = require('../middlewares/role.middleware');

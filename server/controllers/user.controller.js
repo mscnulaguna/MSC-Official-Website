@@ -1,7 +1,7 @@
 // Import user database functions
 const { findUserById, getAllUsers, updateUser, getUserGuilds, getBulkUserGuilds } = require('../models/user.model');
-const { syncInBackground } = require('../services/sharepoint.service');
-const { AVATAR_PRESETS } = require('../utils/avatars');
+const { syncInBackground } = require('../../services/sharepoint.service');
+const { AVATAR_PRESETS } = require('../../utils/avatars');
 const QRCode = require('qrcode');
 
 // Get current authenticated user profile

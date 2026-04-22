@@ -1,8 +1,12 @@
 // Import dependencies
-const express = require('express');
+// const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const { publicLimiter, authLimiter } = require('./middlewares/rateLimit');
+const { publicLimiter, authLimiter } = require('../middlewares/rateLimit');
+import express from 'express';
+// import cors from 'cors';
+// import path from 'path';
+// import { publicLimiter, authLimiter } from './middlewares/rateLimit.js';
 
 // Create Express app
 const app = express();
@@ -61,7 +65,7 @@ app.use('/api/v1', authLimiter);
 // Mount all API route modules
 app.use('/api/v1/auth', require('./routes/auth.routes'));
 app.use('/api/v1/admin', require('./routes/admin.routes'));
-app.use('/api/v1/users', require('./routes/user.routes'));
+app.use('/api/v1/users', require('./routes/user.routes.js'));
 app.use('/api/v1/events', require('./routes/event.routes'));
 app.use('/api/v1/guilds', require('./routes/guild.routes'));
 app.use('/api/v1/announcements', require('./routes/announcement.routes'));
@@ -90,4 +94,4 @@ app.use((err, req, res, next) => {
 });
 
 // Export the configured Express app
-module.exports = app;
+export default app;
