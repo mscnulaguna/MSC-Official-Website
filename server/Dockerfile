@@ -15,8 +15,8 @@ COPY --chown=node:node . .
 # install dependencies.
 # we use 'npm ci' (clean install) instead of 'npm install' to strictly follow package-lock.json to not accidentally upgrade packages in production.
 # remove any node_modules that may have been copied from the host to avoid overriding the clean install.
-RUN rm -rf node_modules && npm ci --only=production
-# RUN npm install --omit=dev
+# RUN rm -rf node_modules && npm ci --only=production
+RUN npm install --omit=dev
 # expose the port the Express server runs on (default is 5000). 
 EXPOSE 80
 
