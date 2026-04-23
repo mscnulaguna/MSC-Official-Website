@@ -5,13 +5,38 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function connectWithRetry(maxAttempts = 30, delayMs = 2000) {
+  let lastError;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      return await mysql.createConnection({
+        host: process.env.DB_HOST || 'localhost',
+        user: process.env.DB_USER || 'root',
+        password: process.env.DB_PASSWORD || '',
+      });
+    } catch (error) {
+      lastError = error;
+      console.log(
+        `[db-init] Waiting for MySQL (${attempt}/${maxAttempts}): ${error.code || error.message}`
+      );
+
+      if (attempt < maxAttempts) {
+        await sleep(delayMs);
+      }
+    }
+  }
+
+  throw lastError;
+}
+
 async function setup() {
   // Connect without specifying DB first to create it
-  const conn = await mysql.createConnection({
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
-  });
+  const conn = await connectWithRetry();
 
   const dbName = process.env.DB_NAME || 'msc_nulaguna';
 
