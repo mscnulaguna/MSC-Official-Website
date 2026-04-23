@@ -12,8 +12,9 @@ import { Footer } from "@/components/ui/layout/Footer"
 import FallbackPage from "./pages/fallback/fallback-page"
 import ProfilePage from "@/pages/profile"
 import { sampleMember } from '@/data/mockMember'
+import { getApiBaseUrl } from '@/lib/api'
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
+const API_BASE_URL = getApiBaseUrl()
 
 const FOOTER_HIDE_PATHS = new Set([
   '/login',
@@ -49,7 +50,7 @@ export default function App() {
 
   const fetchMessage = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/hello`, { cache: 'no-store' })
+      const res = await fetch(`${API_BASE_URL}/hello`, { cache: 'no-store' })
       if (!res.ok) throw new Error(`Request failed: ${res.status}`)
       const data = await res.json()
       console.log('Backend response:', data?.message ?? data)

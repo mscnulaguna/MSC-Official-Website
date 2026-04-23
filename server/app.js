@@ -16,6 +16,9 @@ const integrationRoutes = require('./routes/integration.routes');
 // Create Express app
 const app = express();
 
+// App is deployed behind nginx in Docker, so trust proxy headers from it.
+app.set('trust proxy', 1);
+
 // Parse JSON and URL-encoded request bodies
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
@@ -61,6 +64,11 @@ app.get('/test', (req, res) => {
 // Basic health check endpoint
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', message: 'Server is running' });
+});
+
+// Compatibility endpoints used by the frontend startup check
+app.get(['/api/hello', '/api/v1/hello'], (req, res) => {
+  res.json({ message: 'Hello from the server!' });
 });
 
 // Apply rate limiter to all /api/v1 routes (100 req/min)

@@ -5,8 +5,9 @@ import { Label } from "../components/ui/label";
 import { Card, CardContent } from "../components/ui/card";
 import { useEffect, useState, type JSX, type ChangeEvent, type CSSProperties, type SyntheticEvent } from "react";
 import mscLogo from "../assets/logos/msclogo.svg";
+import { getApiBaseUrl } from "../lib/api";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
+const API_BASE = getApiBaseUrl();
 
 // Types 
 interface Partner {
