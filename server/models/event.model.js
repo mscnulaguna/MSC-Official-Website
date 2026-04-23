@@ -5,16 +5,26 @@ const pool = require('../config/db');
 async function getAllEvents(page = 1, pageSize = 50, filters = {}) {
   const connection = await pool.getConnection();
   try {
+    const safePage = Number.isFinite(Number(page)) && Number(page) > 0 ? Math.floor(Number(page)) : 1;
+    const safePageSize = Number.isFinite(Number(pageSize)) && Number(pageSize) > 0
+      ? Math.floor(Number(pageSize))
+      : 50;
+
     let query = `
       SELECT e.*, 
              u.fullName as createdByName, 
              g.name as guildName,
              g.slug as guildSlug,
-             COUNT(DISTINCT er.id) as registeredCount
+             COALESCE(er_counts.registeredCount, 0) as registeredCount
       FROM events e
       LEFT JOIN users u ON e.created_by = u.id
       LEFT JOIN guilds g ON e.guild_id = g.id
-      LEFT JOIN event_registrations er ON e.id = er.event_id
+      LEFT JOIN (
+        SELECT event_id, COUNT(*) as registeredCount
+        FROM event_registrations
+        WHERE status != 'cancelled'
+        GROUP BY event_id
+      ) er_counts ON e.id = er_counts.event_id
       WHERE 1=1
     `;
     const params = [];
@@ -56,18 +66,17 @@ async function getAllEvents(page = 1, pageSize = 50, filters = {}) {
     const [countResult] = await connection.execute(countQuery, countParams);
     const total = countResult[0].total;
 
-    // Get paginated results sorted by start date
-    query += ` GROUP BY e.id ORDER BY e.start_date DESC LIMIT ? OFFSET ?`;
-    const offset = (page - 1) * pageSize;
-    params.push(pageSize, offset);
+    // Use literal numeric pagination values to avoid stmt arg issues with LIMIT/OFFSET.
+    const offset = (safePage - 1) * safePageSize;
+    query += ` ORDER BY e.start_date DESC LIMIT ${safePageSize} OFFSET ${offset}`;
 
     const [rows] = await connection.execute(query, params);
 
     return {
       data: rows,
       total,
-      page,
-      pageSize,
+      page: safePage,
+      pageSize: safePageSize,
     };
   } finally {
     connection.release();
@@ -84,13 +93,17 @@ async function getEventById(eventId) {
              u.fullName as createdByName,
              g.name as guildName,
              g.slug as guildSlug,
-             COUNT(DISTINCT er.id) as registeredCount
+             COALESCE(er_counts.registeredCount, 0) as registeredCount
       FROM events e
       LEFT JOIN users u ON e.created_by = u.id
       LEFT JOIN guilds g ON e.guild_id = g.id
-      LEFT JOIN event_registrations er ON e.id = er.event_id AND er.status = 'registered'
+      LEFT JOIN (
+        SELECT event_id, COUNT(*) as registeredCount
+        FROM event_registrations
+        WHERE status != 'cancelled'
+        GROUP BY event_id
+      ) er_counts ON e.id = er_counts.event_id
       WHERE e.id = ?
-      GROUP BY e.id
       `,
       [eventId]
     );
@@ -271,11 +284,15 @@ async function getEventCapacity(eventId) {
     const [rows] = await connection.execute(
       `
       SELECT e.max_capacity,
-             COUNT(DISTINCT er.id) as registeredCount
+             COALESCE(er_counts.registeredCount, 0) as registeredCount
       FROM events e
-      LEFT JOIN event_registrations er ON e.id = er.event_id AND er.status != 'cancelled'
+      LEFT JOIN (
+        SELECT event_id, COUNT(*) as registeredCount
+        FROM event_registrations
+        WHERE status != 'cancelled'
+        GROUP BY event_id
+      ) er_counts ON e.id = er_counts.event_id
       WHERE e.id = ?
-      GROUP BY e.id
       `,
       [eventId]
     );
