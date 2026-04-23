@@ -10,13 +10,9 @@ import Login from '@/pages/public/login'
 import { useEffect } from 'react'
 import { Footer } from "@/components/ui/layout/Footer"
 import FallbackPage from "./pages/fallback/fallback-page"
-<<<<<<< HEAD
-import ProfilePage from "@/pages/profile"
 import MembersPage from "@/pages/admin/members"
 import CreateNewEventPage from "@/pages/admin/create-event"
-=======
 import ProfilePage from "@/pages/public/profile"
->>>>>>> dev
 import { sampleMember } from '@/data/mockMember'
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '') || "http://localhost:5000"
