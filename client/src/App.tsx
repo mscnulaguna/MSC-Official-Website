@@ -1,18 +1,22 @@
 import { Routes, Route, useLocation } from 'react-router-dom'
-import Home from '@/pages/home'
-import AboutPage from '@/pages/about'
-import PartnersPage from '@/pages/partners'
-import LearnPage from '@/pages/learn'
-import GuildJoin from '@/pages/guild-join'
-import Activities from './pages/activities'
-import EventDetails from '@/pages/event-details'
-import Login from '@/pages/login'
+import Home from '@/pages/public/home'
+import AboutPage from '@/pages/public/about'
+import PartnersPage from '@/pages/public/partners'
+import LearnPage from '@/pages/public/learn'
+import GuildJoin from '@/pages/public/guild-join'
+import Activities from './pages/public/activities'
+import EventDetails from '@/pages/public/event-details'
+import Login from '@/pages/public/login'
 import { useEffect } from 'react'
 import { Footer } from "@/components/ui/layout/Footer"
 import FallbackPage from "./pages/fallback/fallback-page"
+<<<<<<< HEAD
 import ProfilePage from "@/pages/profile"
 import MembersPage from "@/pages/admin/members"
 import CreateNewEventPage from "@/pages/admin/create-event"
+=======
+import ProfilePage from "@/pages/public/profile"
+>>>>>>> dev
 import { sampleMember } from '@/data/mockMember'
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '') || "http://localhost:5000"
