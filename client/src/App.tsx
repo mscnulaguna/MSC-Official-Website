@@ -11,12 +11,16 @@ import { useEffect } from 'react'
 import { Footer } from "@/components/ui/layout/Footer"
 import FallbackPage from "./pages/fallback/fallback-page"
 import ProfilePage from "@/pages/profile"
+import MembersPage from "@/pages/admin/members"
+import CreateNewEventPage from "@/pages/admin/create-event"
 import { sampleMember } from '@/data/mockMember'
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '') || "http://localhost:5000"
 
 const FOOTER_HIDE_PATHS = new Set([
   '/login',
+  '/admin/members',
+  '/admin/create-event',
   '/coming-soon',
   '/maintenance',
   '/access-restricted',
@@ -32,6 +36,8 @@ const KNOWN_PATHS = new Set([
   '/partners',
   '/login',
   '/profile',
+  '/admin/members',
+  '/admin/create-event',
   '/coming-soon',
   '/maintenance',
   '/access-restricted',
@@ -72,6 +78,8 @@ export default function App() {
         <Route path="/activities/:eventId" element={<EventDetails />} />
         <Route path="/partners" element={<PartnersPage />} />
         <Route path='/profile' element={<ProfilePage member={sampleMember}/>} />
+        <Route path='/admin/members' element={<MembersPage />} />
+        <Route path='/admin/create-event' element={<CreateNewEventPage />} />
 
         {/* fallback demos  */}
         <Route path="/coming-soon"         element={<FallbackPage type="coming-soon" />} />
