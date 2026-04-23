@@ -80,6 +80,7 @@ repo-root/
 ## Setup
 
 > 📋 **New to this repo?** See the full step-by-step guide → **[../SETUP.md](../SETUP.md)**
+> 🐳 **Docker reference:** See **[./DOCKER.md](./DOCKER.md)** for compose and Dockerfile details.
 
 ### 1. Prerequisites
 

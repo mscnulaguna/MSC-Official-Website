@@ -1,6 +1,8 @@
 services:
+  # 1) Database service for local development.
   db:
     image: mysql:8.0
+    # Keep charset/collation consistent with app expectations.
     command:
       - --default-authentication-plugin=mysql_native_password
       - --character-set-server=utf8mb4
@@ -11,11 +13,14 @@ services:
     ports:
       - "3306:3306"
     volumes:
+      # Persist DB state between container restarts.
       - db_data:/var/lib/mysql
+      # Bootstrap schema on first DB initialization.
       - ./server/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
     networks:
       - internal
 
+  # 2) One-off initializer that creates/seeds required records.
   db-init:
     build:
       context: ./server
@@ -31,6 +36,7 @@ services:
     networks:
       - internal
 
+  # 3) Backend API service.
   server:
     build: 
       context: ./server
@@ -49,11 +55,13 @@ services:
     networks:
       - internal
     depends_on:
+      # Wait for DB container startup and seed completion.
       db:
         condition: service_started
       db-init:
         condition: service_completed_successfully
     
+  # 4) Frontend nginx service.
   client:
     build: 
       context: ./client
@@ -65,9 +73,11 @@ services:
     networks:
       - internal
 
+# Private bridge network for service-to-service DNS (db/server/client).
 networks:
   internal:
     driver: bridge
 
+# Named volume for durable MySQL data.
 volumes:
   db_data:
