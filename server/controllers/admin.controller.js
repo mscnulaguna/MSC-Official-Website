@@ -463,6 +463,7 @@ async function bulkPasswordReset(req, res) {
 
     const results = [];
     const errors = [];
+    const pendingResets = [];
 
     for (const userId of userIds) {
       try {
@@ -474,17 +475,39 @@ async function bulkPasswordReset(req, res) {
 
         const tempPassword = generateTemporaryPassword();
         const hashedPassword = await bcrypt.hash(tempPassword, 10);
-
-        await bulkResetPasswords([{ userId, tempPassword, hashedPassword }]);
-
-        results.push({
-          userId: user.id,
-          email: user.email,
-          fullName: user.fullName,
-          temporaryPassword: tempPassword,
+        pendingResets.push({
+          user,
+          userId,
+          tempPassword,
+          hashedPassword,
         });
       } catch (err) {
         errors.push({ userId, error: err.message });
+      }
+    }
+
+    if (pendingResets.length > 0) {
+      try {
+        await bulkResetPasswords(
+          pendingResets.map(({ userId, tempPassword, hashedPassword }) => ({
+            userId,
+            tempPassword,
+            hashedPassword,
+          }))
+        );
+
+        results.push(
+          ...pendingResets.map(({ user, tempPassword }) => ({
+            userId: user.id,
+            email: user.email,
+            fullName: user.fullName,
+            temporaryPassword: tempPassword,
+          }))
+        );
+      } catch (err) {
+        for (const reset of pendingResets) {
+          errors.push({ userId: reset.userId, error: err.message });
+        }
       }
     }
 
@@ -518,6 +541,7 @@ async function sendCredentialsToUsers(req, res) {
 
     const sent = [];
     const failed = [];
+    const pendingResets = [];
 
     for (const userId of userIds) {
       try {
@@ -531,14 +555,56 @@ async function sendCredentialsToUsers(req, res) {
         // cannot be recovered as plaintext. Reset the account and email the new plaintext once.
         const tempPassword = generateTemporaryPassword();
         const hashedPassword = await bcrypt.hash(tempPassword, 10);
-        await bulkResetPasswords([{ userId, tempPassword, hashedPassword }]);
 
-        // Await so we can accurately report per-user success vs failure
-        await sendWelcomeEmail(user, tempPassword);
-
-        sent.push({ userId: String(user.id), email: user.email, fullName: user.fullName });
+        pendingResets.push({
+          user,
+          userId,
+          tempPassword,
+          hashedPassword,
+        });
       } catch (err) {
         failed.push({ userId: String(userId), error: err.message || 'Failed to send email' });
+      }
+    }
+
+    if (pendingResets.length > 0) {
+      try {
+        await bulkResetPasswords(
+          pendingResets.map(({ userId, tempPassword, hashedPassword }) => ({
+            userId,
+            tempPassword,
+            hashedPassword,
+          }))
+        );
+      } catch (err) {
+        for (const reset of pendingResets) {
+          failed.push({ userId: String(reset.userId), error: err.message || 'Failed to reset password' });
+        }
+
+        res.status(200).json({
+          success: true,
+          message: `Credentials sent to ${sent.length} user(s)`,
+          sent: sent.length,
+          failed: failed.length,
+          results: sent,
+          errors: failed.length > 0 ? failed : undefined,
+        });
+        return;
+      }
+
+      for (const reset of pendingResets) {
+        try {
+          // Await so we can accurately report per-user success vs failure
+          await sendWelcomeEmail(reset.user, reset.tempPassword);
+
+          sent.push({
+            userId: String(reset.user.id),
+            email: reset.user.email,
+            fullName: reset.user.fullName,
+          });
+        } catch (err) {
+          failed.push({ userId: String(reset.userId), error: err.message || 'Failed to send email' });
+        }
       }
     }
 
