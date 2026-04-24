@@ -9,6 +9,12 @@ export function getApiBaseUrl(): string {
     return configuredBase
   }
 
+  const versionedBase = configuredBase.match(/^(.*)\/v(\d+)$/)
+
+  if (versionedBase) {
+    return `${versionedBase[1]}/api/v${versionedBase[2]}`
+  }
+
   if (configuredBase.endsWith('/api')) {
     return `${configuredBase}/v1`
   }
