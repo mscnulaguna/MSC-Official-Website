@@ -16,6 +16,30 @@ const integrationRoutes = require('./routes/integration.routes');
 // Create Express app
 const app = express();
 
+const DEV_CORS_ORIGINS = [
+  'http://localhost',
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'http://127.0.0.1',
+  'http://127.0.0.1:5173',
+  'http://127.0.0.1:3000',
+  'http://127.0.0.1:3001',
+];
+
+const normalizeOrigin = (origin) => origin.trim().replace(/\/$/, '');
+
+const envCorsOrigins = (process.env.CORS_ORIGINS || '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean)
+  .map(normalizeOrigin);
+
+const allowedCorsOrigins = new Set([
+  ...DEV_CORS_ORIGINS.map(normalizeOrigin),
+  ...envCorsOrigins,
+]);
+
 // App is deployed behind nginx in Docker, so trust proxy headers from it.
 app.set('trust proxy', 1);
 
@@ -25,14 +49,20 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Enable CORS for cross-origin requests with explicit options
 app.use(cors({
-  origin: [
-    'http://localhost:5173', // Vite default (client/ in MSC-Official-Website repo)
-    'http://localhost:3000', // Alternative dev port
-    'http://localhost:3001',
-    'http://localhost:80',
-    'http://127.0.0.1:5173',
-    'http://127.0.0.1:3000',
-  ],
+  origin: (origin, callback) => {
+    if (!origin) {
+      callback(null, true);
+      return;
+    }
+
+    const normalizedOrigin = normalizeOrigin(origin);
+    if (allowedCorsOrigins.has(normalizedOrigin)) {
+      callback(null, true);
+      return;
+    }
+
+    callback(new Error(`Not allowed by CORS: ${origin}`));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']

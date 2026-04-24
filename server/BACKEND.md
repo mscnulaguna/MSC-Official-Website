@@ -146,6 +146,25 @@ Version 1.0 | February 2026
 
 > 🛠️ **Local development:** use `http://localhost:5000/api/v1`
 
+### CORS Policy (Origins)
+
+The API accepts browser requests from these development origins by default:
+
+- `http://localhost`
+- `http://localhost:5173`
+- `http://localhost:3000`
+- `http://localhost:3001`
+- `http://127.0.0.1`
+- `http://127.0.0.1:5173`
+- `http://127.0.0.1:3000`
+- `http://127.0.0.1:3001`
+
+For production, configure additional frontend origins via the `CORS_ORIGINS` environment variable (comma-separated), for example:
+
+```env
+CORS_ORIGINS=https://msc-client.azurewebsites.net,https://www.msc-nulaguna.org
+```
+
 ---
 
 ### 🔐 Authentication — `/auth`
