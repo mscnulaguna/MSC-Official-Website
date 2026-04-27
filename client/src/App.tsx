@@ -7,6 +7,8 @@ import GuildJoin from '@/pages/public/guild-join'
 import Activities from './pages/public/activities'
 import EventDetails from '@/pages/public/event-details'
 import Login from '@/pages/public/login'
+import ForgotPasswordPage from '@/pages/public/forgot-password'
+import ResetPasswordPage from '@/pages/public/reset-password'
 import { useEffect } from 'react'
 import { Footer } from "@/components/ui/layout/Footer"
 import FallbackPage from "./pages/fallback/fallback-page"
@@ -17,6 +19,8 @@ const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, ''
 
 const FOOTER_HIDE_PATHS = new Set([
   '/login',
+  '/forgot-password',
+  '/reset-password',
   '/coming-soon',
   '/maintenance',
   '/access-restricted',
@@ -31,6 +35,8 @@ const KNOWN_PATHS = new Set([
   '/activities',
   '/partners',
   '/login',
+  '/forgot-password',
+  '/reset-password',
   '/profile',
   '/coming-soon',
   '/maintenance',
@@ -72,6 +78,8 @@ export default function App() {
         <Route path="/activities/:eventId" element={<EventDetails />} />
         <Route path="/partners" element={<PartnersPage />} />
         <Route path='/profile' element={<ProfilePage member={sampleMember}/>} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password"  element={<ResetPasswordPage />} />
 
         {/* fallback demos  */}
         <Route path="/coming-soon"         element={<FallbackPage type="coming-soon" />} />
