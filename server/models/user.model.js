@@ -190,7 +190,7 @@ async function verifyPassword(plainPassword, hashedPassword) {
 }
 
 // Bulk update temporary passwords for multiple users.
-// Contract: updates = [{ userId, tempPassword, hashedPassword }]
+// Contract: updates = [{ userId, tempPassword }]
 async function bulkResetPasswords(updates) {
   if (!Array.isArray(updates) || updates.length === 0) {
     throw new TypeError('bulkResetPasswords expects a non-empty updates array');
@@ -202,7 +202,7 @@ async function bulkResetPasswords(updates) {
       throw new TypeError(`bulkResetPasswords: updates[${index}] must be an object`);
     }
 
-    const { userId, tempPassword, hashedPassword } = update;
+    const { userId, tempPassword } = update;
 
     if (userId === undefined || userId === null || userId === '') {
       throw new TypeError(`bulkResetPasswords: updates[${index}].userId is required`);
@@ -212,14 +212,9 @@ async function bulkResetPasswords(updates) {
       throw new TypeError(`bulkResetPasswords: updates[${index}].tempPassword must be a non-empty string`);
     }
 
-    if (typeof hashedPassword !== 'string' || hashedPassword.trim().length === 0) {
-      throw new TypeError(`bulkResetPasswords: updates[${index}].hashedPassword must be a non-empty string`);
-    }
-
     return {
       userId,
       tempPassword,
-      hashedPassword,
     };
   });
 
@@ -235,7 +230,7 @@ async function bulkResetPasswords(updates) {
          tempPasswordCreatedAt = NOW(),
          updated_at = CURRENT_TIMESTAMP 
          WHERE id = ?`,
-        [hashedTempPassword, update.hashedPassword, update.userId]
+        [hashedTempPassword, hashedTempPassword, update.userId]
       );
     }
     return true;

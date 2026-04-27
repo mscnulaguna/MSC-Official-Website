@@ -425,8 +425,7 @@ async function resetUserTemporaryPassword(req, res) {
     // Generate a fresh temporary password, store only its hash, and return the plaintext once.
     // This avoids returning a stored bcrypt hash and ensures the plaintext is never persisted.
     const tempPassword = generateTemporaryPassword();
-    const hashedPassword = await bcrypt.hash(tempPassword, 10);
-    await bulkResetPasswords([{ userId, tempPassword, hashedPassword }]);
+    await bulkResetPasswords([{ userId, tempPassword }]);
 
     res.status(200).json({
       success: true,
@@ -474,12 +473,10 @@ async function bulkPasswordReset(req, res) {
         }
 
         const tempPassword = generateTemporaryPassword();
-        const hashedPassword = await bcrypt.hash(tempPassword, 10);
         pendingResets.push({
           user,
           userId,
           tempPassword,
-          hashedPassword,
         });
       } catch (err) {
         errors.push({ userId, error: err.message });
@@ -489,10 +486,9 @@ async function bulkPasswordReset(req, res) {
     if (pendingResets.length > 0) {
       try {
         await bulkResetPasswords(
-          pendingResets.map(({ userId, tempPassword, hashedPassword }) => ({
+          pendingResets.map(({ userId, tempPassword }) => ({
             userId,
             tempPassword,
-            hashedPassword,
           }))
         );
 
@@ -554,13 +550,11 @@ async function sendCredentialsToUsers(req, res) {
         // Always generate a fresh temp password: stored value is a bcrypt hash and
         // cannot be recovered as plaintext. Reset the account and email the new plaintext once.
         const tempPassword = generateTemporaryPassword();
-        const hashedPassword = await bcrypt.hash(tempPassword, 10);
 
         pendingResets.push({
           user,
           userId,
           tempPassword,
-          hashedPassword,
         });
       } catch (err) {
         failed.push({ userId: String(userId), error: err.message || 'Failed to generate password' });
@@ -579,7 +573,6 @@ async function sendCredentialsToUsers(req, res) {
           await bulkResetPasswords([{
             userId: reset.userId,
             tempPassword: reset.tempPassword,
-            hashedPassword: reset.hashedPassword,
           }]);
 
           sent.push({
