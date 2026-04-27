@@ -82,7 +82,6 @@ async function login(req, res) {
 
     const user = await findUserByEmail(email);
     if (!user) {
-      console.log(`[AUTH] Login failed: User ${email} not found in database`);
       return res.status(401).json({
         error: {
           code: 'UNAUTHORIZED',
@@ -97,7 +96,6 @@ async function login(req, res) {
     const passwordMatch = await verifyPassword(password, user.password);
 
     if (!passwordMatch) {
-      console.log(`[AUTH] Login failed: Password mismatch for user ${email}`);
       return res.status(401).json({
         error: {
           code: 'UNAUTHORIZED',
@@ -110,7 +108,6 @@ async function login(req, res) {
 
     // Convert requiresPasswordChange from MySQL boolean (0/1) to JavaScript boolean
     const requiresPasswordChange = Boolean(user.requiresPasswordChange);
-    console.log(`[AUTH] requiresPasswordChange for ${email}: ${requiresPasswordChange}`);
 
     res.status(200).json({
       success: true,
@@ -264,8 +261,6 @@ async function changePassword(req, res) {
     
     // Clear the temporary password and mark requiresPasswordChange as false
     await clearTemporaryPassword(userId);
-
-    console.log(`[AUTH] Password changed successfully for user ${user.email}`);
     return res.status(200).json({
       success: true,
       message: 'Password changed successfully',

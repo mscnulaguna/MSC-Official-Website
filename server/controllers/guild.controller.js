@@ -55,10 +55,8 @@ async function listGuilds(req, res) {
 async function getGuild(req, res) {
   try {
     const { slug } = req.params;
-    console.log('Fetching guild with slug:', slug);
 
     const guild = await getGuildBySlug(slug);
-    console.log('Guild found:', guild);
 
     if (!guild) {
       return res.status(404).json({
