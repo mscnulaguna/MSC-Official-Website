@@ -7,10 +7,11 @@ import { useTypingAnimation, type TypingWord } from '@/hooks/useTypingAnimation'
 import { useTheme } from '@/context/ThemeContext'; // dark mode support
 import mscLogo from '@/assets/logos/msclogo.svg';
 import abstracticon from '@/assets/shapes/abstracticons.svg';
+import { getApiBaseUrl } from '@/lib/api';
 import '@/styles/home.css';
 import { useEffect, useState, type JSX } from 'react';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
+const API_BASE = getApiBaseUrl();
 
 // Types for API data
 interface Perk {
