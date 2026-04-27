@@ -8,6 +8,7 @@ import {
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu'
 import { NAV_ITEMS } from '@/config/navigation'
+import { useAuth } from '@/context/authContext';
 
 /**
  * Helper component to render submenu items
@@ -30,12 +31,20 @@ function SubmenuItem({
 }
 
 export function NavbarCenter() {
+
+  const { isLoggedIn } = useAuth()
+  
+  const PROTECTED_LABELS = [ 'Activities', 'Learn' ];
+  const visibleItems = NAV_ITEMS.filter(
+    (item) => isLoggedIn || !PROTECTED_LABELS.includes(item.label)
+  )
+
   return (
     <nav className="hidden lg:block" suppressHydrationWarning>
       {/* Navigation Menu - Only visible on large screens */}
       <NavigationMenu>
         <NavigationMenuList className="gap-1">
-          {NAV_ITEMS.map((item) => (
+          {visibleItems.map((item) => (
             <NavigationMenuItem key={item.label}>
               {/* Simple Link Item */}
               {'href' in item ? (

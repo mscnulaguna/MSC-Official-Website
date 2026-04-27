@@ -1,4 +1,11 @@
+// External libraries
 import { Routes, Route, useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
+
+// Components
+import { Footer } from "@/components/ui/layout/Footer"
+
+// Pages
 import Home from '@/pages/public/home'
 import AboutPage from '@/pages/public/about'
 import PartnersPage from '@/pages/public/partners'
@@ -9,10 +16,10 @@ import EventDetails from '@/pages/public/event-details'
 import Login from '@/pages/public/login'
 import ForgotPasswordPage from '@/pages/public/forgot-password'
 import ResetPasswordPage from '@/pages/public/reset-password'
-import { useEffect } from 'react'
-import { Footer } from "@/components/ui/layout/Footer"
-import FallbackPage from "./pages/fallback/fallback-page"
 import ProfilePage from "@/pages/public/profile"
+import FallbackPage from "./pages/fallback/fallback-page"
+
+// Data / Utils
 import { sampleMember } from '@/data/mockMember'
 import { getApiBaseUrl } from '@/lib/api'
 

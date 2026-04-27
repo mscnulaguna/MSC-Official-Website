@@ -2,20 +2,23 @@ import { useEffect, useId, useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { InputGroup, InputGroupSuffix } from '@/components/ui/input-group'
 import { Kbd } from '@/components/ui/kbd'
-import { Search } from 'lucide-react'
+import { Search, LogOut, User } from 'lucide-react'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import circleHalfBlackSvg from '@/assets/icons/circle-half-black.svg?raw'
 import { SearchDialog } from './SearchDialog'
 import { useTheme } from '@/context/ThemeContext'
 import { useNavigate } from 'react-router-dom'
 import { getInitials } from '@/lib/utils'
+import { useAuth } from '@/context/authContext'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 
-export function NavbarRight({
-  isLoggedIn = false,
-  userName = '',
-}: Readonly<{ isLoggedIn?: boolean; userName?: string }>) {
+export function NavbarRight() {
+  const { isLoggedIn, user, logout } = useAuth()
+  const userName = user?.fullName ?? ''
+
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const { isDarkMode, toggleDarkMode } = useTheme()
+  const [isProfileOpen, setIsProfileOpen] = useState(false)
   const instanceId = useId()
 
   const scopedCircleHalfBlackSvg = useMemo(() => {
@@ -107,10 +110,41 @@ export function NavbarRight({
             </Button>
           </>
         ) : (
-          /* User Avatar Circle - Shows when logged in */
-          <Avatar className="h-10 w-10 border-2 border-primary cursor-pointer">
-            <AvatarFallback className="font-semibold">{getInitials(userName)}</AvatarFallback>
-          </Avatar>
+          <Popover open={isProfileOpen} onOpenChange={setIsProfileOpen}>
+            <PopoverTrigger asChild>
+              <Avatar
+                className="h-10 w-10 border-2 border-primary cursor-pointer"
+                onMouseEnter={() => setIsProfileOpen(true)}
+              >
+                <AvatarFallback className="font-semibold">{getInitials(userName)}</AvatarFallback>
+              </Avatar>
+            </PopoverTrigger>
+            <PopoverContent
+              align="end"
+              className="w-48 p-1 rounded-none"
+              onMouseEnter={() => setIsProfileOpen(true)}
+              onMouseLeave={() => setIsProfileOpen(false)}
+            >
+              <button
+                className="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-muted transition-colors"
+                onClick={() => navigate('/profile')}
+              >
+                <User className="h-4 w-4" />
+                Profile
+              </button>
+              <div className="h-px bg-border my-1" />
+              <button
+                className="flex w-full items-center gap-2 px-3 py-2 text-sm text-destructive hover:bg-muted transition-colors"
+                onClick={() => {
+                  logout()
+                  window.location.href = '/'
+                }}
+              >
+                <LogOut className="h-4 w-4" />
+                Log Out
+              </button>
+            </PopoverContent>
+          </Popover>
         )}
       </div>
     </>
