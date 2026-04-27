@@ -5,8 +5,8 @@ import { Button } from "../../components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar"
 import { Link } from "react-router-dom"
 import { Users } from "lucide-react"
-import { getInitials } from "../lib/utils"
-import { getApiBaseUrl } from "../lib/api"
+import { getInitials } from "@/lib/utils"
+import { getApiBaseUrl } from "@/lib/api"
 
 const API_BASE = getApiBaseUrl()
 const USE_API = false // Set to true when backend is ready
