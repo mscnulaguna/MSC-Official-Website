@@ -126,7 +126,7 @@ export function NavbarRight() {
               onMouseLeave={() => setIsProfileOpen(false)}
             >
               <button
-                className="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-muted transition-colors"
+                className="flex w-full items-center gap-2 px-3 py-2 text-sm hover:text-primary transition-colors"
                 onClick={() => navigate('/profile')}
               >
                 <User className="h-4 w-4" />
@@ -134,7 +134,7 @@ export function NavbarRight() {
               </button>
               <div className="h-px bg-border my-1" />
               <button
-                className="flex w-full items-center gap-2 px-3 py-2 text-sm text-destructive hover:bg-muted transition-colors"
+                className="flex w-full items-center gap-2 px-3 py-2 text-sm text-destructive hover:text-warning transition-colors"
                 onClick={() => {
                   logout()
                   window.location.href = '/'
