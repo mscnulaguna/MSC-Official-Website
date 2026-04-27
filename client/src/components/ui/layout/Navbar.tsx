@@ -1,4 +1,5 @@
-import mscLogo from '@/assets/logos/msclogo.svg'
+import mscLogo from '@/assets/logos/msclogofooterblack.svg'
+import mscLogoWhite from '@/assets/logos/msclogofooterwhite.svg'
 import { NavbarLeft } from './NavbarLeft'
 import { NavbarCenter } from './NavbarCenter'
 import { NavbarRight } from './NavbarRight'
@@ -13,6 +14,7 @@ import { useState } from 'react'
   /*** Additional CSS classes for navbar container*/
 interface NavbarProps {
   logoSrc?: string
+  darkLogoSrc?: string
   logoAlt?: string
   className?: string
 }
@@ -79,6 +81,7 @@ interface NavbarProps {
 
 export function Navbar({
   logoSrc = mscLogo,
+  darkLogoSrc = mscLogoWhite,
   logoAlt = 'Logo',
   className = '',
 }: Readonly<NavbarProps>) {
@@ -99,8 +102,13 @@ export function Navbar({
           </div>
 
           {/* DESKTOP: Logo Left, MOBILE: Logo Right */}
-          <div className="hidden lg:flex lg:flex-shrink-0 z-10 pl-4">
-            <NavbarLeft logoSrc={logoSrc} logoAlt={logoAlt} />
+          <div className="hidden lg:flex lg:shrink-0 z-10 pl-4">
+            <div className="block dark:hidden">
+              <NavbarLeft logoSrc={logoSrc} logoAlt={logoAlt} />
+            </div>
+            <div className="hidden dark:block">
+              <NavbarLeft logoSrc={darkLogoSrc} logoAlt={logoAlt} />
+            </div>
           </div>
 
           {/* MOBILE/TABLET: User Avatar in Center when logged in */}
@@ -114,7 +122,12 @@ export function Navbar({
 
           {/* MOBILE/TABLET: Logo on Right */}
           <div className="lg:hidden flex-shrink-0 z-10 pr-2">
-            <NavbarLeft logoSrc={logoSrc} logoAlt={logoAlt} />
+            <div className="block dark:hidden">
+              <NavbarLeft logoSrc={logoSrc} logoAlt={logoAlt} />
+            </div>
+            <div className="hidden dark:block">
+              <NavbarLeft logoSrc={darkLogoSrc} logoAlt={logoAlt} />
+            </div>
           </div>
 
           {/* CENTER: Navigation Menu (Desktop Only) - Exactly centered */}

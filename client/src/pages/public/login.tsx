@@ -1,4 +1,5 @@
 import { useState, useEffect, type JSX } from "react"
+import { Link } from "react-router-dom"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
@@ -204,7 +205,7 @@ export default function LoginPage(): JSX.Element {
                 variant="link"
                 className="text-sm font-extralight text-muted-foreground hover:text-primary no-underline hover:no-underline"
               >
-                Forgot password?
+                <Link to="/forgot-password">Forgot Password?</Link>
               </Button>
             </div>
 
