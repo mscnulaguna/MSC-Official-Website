@@ -215,6 +215,11 @@ Update a user's details (fullName, yearLevel, course).
 Generate a fresh temporary password for a user and return it once in the response.  
 The system stores only hashed password values in the database.
 
+#### Behavior Notes
+
+- The generated temporary password is hashed once and that hash is stored in both `password` and `temporaryPassword`.
+- `requiresPasswordChange` is set to `true` and `tempPasswordCreatedAt` is refreshed.
+
 #### Response `200 OK`
 
 ```json
@@ -247,6 +252,12 @@ The system stores only hashed password values in the database.
 Send a welcome email containing login credentials to one or more selected users.  
 Always generates a fresh temporary password, stores only hashes, and emails the new plaintext password once.  
 Emails are delivered to the student's `@students.nu-laguna.edu.ph` Outlook inbox via the configured SMTP sender.
+
+#### Behavior Notes
+
+- The system attempts email delivery first for each selected user.
+- Password reset is committed only after that user's email is sent successfully.
+- If email delivery fails, that user's existing credentials remain unchanged to avoid lockout.
 
 > Requires `SMTP_HOST`, `SMTP_USER`, and `SMTP_PASS` to be set in `.env`. Silently skips if SMTP is not configured.
 
