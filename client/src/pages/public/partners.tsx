@@ -1,8 +1,8 @@
-import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
-import { Textarea } from "../components/ui/textarea";
-import { Label } from "../components/ui/label";
-import { Card, CardContent } from "../components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
 import { useEffect, useState, type JSX, type ChangeEvent, type CSSProperties, type SyntheticEvent } from "react";
 import mscLogo from "../assets/logos/msclogo.svg";
 import { getApiBaseUrl } from "../lib/api";
@@ -59,8 +59,7 @@ const LogoSkeleton = (): JSX.Element => (
 )
 
 // Stat badge 
-const StatBadge = ({ bgColor, iconColor, count, label }: {
-    bgColor: string;
+const StatBadge = ({ iconColor, count, label }: {
     iconColor: string;
     count: number;
     label: string;
@@ -68,7 +67,6 @@ const StatBadge = ({ bgColor, iconColor, count, label }: {
     <div className="flex flex-col items-center gap-1">
         <div
             className="w-12 h-12 sm:w-14 sm:h-14 rounded-none flex items-center justify-center"
-            style={{ backgroundColor: bgColor }}
         >
             <StarIcon style={{ color: iconColor }} />
         </div>
@@ -79,13 +77,13 @@ const StatBadge = ({ bgColor, iconColor, count, label }: {
 
 // Testimonial card 
 const TestimonialCard = (): JSX.Element => (
-    <Card className="rounded-none p-4 sm:p-6 shadow-sm" style={{ border: "1px solid #CBD5E1" }}>
+    <Card className="rounded-none p-4 sm:p-6 shadow-sm border border-gray-200">
         <CardContent className="p-0 space-y-3">
             <svg width="28" height="21" viewBox="0 0 32 24" fill="none">
                 <path d="M0 24V14.4C0 10.08 1.12 6.56 3.36 3.84C5.6 1.12 8.64 0 12.48 0V4.8C10.56 4.8 9.04 5.44 7.92 6.72C6.8 8 6.24 9.76 6.24 12H12V24H0ZM20 24V14.4C20 10.08 21.12 6.56 23.36 3.84C25.6 1.12 28.64 0 32.48 0V4.8C30.56 4.8 29.04 5.44 27.92 6.72C26.8 8 26.24 9.76 26.24 12H32V24H20Z"
                     fill="#CBD5E1" />
             </svg>
-            <p className="text-xs sm:text-sm ">
+            <p className="text-xs sm:text-sm">
                 IJBOL? ano kaya meaning non, diba korean yon? tae i just burst out laughing kasi, how about rofl? ano yun? edi rolling on the floor? pano mo isspell yon?? R-U-F-L? NUYAN?! rolling un the floor? ifukuk talaga.
             </p>
             <div className="pt-2">
@@ -260,7 +258,7 @@ export default function PartnersPage(): JSX.Element {
             </section>
 
             {/* ── Section 2: Why Partner With Us ── */}
-            <section className="py-32 sm:py-40 text-center" style={{ backgroundColor: "#F5F5F5" }}>
+            <section className="py-32 sm:py-40 text-center border">
                 <div className="w-4/5 mx-auto px-4 sm:px-6 lg:px-8">
                     <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold inline-block gradient-text">
                         WHY PARTNER WITH US
@@ -272,9 +270,9 @@ export default function PartnersPage(): JSX.Element {
 
                     {/* Stats */}
                     <div className="mt-8 flex justify-center gap-8 sm:gap-12 flex-wrap">
-                        <StatBadge bgColor="#E6F4FD" iconColor="#00A2ED" count={partners.length || 0} label="Partners" />
-                        <StatBadge bgColor="#EEF6E6" iconColor="#6AAC0E" count={300} label="Members" />
-                        <StatBadge bgColor="#FFF8E6" iconColor="#FFBB00" count={10} label="Events" />
+                        <StatBadge iconColor="#00A2ED" count={partners.length || 0} label="Partners" />
+                        <StatBadge iconColor="#6AAC0E" count={300} label="Members" />
+                        <StatBadge iconColor="#FFBB00" count={10} label="Events" />
                     </div>
 
                     {/* Testimonials */}

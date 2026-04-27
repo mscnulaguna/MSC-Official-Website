@@ -6,7 +6,7 @@ interface IDCardBackProps {
 
 export default function IDCardBack({ member }: IDCardBackProps) {
   return (
-    <div className="relative w-full h-full overflow-hidden border select-none">
+    <div className="relative w-full h-full overflow-hidden border select-none bg-white">
       <div className="absolute -left-12 md:-left-20 top-1/2 -translate-y-1/2 w-20 h-20 md:w-28 md:h-28 rounded-full bg-brand-blue opacity-80" />
       <div className="absolute -left-16 md:-left-25 top-1/2 -translate-y-1/2 w-26 h-26 md:w-36 md:h-36 rounded-full bg-brand-blue opacity-40" />
       <div className="absolute -right-12 md:-right-20 top-1/2 -translate-y-1/2 w-20 h-20 md:w-28 md:h-28 rounded-full bg-brand-blue opacity-80" />
@@ -15,7 +15,7 @@ export default function IDCardBack({ member }: IDCardBackProps) {
       <div className="relative z-10 flex h-full items-stretch px-6 md:px-10 lg:px-10 py-4 md:py-6 lg:py-6 gap-4 md:gap-6 lg:gap-6">
         {/* QR section */}
         <div className="flex flex-col items-center justify-center gap-2 md:gap-3 lg:gap-3 flex-1">
-          <div className="border rounded-none p-2 md:p-3 lg:p-3">
+          <div className="border border-gray-400 rounded-none p-2 md:p-3 lg:p-3">
             {member.qrCode ? (
               <img
                 src={member.qrCode}
@@ -46,7 +46,7 @@ export default function IDCardBack({ member }: IDCardBackProps) {
           </div>
         </div>
 
-        <div className="w-px bg-gray-100 self-stretch" />
+        <div className="w-px bg-gray-200 self-stretch" />
 
         {/* Emergency contact */}
         <div className="flex flex-col justify-center gap-3 md:gap-5 lg:gap-5 flex-1">
@@ -54,7 +54,7 @@ export default function IDCardBack({ member }: IDCardBackProps) {
             In case of emergency,<br />please contact:
           </p>
           <div>
-            <p className="text-xs md:text-base lg:text-base font-extrabold uppercase tracking-wide">
+            <p className="text-xs md:text-base lg:text-base text-gray-800 font-extrabold uppercase tracking-wide">
               {member.emergencyContact.name}
             </p>
             <p className="text-[8px] md:text-[11px] lg:text-[11px] text-gray-400 uppercase tracking-widest mt-0.5">
@@ -62,10 +62,10 @@ export default function IDCardBack({ member }: IDCardBackProps) {
             </p>
           </div>
           <div>
-            <p className="text-xs md:text-base lg:text-base font-extrabold ">
+            <p className="text-xs md:text-base lg:text-base text-gray-800 font-extrabold ">
               {member.emergencyContact.number}
             </p>
-            <p className="text-[8px] md:text-[11px] lg:text-[11px] uppercase tracking-widest mt-0.5">
+            <p className="text-[8px] md:text-[11px] lg:text-[11px] uppercase text-gray-400 tracking-widest mt-0.5">
               Contact Number
             </p>
           </div>

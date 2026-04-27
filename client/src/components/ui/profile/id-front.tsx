@@ -23,7 +23,7 @@ export default function IDCardFront({ member }: IDCardFrontProps) {
   ];
 
   return (
-    <div className="relative w-full h-full overflow-hidden border select-none">
+    <div className="relative w-full h-full overflow-hidden border bg-white select-none">
       <div className="relative z-10 flex flex-col h-full px-6 pt-4 pb-5">
         {/* Background Gradient Blobs */}
         <svg 
@@ -59,16 +59,16 @@ export default function IDCardFront({ member }: IDCardFrontProps) {
             <img src={mscLogoUrl} alt="logo" className="w-full h-full" />
           </div>
           <div className="leading-tight">
-            <p className="text-[10px] md:text-base lg:text-base font-extrabold uppercase tracking-wide">Microsoft Student</p>
-            <p className="text-[10px] md:text-base lg:text-base font-extrabold uppercase tracking-wide">Community</p>
-            <p className="text-[10px] md:text-base lg:text-base">NU Laguna</p>
+            <p className="text-[10px] md:text-base lg:text-base text-black font-extrabold uppercase tracking-wide">Microsoft Student</p>
+            <p className="text-[10px] md:text-base lg:text-base text-black font-extrabold uppercase tracking-wide">Community</p>
+            <p className="text-[10px] md:text-base lg:text-base text-black ">NU Laguna</p>
           </div>
         </div>
 
         {/* Photo + info */}
         <div className="flex gap-5 flex-1 items-start">
           <div className="shrink-0 z-20 w-25 h-25 md:w-45 md:h-45 lg:w-45 lg:h-45 overflow-hidden border-2 border-brand-blue/60">
-            <img src={member.photo} alt={member.fullName} className="w-full h-full object-cover object-top" />
+            <img src={member.photo} alt={member.fullName} className="w-full h-full object-cover object-top text-black" />
           </div>
 
           <div className="flex-1 min-w-0">
@@ -80,17 +80,17 @@ export default function IDCardFront({ member }: IDCardFrontProps) {
               {fields.map(({ label, value }, i) => (
                 <div key={label}>
                   <div className="flex justify-between items-center py-0.5 md:py-2 lg:py-2">
-                    <span className="text-[8px] md:text-sm lg:text-sm font-bold uppercase tracking-wide">{label}</span>
-                    <span className="text-[8px] md:text-sm lg:text-sm text-right">{value}</span>
+                    <span className="text-[8px] md:text-sm lg:text-sm font-bold text-black  uppercase tracking-wide">{label}</span>
+                    <span className="text-[8px] md:text-sm lg:text-sm text-black  text-right">{value}</span>
                   </div>
-                  {i < fields.length - 1 && <hr className="" />}
+                  {i < fields.length - 1 && <hr className="border-t border-gray-300" />}
                 </div>
               ))}
 
-              <hr className="" />
+              <hr className="border-t border-gray-300" />
               <div className="flex justify-between items-center py-0.5 md:gap-1 lg:gap-1">
-                <span className="text-[8px] md:text-sm lg:text-sm font-bold uppercase tracking-wide">Tier</span>
-                <Badge className={`text-[8px] md:text-sm lg:text-sm px-3 py-0.5 rounded-none font-semibold ${tierClass}`}>
+                <span className="text-[8px] md:text-sm lg:text-sm text-black  font-bold uppercase tracking-wide">Tier</span>
+                <Badge className={`text-[8px] md:text-sm lg:text-sm text-black  px-3 py-0.5 rounded-none font-semibold ${tierClass}`}>
                   {member.tier}
                 </Badge>
               </div>

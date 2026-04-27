@@ -1,16 +1,18 @@
 import { Routes, Route, useLocation } from 'react-router-dom'
-import Home from '@/pages/home'
-import AboutPage from '@/pages/about'
-import PartnersPage from '@/pages/partners'
-import LearnPage from '@/pages/learn'
-import GuildJoin from '@/pages/guild-join'
-import Activities from './pages/activities'
-import EventDetails from '@/pages/event-details'
-import Login from '@/pages/login'
+import Home from '@/pages/public/home'
+import AboutPage from '@/pages/public/about'
+import PartnersPage from '@/pages/public/partners'
+import LearnPage from '@/pages/public/learn'
+import GuildJoin from '@/pages/public/guild-join'
+import Activities from './pages/public/activities'
+import EventDetails from '@/pages/public/event-details'
+import Login from '@/pages/public/login'
+import ForgotPasswordPage from '@/pages/public/forgot-password'
+import ResetPasswordPage from '@/pages/public/reset-password'
 import { useEffect } from 'react'
 import { Footer } from "@/components/ui/layout/Footer"
 import FallbackPage from "./pages/fallback/fallback-page"
-import ProfilePage from "@/pages/profile"
+import ProfilePage from "@/pages/public/profile"
 import { sampleMember } from '@/data/mockMember'
 import { getApiBaseUrl } from '@/lib/api'
 
@@ -18,6 +20,8 @@ const API_BASE_URL = getApiBaseUrl()
 
 const FOOTER_HIDE_PATHS = new Set([
   '/login',
+  '/forgot-password',
+  '/reset-password',
   '/coming-soon',
   '/maintenance',
   '/access-restricted',
@@ -32,6 +36,8 @@ const KNOWN_PATHS = new Set([
   '/activities',
   '/partners',
   '/login',
+  '/forgot-password',
+  '/reset-password',
   '/profile',
   '/coming-soon',
   '/maintenance',
@@ -73,6 +79,8 @@ export default function App() {
         <Route path="/activities/:eventId" element={<EventDetails />} />
         <Route path="/partners" element={<PartnersPage />} />
         <Route path='/profile' element={<ProfilePage member={sampleMember}/>} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password"  element={<ResetPasswordPage />} />
 
         {/* fallback demos  */}
         <Route path="/coming-soon"         element={<FallbackPage type="coming-soon" />} />
