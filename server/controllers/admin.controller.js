@@ -563,39 +563,24 @@ async function sendCredentialsToUsers(req, res) {
           hashedPassword,
         });
       } catch (err) {
-        failed.push({ userId: String(userId), error: err.message || 'Failed to send email' });
+        failed.push({ userId: String(userId), error: err.message || 'Failed to generate password' });
       }
     }
 
     if (pendingResets.length > 0) {
-      try {
-        await bulkResetPasswords(
-          pendingResets.map(({ userId, tempPassword, hashedPassword }) => ({
-            userId,
-            tempPassword,
-            hashedPassword,
-          }))
-        );
-      } catch (err) {
-        for (const reset of pendingResets) {
-          failed.push({ userId: String(reset.userId), error: err.message || 'Failed to reset password' });
-        }
-
-        res.status(200).json({
-          success: true,
-          message: `Credentials sent to ${sent.length} user(s)`,
-          sent: sent.length,
-          failed: failed.length,
-          results: sent,
-          errors: failed.length > 0 ? failed : undefined,
-        });
-        return;
-      }
-
+      // Send emails first, then reset passwords only on successful delivery.
+      // This prevents locking users out with passwords they never received.
       for (const reset of pendingResets) {
         try {
           // Await so we can accurately report per-user success vs failure
           await sendWelcomeEmail(reset.user, reset.tempPassword);
+
+          // Email sent successfully; now commit the password change.
+          await bulkResetPasswords([{
+            userId: reset.userId,
+            tempPassword: reset.tempPassword,
+            hashedPassword: reset.hashedPassword,
+          }]);
 
           sent.push({
             userId: String(reset.user.id),
@@ -603,7 +588,11 @@ async function sendCredentialsToUsers(req, res) {
             fullName: reset.user.fullName,
           });
         } catch (err) {
-          failed.push({ userId: String(reset.userId), error: err.message || 'Failed to send email' });
+          // If either email send or password reset fails, mark as failed but do not change password.
+          failed.push({
+            userId: String(reset.userId),
+            error: err.message || 'Failed to send email or reset password',
+          });
         }
       }
     }
