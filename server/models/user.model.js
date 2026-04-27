@@ -20,8 +20,8 @@ async function createUser(userData) {
     // Insert user record with default role and status
     const [result] = await connection.execute(
       `INSERT INTO users (studentId, email, password, fullName, yearLevel, course, role, isActive, requiresPasswordChange, temporaryPassword, tempPasswordCreatedAt) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
-      [studentId, email, password, fullName, yearLevel, course, role, true, true, temporaryPassword]
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CASE WHEN ? IS NOT NULL THEN NOW() ELSE NULL END)`,
+      [studentId, email, password, fullName, yearLevel, course, role, true, true, temporaryPassword, temporaryPassword]
     );
 
     return await findUserById(result.insertId);
@@ -244,7 +244,7 @@ async function clearTemporaryPassword(userId) {
   const connection = await pool.getConnection();
   try {
     await connection.execute(
-      `UPDATE users SET temporaryPassword = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+      `UPDATE users SET temporaryPassword = NULL, tempPasswordCreatedAt = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
       [userId]
     );
     return await findUserById(userId);
