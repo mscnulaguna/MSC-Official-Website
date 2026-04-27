@@ -6,10 +6,11 @@ import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react"
 import abstractIcon from '@/assets/shapes/abstracticons.svg'
-import { getApiBaseUrl } from "@/lib/api"
 import { useAuth } from "@/context/authContext"
 
-const API_BASE_URL = getApiBaseUrl()
+// import { getApiBaseUrl } from "@/lib/api"
+// const API_BASE_URL = getApiBaseUrl()
+
 const NU_EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@students\.nu-laguna\.edu\.ph$/
 
 function validate(email: string, password: string) {
