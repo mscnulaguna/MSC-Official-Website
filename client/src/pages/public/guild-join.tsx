@@ -22,10 +22,11 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { getInitials } from "@/lib/utils"
+import { getApiBaseUrl } from "@/lib/api"
 import { Users, ExternalLink, ChevronLeft } from "lucide-react"
 import purplesnow from "@/assets/shapes/purplesnow.svg"
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api"
+const API_BASE = getApiBaseUrl()
 const USE_API = false // Set to true when backend is ready
 
 // Unified Guild interface matching API contract

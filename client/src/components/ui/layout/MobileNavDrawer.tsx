@@ -8,10 +8,10 @@ import { NAV_ITEMS, type NavItem } from '@/config/navigation'
 import { Separator } from '@/components/ui/separator'
 import { InputGroup } from '../input-group'
 import { SearchDialog } from './SearchDialog'
+import { useAuth } from '@/context/authContext'
 
 interface MobileNavDrawerProps {
   onNavigate?: () => void
-  isLoggedIn?: boolean
 }
 
 type CollapsibleNavItemProps = Readonly<{
@@ -71,8 +71,8 @@ function CollapsibleNavItem({
 
 export function MobileNavDrawer({
   onNavigate,
-  isLoggedIn = false,
 }: Readonly<MobileNavDrawerProps>) {
+  const { isLoggedIn, logout } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const { isDarkMode, toggleDarkMode } = useTheme()
@@ -88,6 +88,12 @@ export function MobileNavDrawer({
     onNavigate?.()
     setIsOpen(false)
   }
+
+  const PROTECTED_LABELS = ['Learn', 'Events']
+  const visibleItems = NAV_ITEMS.filter(
+    (item) => isLoggedIn || !PROTECTED_LABELS.includes(item.label)
+  )
+
 
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen} direction="left">
@@ -147,7 +153,7 @@ export function MobileNavDrawer({
         {/* Navigation Items */}
         <div className="flex-1 overflow-y-auto">
           <nav className="space-y-0">
-            {NAV_ITEMS.map((item) => (
+            {visibleItems.map((item) => (
               <CollapsibleNavItem
                 key={item.label}
                 item={item}
@@ -168,7 +174,10 @@ export function MobileNavDrawer({
               <Button
                 variant="destructive"
                 className="w-full flex items-center gap-2"
-                onClick={handleNavigate}
+                onClick={() => {
+                  logout()
+                  window.location.href = "/"
+                }}
               >
                 <LogOut className="h-4 w-4" />
                 Log Out

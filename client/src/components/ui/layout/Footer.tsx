@@ -9,8 +9,9 @@ import githubIcon from '@/assets/icons/github-icon.svg'
 import igIcon from '@/assets/icons/ig-icon.svg'
 import tiktokIcon from '@/assets/icons/tiktok-icon.svg'
 import { Button } from '@/components/ui/button'
-import { Link } from 'react-router-dom'
 import { useTheme } from '@/context/ThemeContext'
+import { useNavigate } from 'react-router-dom'
+
 
 const CONTACT = {
   addressHref:
@@ -52,6 +53,11 @@ function FooterIcon({
 export function Footer() {
   const { isDarkMode } = useTheme()
   const footerLogo = isDarkMode ? msclogoFooterLight : msclogoFooterBlack
+  const navigate = useNavigate()
+
+  const handlePartnerClick = () => {
+    navigate('/partners#contactForm')
+  }
   
   return (
     <footer className="w-full bg-background border-t border-border">
@@ -152,11 +158,9 @@ export function Footer() {
           </div>
 
           {/* Partner with Us Button - Centered with padding */}
-          <Link to="/partners">
-            <Button className="w-[calc(100%-1rem)] mx-2" variant={'destructive'}  >
+            <Button className="w-[calc(100%-1rem)] mx-2" variant={'destructive'} onClick={handlePartnerClick}  >
               Partner with us
             </Button>
-          </Link>
         </div>
 
         {/* Desktop Layout: Logo | Contact | Follow | Partner Button */}
@@ -230,11 +234,9 @@ export function Footer() {
           
           {/* Partner with Us Section */}
           <div className="flex items-center justify-center">
-            <Link to="/partners">
-              <Button variant={'destructive'}>
+              <Button variant={'destructive'} onClick={handlePartnerClick}>
                 Partner with us
               </Button>
-            </Link>
           </div>
         </div>
       </div>

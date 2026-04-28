@@ -1,10 +1,15 @@
 import { useState, useEffect, type JSX } from "react"
+import { Link } from "react-router-dom"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react"
 import abstractIcon from '@/assets/shapes/abstracticons.svg'
+import { useAuth } from "@/context/authContext"
+
+// import { getApiBaseUrl } from "@/lib/api"
+// const API_BASE_URL = getApiBaseUrl()
 
 const NU_EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@students\.nu-laguna\.edu\.ph$/
 
@@ -30,6 +35,7 @@ const BackgroundSVG = (): JSX.Element => (
 )
 
 export default function LoginPage(): JSX.Element {
+  const { login } = useAuth()
   const [email, setEmail]       = useState("")
   const [password, setPassword] = useState("")
   const [showPass, setShowPass] = useState(false)
@@ -58,33 +64,21 @@ export default function LoginPage(): JSX.Element {
   const clearApiErr = () => setApiError("")
 
   const handleSubmit = async () => {
-    setTouched({ email: true, password: true })
-    if (!isValid) return
+  setTouched({ email: true, password: true })
+  if (!isValid) return
 
-    setLoading(true)
-    setApiError("")
+  setLoading(true)
+  setApiError("")
 
-    try {
-      const res = await fetch("https://api.msc-nulaguna.org/v1/auth/login", {
-        method:  "POST",
-        headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({ email, password }),
-      })
-      const data = await res.json()
-
-      if (!res.ok) {
-        setApiError(data?.message || "Invalid email or password. Please try again.")
-      } else {
-        localStorage.setItem("msc_token",   data.token)
-        localStorage.setItem("msc_refresh", data.refreshToken)
-        window.location.href = "/dashboard"
-      }
-    } catch {
-      setApiError("Unable to reach the server. Check your connection and try again.")
-    } finally {
-      setLoading(false)
-    }
+  try {
+    await login(email, password) 
+    window.location.href = "/"
+  } catch (err) {
+    setApiError(err instanceof Error ? err.message : "Invalid email or password. Please try again.")
+  } finally {
+    setLoading(false)
   }
+}
 
   return (
     <div className="font-sans h-screen flex flex-col overflow-hidden">
@@ -204,7 +198,7 @@ export default function LoginPage(): JSX.Element {
                 variant="link"
                 className="text-sm font-extralight text-muted-foreground hover:text-primary no-underline hover:no-underline"
               >
-                Forgot password?
+                <Link to="/forgot-password">Forgot Password?</Link>
               </Button>
             </div>
 

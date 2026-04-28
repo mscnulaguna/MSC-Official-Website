@@ -5,9 +5,10 @@ import { Button } from "../../components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar"
 import { Link } from "react-router-dom"
 import { Users } from "lucide-react"
-import { getInitials } from "../../lib/utils"
+import { getInitials } from "@/lib/utils"
+import { getApiBaseUrl } from "@/lib/api"
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api"
+const API_BASE = getApiBaseUrl()
 const USE_API = false // Set to true when backend is ready
 
 // Unified Guild interface matching API contract

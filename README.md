@@ -130,11 +130,21 @@ Fallback/demo routes:
 
 ## Backend API
 
-Defined in `server/index.js`.
+Defined in `server/app.js` (Express app) and `server/server.js` (runtime entrypoint).
 
 - `GET /api/hello` -> `{ message: "Hello from the server!" }`
 
-The server enables CORS for `http://localhost:5173`.
+Default CORS origins for development:
+- `http://localhost`
+- `http://localhost:5173`
+- `http://localhost:3000`
+- `http://localhost:3001`
+- `http://127.0.0.1`
+- `http://127.0.0.1:5173`
+- `http://127.0.0.1:3000`
+- `http://127.0.0.1:3001`
+
+Production origins should be configured through `server/.env` using `CORS_ORIGINS` (comma-separated).
 
 ## Development Notes
 
@@ -148,7 +158,8 @@ The server enables CORS for `http://localhost:5173`.
 	- Verify backend is running on the expected port.
 	- Verify `client/.env` contains the correct `VITE_API_BASE_URL`.
 - CORS errors in browser:
-	- Ensure frontend runs on `http://localhost:5173` or update CORS config in `server/index.js`.
+	- Ensure frontend origin is in the backend allowlist in `server/app.js`.
+	- In production, set `CORS_ORIGINS` in `server/.env` (or hosting app settings) to include your frontend URL.
 - Port already in use:
 	- Change backend `PORT` in `server/.env` and update `VITE_API_BASE_URL` accordingly.
 

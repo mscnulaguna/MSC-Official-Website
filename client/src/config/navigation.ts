@@ -37,12 +37,6 @@ export const NAV_ITEMS: NavItem[] = [
       { label: 'Past Events', href: '/activities?tab=past' },
     ],
   },
-  {
-    type: 'group',
-    label: 'Learn',
-    submenu: [
-      { label: 'Learn', href: '/learn' },
-    ],
-  },
+  { label: 'Learn', href: '/learn' },
   { label: 'Partners', href: '/partners' },
 ]

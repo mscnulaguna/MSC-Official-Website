@@ -1,4 +1,4 @@
-import mscLogo from "@/assets/logos/msclogo.svg"
+import mscLogo from "@/assets/logos/msclogofooterblack.svg"
 /**
  * NavbarLeft Component
  * ====================
@@ -28,7 +28,7 @@ export function NavbarLeft({
       className="flex items-center gap-2 transition-all duration-200 hover:-translate-y-0.5"
     >
       {/* Logo image - Responsive sizing (h-8 mobile, h-10 tablet+) */}
-      <div className="relative h-8 w-8 sm:h-10 sm:w-10">
+      <div className="relative h-35 w-35 sm:h-20 sm:w-45">
         <img
           src={logoSrc}
           alt={logoAlt}
