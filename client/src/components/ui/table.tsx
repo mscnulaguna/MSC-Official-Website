@@ -21,7 +21,8 @@ Table.displayName = "Table"
 
 const TableHeader = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
   ({ className, ...props }, ref) => (
-    <thead ref={ref} className={cn("bg-gray-50 border-b border-border", className)} {...props} />
+    // Changed bg-gray-50 to bg-muted/50 for dark mode support
+    <thead ref={ref} className={cn("bg-muted/50 border-b border-border", className)} {...props} />
   )
 )
 TableHeader.displayName = "TableHeader"
@@ -41,7 +42,8 @@ const TableFooter = React.forwardRef<HTMLTableSectionElement, React.HTMLAttribut
   ({ className, ...props }, ref) => (
     <tfoot
       ref={ref}
-      className={cn("border-t border-border bg-gray-50 font-medium", className)}
+      // Changed bg-gray-50 to bg-muted/50 for dark mode support
+      className={cn("border-t border-border bg-muted/50 font-medium", className)}
       {...props}
     />
   )
@@ -53,7 +55,8 @@ const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTML
     <tr
       ref={ref}
       className={cn(
-        "border-b border-border hover:bg-gray-50/50 transition-colors data-[state=selected]:bg-blue-50",
+        // Changed hardcoded gray/blue hover/selected states to semantic muted variables
+        "border-b border-border hover:bg-muted/50 transition-colors data-[state=selected]:bg-muted",
         className
       )}
       {...props}
