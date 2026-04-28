@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useEffect, useState, type JSX, type ChangeEvent, type CSSProperties, type SyntheticEvent } from "react";
 import mscLogo from "@/assets/logos/msclogo.svg";
 import { getApiBaseUrl } from "@/lib/api";
+import { useLocation } from "react-router-dom";
 
 const API_BASE = getApiBaseUrl();
 
@@ -197,6 +198,7 @@ export default function PartnersPage(): JSX.Element {
     const [partners, setPartners] = useState<Partner[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const location = useLocation();
 
     useEffect(() => {
         const fetchPartners = async () => {
@@ -219,6 +221,17 @@ export default function PartnersPage(): JSX.Element {
         };
         fetchPartners();
     }, []);
+
+    useEffect(() => {
+    if (location.hash) {
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                document.getElementById(location.hash.slice(1))?.scrollIntoView({ behavior: "smooth" });
+            });
+        });
+    }
+    }, [location.hash]);
+
 
     return (
         <div className="font-sans">
