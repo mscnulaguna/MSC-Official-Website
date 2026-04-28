@@ -260,6 +260,7 @@ export default function Home(): JSX.Element {
   const viewPerks = () => {
     navigate('/about#perks')
   }
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -333,7 +334,7 @@ export default function Home(): JSX.Element {
         
         <div className="relative section-container flex flex-col items-center text-center z-10 py-16 sm:py-20 md:py-28 lg:py-36">
           <div className="relative z-10 max-w-4xl mx-auto space-y-6">
-            <p className="text-xs sm:text-sm md:text-base font-semibold">MICROSOFT STUDENT COMMUNITY | NU LAGUNA</p>
+            <p className="text-xs sm:text-sm md:text-base font-semibold">MICROSOFT STUDENT COMMUNITY - NU LAGUNA</p>
             
             <h1 className="text-5xl sm:text-5xl md:text-6xl lg:text-8xl font-bold tracking-tight">Helping You<br /><span className="inline-flex items-center text-left"><span className={`${TYPING_WORDS[currentWordIndex].color}`}>#</span><span className={`inline-block ${TYPING_WORDS[currentWordIndex].color}`}>{displayText}</span><span className="inline-block h-[0.8em] w-[2px] animate-blink bg-foreground ml-1" /><span className="text-foreground ml-1">More
             </span></span></h1>

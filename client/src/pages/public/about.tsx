@@ -6,8 +6,6 @@ import bulbBg from "@/assets/icons/about-bg-bulb.svg"
 import targetBg from "@/assets/icons/about-bg-target.svg"
 import missionIcon from "@/assets/icons/missionIcon.svg"
 import visionIcon from "@/assets/icons/visionIcon.svg"
-import pfpPhoto from "@/assets/icons/pfp.jpg"
-import samplePhoto from "@/assets/icons/sample.jpg"
 import WWD1 from "@/assets/icons/wwd1.svg"
 import WWD2 from "@/assets/icons/wwd2.svg"
 import WWD3 from "@/assets/icons/wwd3.svg"
@@ -15,16 +13,13 @@ import WWD4 from "@/assets/icons/wwd4.svg"
 import WWD5 from "@/assets/icons/wwd5.svg"
 import WWD6 from "@/assets/icons/wwd6.svg"
 import WWD7 from "@/assets/icons/wwd7.svg"
-import facebookIcon from "@/assets/icons/icon-facebook.svg"
-import linkedInIcon from "@/assets/icons/icon-linkedin.svg"
-import instagramIcon from "@/assets/icons/icon-instagram.svg"
+import facebookIcon from "@/assets/icons/facebook-brands-solid-full.svg"
+import linkedInIcon from "@/assets/icons/linkedin-svgrepo-com.svg"
+import microsoftLearnIcon from "@/assets/icons/microsoft.svg"
 
-// team data types
-type TeamMember = {
-  name: string
-  role: string
-  photoSrc?: string
-}
+import defaultPhoto from "@/assets/icons/sample.jpg"
+import { TEAMS } from "@/data/team.data"
+import type { TeamMember } from "@/types/teams.type"
 
 // what we do items
 type WhatWeDoItem = {
@@ -174,99 +169,15 @@ function WhatWeDoCard({
   )
 }
 
-// Section 3 (Meet the Team) data grouped by department
-const TEAMS: Record<
-  string,
-  {
-    label: string
-    description: string
-    members: TeamMember[]
-  }
-> = {
-  executive: {
-    label: "Executive",
-    description:
-      "The Executive team oversees the organization’s direction, planning, and overall coordination of MSC – NU Laguna.",
-    members: [
-      {
-        name: "Juliane Nicole Caballes",
-        role: "VP for Community Development",
-        photoSrc: samplePhoto,
-      },
-      { name: "(Name)", role: "(Role)" },
-      { name: "(Name)", role: "(Role)" },
-      { name: "(Name)", role: "(Role)" },
-      { name: "(Name)", role: "(Role)" },
-      { name: "(Name)", role: "(Role)" },
-      { name: "(Name)", role: "(Role)" },
-      { name: "(Name)", role: "(Role)" },
-      { name: "(Name)", role: "(Role)" },
-      { name: "(Name)", role: "(Role)" },
-      { name: "(Name)", role: "(Role)" },
-      { name: "(Name)", role: "(Role)" },
-    ],
-  },
-  technology: {
-    label: "Technology",
-    description:
-      "The Technology team builds and maintains tools, supports events, and helps members grow through hands-on technical work.",
-    members: [
-      { name: "(Name)", role: "(Role)" },
-      { name: "(Name)", role: "(Role)" },
-      { name: "(Name)", role: "(Role)" },
-      { name: "(Name)", role: "(Role)" },
-      { name: "(Name)", role: "(Role)" },
-      { name: "(Name)", role: "(Role)" },
-      { name: "(Name)", role: "(Role)" },
-      { name: "(Name)", role: "(Role)" },
-    ],
-  },
-  community: {
-    label: "Community Development",
-    description:
-      "The Community Development team strengthens member engagement, runs initiatives, and builds a supportive learning environment.",
-    members: [
-      {
-        name: "Juliane Nicole Caballes",
-        role: "VP for Community Development",
-        photoSrc: samplePhoto,
-      },
-    ],
-  },
-  communications: {
-    label: "Communications",
-    description:
-      "The Communications team manages announcements, creative assets, and messaging to keep everyone informed and connected.",
-    members: [{ name: "(Name)", role: "(Role)" }],
-  },
-  finance: {
-    label: "Finance",
-    description:
-      "The Finance team handles budgeting, documentation, and financial planning to support organization activities.",
-    members: [{ name: "(Name)", role: "(Role)" }],
-  },
-  operations: {
-    label: "Operations",
-    description:
-      "The Operations team manages logistics, coordination, and execution to ensure events and initiatives run smoothly.",
-    members: [{ name: "(Name)", role: "(Role)" }],
-  },
-  partners: {
-    label: "Strategic Partnerships",
-    description:
-      "The Strategic Partnerships team collaborates with partners and sponsors to create opportunities, resources, and impactful events.",
-    members: [{ name: "(Name)", role: "(Role)" }],
-  },
-}
 
 // renders a single team member card
-function TeamMemberCard({ name, role, photoSrc }: Readonly<TeamMember>) {
+function TeamMemberCard({ name, role, photoSrc, facebookUrl, linkedInUrl, microsoftLearnUrl }: Readonly<TeamMember>) {
   return (
     <Card className="overflow-hidden gap-0 py-0">
       <div className="border-b border-border">
         <div className="flex aspect-square w-full overflow-hidden bg-muted">
           <img
-            src={photoSrc ?? pfpPhoto}
+            src={photoSrc ?? defaultPhoto}
             alt=""
             aria-hidden="true"
             className="h-full w-full object-cover"
@@ -280,24 +191,30 @@ function TeamMemberCard({ name, role, photoSrc }: Readonly<TeamMember>) {
         <h3 className="font-bold leading-tight">{name}</h3>
         <p className="mt-1 text-sm text-muted-foreground">{role}</p>
         <div className="mt-3 flex items-center justify-center gap-3">
-          <img
-            src={facebookIcon}
-            alt=""
-            aria-hidden="true"
-            className="h-5 w-5 object-contain cursor-pointer hover:-translate-y-0.5 hover:opacity-75 transition-opacity dark:invert"
-          />
-          <img
-            src={linkedInIcon}
-            alt=""
-            aria-hidden="true"
-            className="h-5 w-5 object-contain cursor-pointer duration-200 hover:-translate-y-0.5 hover:opacity-75 transition-opacity dark:invert"
-          />
-          <img
-            src={instagramIcon}
-            alt=""
-            aria-hidden="true"
-            className="h-5 w-5 object-contain cursor-pointer duration-200 hover:-translate-y-0.5 hover:opacity-75 transition-opacity dark:invert"
-          />
+          <a href={facebookUrl} target="_blank" rel="noopener noreferrer">
+            <img
+              src={facebookIcon}
+              alt=""
+              aria-hidden="true"
+              className="h-6 w-6 object-contain cursor-pointer hover:-translate-y-0.5 hover:opacity-75 transition-opacity"
+            />
+          </a>
+          <a href={linkedInUrl} target="_blank" rel="noopener noreferrer">
+            <img
+              src={linkedInIcon}
+              alt=""
+              aria-hidden="true"
+              className="h-5 w-5 object-contain cursor-pointer duration-200 hover:-translate-y-0.5 hover:opacity-75 transition-opacity"
+            />
+          </a>
+          <a href={microsoftLearnUrl} target="_blank" rel="noopener noreferrer">
+            <img
+              src={microsoftLearnIcon}
+              alt="Microsoft Learn"
+              aria-hidden="true"
+              className="h-5 w-5 object-contain cursor-pointer duration-200 hover:-translate-y-0.5 hover:opacity-75 transition-opacity"
+            />
+          </a>
         </div>
       </CardContent>
     </Card>
