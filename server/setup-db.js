@@ -14,11 +14,23 @@ async function connectWithRetry(maxAttempts = 30, delayMs = 2000) {
 
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
     try {
-      return await mysql.createConnection({
-        host: process.env.DB_HOST || 'localhost',
-        user: process.env.DB_USER || 'root',
+      const config = {
+        // .trim() removes any accidental spaces from your .env file
+        host: process.env.DB_HOST ? process.env.DB_HOST.trim() : 'localhost',
+        user: process.env.DB_USER ? process.env.DB_USER.trim() : 'root',
         password: process.env.DB_PASSWORD || '',
-      });
+        // Force SSL unconditionally for this production run
+        ssl: {
+          rejectUnauthorized: false
+        }
+      };
+
+      // Print this out on the first try so we know the new code is running
+      if (attempt === 1) {
+        console.log(`[db-init] Attempting connection to: ${config.host} with SSL FORCEABLY ENABLED.`);
+      }
+
+      return await mysql.createConnection(config);
     } catch (error) {
       lastError = error;
       console.log(
