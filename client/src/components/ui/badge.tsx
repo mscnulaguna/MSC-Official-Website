@@ -11,24 +11,26 @@ import { cn } from "@/lib/utils"
  */
 
 const badgeVariants = cva(
-  "inline-flex items-center rounded-none border px-3 py-1 text-xs font-semibold uppercase tracking-wide transition-colors",
+  "inline-flex items-center rounded-none border px-3 py-1 text-xs font-sans font-normal capitalize tracking-normal transition-[filter,color,background-color,border-color]",
   {
     variants: {
       variant: {
         default:
-          "border-transparent bg-primary text-primary-foreground hover:bg-primary/90",
+          "border-transparent bg-primary text-primary-foreground hover:brightness-90",
         secondary:
-          "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/90",
+          "border-transparent bg-secondary text-secondary-foreground hover:brightness-90",
         destructive:
-          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/90",
+          "border-transparent bg-destructive text-white hover:brightness-90",
         outline:
           "text-foreground border-border bg-background hover:bg-muted",
         success:
-          "border-transparent bg-emerald-600 text-white hover:bg-emerald-700",
+          "border-transparent bg-success text-white hover:brightness-90",
         warning:
-          "border-transparent bg-amber-500 text-white hover:bg-amber-600",
+          "border-transparent bg-warning text-white hover:brightness-90",
         info:
-          "border-transparent bg-sky-500 text-white hover:bg-sky-600",
+          "border-transparent bg-info text-white hover:brightness-90",
+        accent:
+          "border-transparent bg-accent text-white hover:brightness-90",
       },
     },
     defaultVariants: {
@@ -41,7 +43,7 @@ export interface BadgeProps
   extends React.HTMLAttributes<HTMLSpanElement>,
     VariantProps<typeof badgeVariants> {}
 
-function Badge({ className, variant, ...props }: BadgeProps) {
+function Badge({ className, variant, ...props }: Readonly<BadgeProps>) {
   return (
     <span className={cn(badgeVariants({ variant }), className)} {...props} />
   )

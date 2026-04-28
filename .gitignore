@@ -1,0 +1,61 @@
+# Environment Variables (.env is pushed intentionally — dummy Gmail account for team testing)
+.env
+.env.local
+.env.*.local
+
+# Personal notes
+NOTES_*.md
+
+# Test/personal frontend (not part of the repo — team uses client/ instead)
+frontend/
+
+# Node Modules
+node_modules/
+npm-debug.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+
+# OS Files
+Thumbs.db
+.DS_Store
+
+# Dependencies
+yarn.lock
+
+# Testing
+coverage/
+.nyc_output/
+
+# Logs
+logs/
+*.log
+test_results.txt
+
+# Temporary Files
+.tmp/
+temp/
+
+# Frontend build output
+frontend/dist/
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+frontend/node_modules/
+
+# User-uploaded files (keep folder structure with .gitkeep)
+public/uploads/profile-photos/*
+!public/uploads/profile-photos/.gitkeep
+uploads/event-covers/*
+!uploads/event-covers/.gitkeep
+public/avatars/generated/

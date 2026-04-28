@@ -1,0 +1,97 @@
+# display name for the workflow
+name: MSC Website CI/CD Pipeline 
+
+on: # trigger
+  push:
+    branches: [main, dev] # trigger on push to main and dev branches
+  pull_request:
+    branches: [main, dev] # trigger on pull request to main and dev branches
+
+jobs:
+  build-and-test:
+    # creates a temporary Ubuntu Linux server to work on
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read # allows the workflow to read the repository contents
+      packages: write # allows the workflow to write to GitHub Packages (if needed)
+
+    steps:
+      # checks out the code from the repository
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+        # standardizes the repository name to lowercase for all subsequent steps
+      - name: Set Environment Variables
+        run: echo "REPO_LC=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
+
+      - name: Set Environment-Specific Variables
+        run: |
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            echo "VITE_API_URL=msc-prod-server-gzgxacashugfbye8.southeastasia-01.azurewebsites.net" >> $GITHUB_ENV
+            echo "IMAGE_TAG=prod" >> $GITHUB_ENV
+          else
+            echo "VITE_API_URL=msc-server-duggfme6cgb0bzc4.southeastasia-01.azurewebsites.net" >> $GITHUB_ENV
+            echo "IMAGE_TAG=staging" >> $GITHUB_ENV
+          fi
+
+      # logs into the registry
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # builds and pushes the node.js server
+      # Docker requires repository names to be strictly lowercase
+      - name: Build and Push Server
+        run: | 
+          docker build ./server -t ghcr.io/${{ env.REPO_LC }}/msc-server:${{ env.IMAGE_TAG }}
+          docker push ghcr.io/${{ env.REPO_LC }}/msc-server:${{ env.IMAGE_TAG }}
+
+      # builds and pushes the React client, injecting the appropriate API URL as a build argument
+      - name: Build and Push Client
+      # injects the staging URL as a build argument when building the client image
+        run: | 
+          docker build ./client \
+            --build-arg VITE_API_BASE_URL=${{ env.VITE_API_URL }} \
+            -t ghcr.io/${{ env.REPO_LC }}/msc-client:${{ env.IMAGE_TAG }}
+          docker push ghcr.io/${{ env.REPO_LC }}/msc-client:${{ env.IMAGE_TAG }}
+
+      # deploys to Azure Web App using the publish profile secret, but only on the dev branch
+      - name: Deploy to Staging
+        if: github.ref == 'refs/heads/dev' # only deploy to staging on dev branch
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: msc-server
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_SERVER }} 
+          images: ghcr.io/${{ env.REPO_LC }}/msc-server:staging
+
+      # deploys the client to Azure Web App using the publish profile secret, but only on the dev branch
+      - name: Deploy Client to Staging
+        if: github.ref == 'refs/heads/dev' # only deploy to staging on dev branch
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: msc-client
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_CLIENT }} 
+          images: ghcr.io/${{ env.REPO_LC }}/msc-client:staging
+
+      # deploys to production
+      - name: Deploy Server to Production
+        if: github.ref == 'refs/heads/main' # only deploy to production on main branch
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: msc-prod-server
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_SERVER_PROD }}
+          images: ghcr.io/${{ env.REPO_LC }}/msc-server:prod
+
+      # deploys the client to production
+      - name: Deploy Client to Production
+        if: github.ref == 'refs/heads/main'
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: msc-prod-client
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_CLIENT_PROD }}
+          images: ghcr.io/${{ env.REPO_LC }}/msc-client:prod

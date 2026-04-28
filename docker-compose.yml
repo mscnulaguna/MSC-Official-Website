@@ -1,0 +1,83 @@
+services:
+  # 1) Database service for local development.
+  db:
+    image: mysql:8.0
+    # Keep charset/collation consistent with app expectations.
+    command:
+      - --default-authentication-plugin=mysql_native_password
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_DATABASE=msc_nulaguna
+    ports:
+      - "3306:3306"
+    volumes:
+      # Persist DB state between container restarts.
+      - db_data:/var/lib/mysql
+      # Bootstrap schema on first DB initialization.
+      - ./server/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+    networks:
+      - internal
+
+  # 2) One-off initializer that creates/seeds required records.
+  db-init:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    command: ["node", "setup-db.js"]
+    environment:
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=
+      - DB_NAME=msc_nulaguna
+    depends_on:
+      - db
+    networks:
+      - internal
+
+  # 3) Backend API service.
+  server:
+    build: 
+      context: ./server
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=db       # Points to the local Docker database
+      - DB_USER=root
+      - DB_PASSWORD=
+      - DB_NAME=msc_nulaguna
+    ports:
+      - "5000:80"        # Expose port 80 from the container to port 5000 on the host
+    volumes:
+      - ./server:/app    # Mount the server code for development
+      - /app/node_modules   # Ensure node_modules is not overwritten
+    networks:
+      - internal
+    depends_on:
+      # Wait for DB container startup and seed completion.
+      db:
+        condition: service_started
+      db-init:
+        condition: service_completed_successfully
+    
+  # 4) Frontend nginx service.
+  client:
+    build: 
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+    networks:
+      - internal
+
+# Private bridge network for service-to-service DNS (db/server/client).
+networks:
+  internal:
+    driver: bridge
+
+# Named volume for durable MySQL data.
+volumes:
+  db_data:

@@ -48,7 +48,7 @@ export function EventHoverCard({
       <CardContent className="p-0 w-full h-full">
         <div className="relative aspect-[3/4] w-full">
           {/* Base surface */}
-          <div className="absolute inset-0 bg-blue-50 transition-opacity duration-300 group-hover:opacity-60" />
+          <div className="absolute inset-0 bg-primary transition-opacity duration-300 group-hover:opacity-60" />
 
           {/* Image */}
           {image && (

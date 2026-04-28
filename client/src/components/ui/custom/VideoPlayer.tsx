@@ -101,7 +101,7 @@ export function VideoPlayer({
   const videoContent = isEmbed ? (
     // YouTube/Vimeo embed
     <iframe
-      className="w-full h-full rounded-lg"
+      className="w-full h-full rounded-none"
       src={embedSrc}
       title={title}
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -110,7 +110,7 @@ export function VideoPlayer({
   ) : (
     // Direct video file
     <video
-      className="w-full h-full rounded-lg"
+      className="w-full h-full rounded-none"
       controls
       controlsList="nodownload"
     >

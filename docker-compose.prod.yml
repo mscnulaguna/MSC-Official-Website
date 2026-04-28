@@ -1,0 +1,17 @@
+services:
+  # 1. The Node.js Backend (Production)
+  server:
+    # Notice we use 'image' instead of 'build'
+    image: ghcr.io/mscnulaguna/msc-official-website/msc-server:latest
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+
+  # 2. The React/Vite Frontend (Production)
+  client:
+    image: ghcr.io/mscnulaguna/msc-official-website/msc-client:latest
+    ports:
+      - "80:80"
+    depends_on:
+      - server

@@ -1,27 +1,28 @@
-import { useState } from 'react'
-import { Menu, Search } from 'lucide-react'
-import {
-  Drawer,
-  DrawerContent,
-  DrawerClose,
-} from '@/components/ui/drawer'
+import { useId, useMemo, useState } from 'react'
+import { ChevronDown, Menu, Search, LogOut } from 'lucide-react'
+import { Drawer, DrawerContent, DrawerClose } from '@/components/ui/drawer'
 import { Button } from '@/components/ui/button'
-import { ChevronDown } from 'lucide-react'
-import circleHalfBlack from '@/assets/icons/circle-half-black.svg'
+import circleHalfBlackSvg from '@/assets/icons/circle-half-black.svg?raw'
 import { useTheme } from '@/context/ThemeContext'
 import { NAV_ITEMS, type NavItem } from '@/config/navigation'
+import { Separator } from '@/components/ui/separator'
+import { InputGroup } from '../input-group'
+import { SearchDialog } from './SearchDialog'
+import { useAuth } from '@/context/authContext'
 
 interface MobileNavDrawerProps {
   onNavigate?: () => void
 }
 
+type CollapsibleNavItemProps = Readonly<{
+  item: NavItem
+  onNavigate?: () => void
+}>
+
 function CollapsibleNavItem({
   item,
   onNavigate,
-}: {
-  item: NavItem
-  onNavigate?: () => void
-}) {
+}: CollapsibleNavItemProps) {
   const [isOpen, setIsOpen] = useState(false)
   const hasSubmenu = 'submenu' in item
 
@@ -29,7 +30,7 @@ function CollapsibleNavItem({
     return (
       <a
         href={item.href}
-        className="block w-full px-4 py-3 text-base font-medium border-b border-border/40 hover:bg-muted/50 transition-colors"
+        className="block w-full px-4 py-3 text-base font-normal border-b border-border/40 hover:bg-muted/50 transition-colors"
         onClick={onNavigate}
       >
         {item.label}
@@ -41,7 +42,7 @@ function CollapsibleNavItem({
     <div className="border-b border-border/40">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex w-full items-center justify-between px-4 py-3 text-base font-medium hover:bg-muted/50 transition-colors"
+        className="flex w-full items-center justify-between px-4 py-3 text-base font-normal hover:bg-muted/50 transition-colors"
       >
         {item.label}
         <ChevronDown
@@ -56,7 +57,7 @@ function CollapsibleNavItem({
             <a
               key={subitem.href}
               href={subitem.href}
-              className="block w-full pl-8 pr-4 py-3 text-sm font-medium text-foreground/80 hover:bg-muted/50 hover:text-foreground transition-colors border-b border-border/40 last:border-b-0"
+              className="block w-full pl-8 pr-4 py-3 text-sm font-normal text-foreground/80 hover:bg-muted/50 hover:text-foreground transition-colors border-b border-border/40 last:border-b-0"
               onClick={onNavigate}
             >
               {subitem.label}
@@ -68,15 +69,31 @@ function CollapsibleNavItem({
   )
 }
 
-export function MobileNavDrawer({ onNavigate }: MobileNavDrawerProps) {
+export function MobileNavDrawer({
+  onNavigate,
+}: Readonly<MobileNavDrawerProps>) {
+  const { isLoggedIn, logout } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
   const { isDarkMode, toggleDarkMode } = useTheme()
-  const iconFilter = isDarkMode ? 'brightness(0) invert(1)' : 'none'
+  const instanceId = useId()
+
+  const scopedCircleHalfBlackSvg = useMemo(() => {
+    const originalId = 'path-1-inside-1_477_561'
+    const safeScope = `msc-${instanceId.replaceAll(':', '')}`
+    return circleHalfBlackSvg.replaceAll(originalId, `${safeScope}-${originalId}`)
+  }, [instanceId])
 
   const handleNavigate = () => {
     onNavigate?.()
     setIsOpen(false)
   }
+
+  const PROTECTED_LABELS = ['Learn', 'Events']
+  const visibleItems = NAV_ITEMS.filter(
+    (item) => isLoggedIn || !PROTECTED_LABELS.includes(item.label)
+  )
+
 
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen} direction="left">
@@ -91,45 +108,52 @@ export function MobileNavDrawer({ onNavigate }: MobileNavDrawerProps) {
         <Menu className="h-5 w-5" />
       </Button>
 
+      {/* Search Dialog - Same as desktop */}
+      <SearchDialog open={isSearchOpen} onOpenChange={setIsSearchOpen} />
+
       {/* Drawer Content with built-in animation */}
-      <DrawerContent showOverlay={false} className="fixed !inset-y-auto !top-16 !left-0 !h-[calc(100vh-64px)] !w-full !max-w-none rounded-none flex flex-col !border-l-0 border-t border-border bg-background">
-        {/* Visible Separator at top */}
-        <div className="h-px bg-border/60" />
+      <DrawerContent
+        className="flex flex-col"
+      >
+        <Separator />
         {/* Search and Theme Toggle Row */}
         <div className="flex items-center gap-3 p-4 border-b border-border/40">
-          {/* Search bar - 3/4 width */}
-          <div className="flex-1 bg-muted/50 rounded-lg px-3 py-2 flex items-center gap-2">
-            <Search className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-            <input 
-              type="text" 
-              placeholder="Search..." 
-              className="bg-transparent outline-none text-sm flex-1 placeholder-muted-foreground"
-            />
-          </div>
+          {/* Search Input - Same as desktop, opens SearchDialog */}
+          <button
+            type="button"
+            className="flex-1"
+            onClick={() => setIsSearchOpen(true)}
+            aria-label="Open search"
+          >
+            <InputGroup className="w-full bg-muted/50 border border-border/40 cursor-pointer">
+              <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
+              <span className="w-full flex-1 pl-9 pr-3 text-left text-sm text-muted-foreground select-none">
+                Search...
+              </span>
+            </InputGroup>
+          </button>
           
-          {/* Dark/Light toggle - 1/4 width */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-10 w-10 flex-shrink-0"
+          {/* Dark/Light toggle */}
+          <button
+            type="button"
             onClick={toggleDarkMode}
             aria-label="Toggle dark mode"
+            className="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center cursor-pointer bg-transparent text-foreground transition-colors duration-200"
           >
-            <img
-              src={circleHalfBlack}
-              alt="Theme toggle icon"
-              width={20}
-              height={20}
-              className="object-contain"
-              style={{ filter: iconFilter }}
+            <span
+              className={
+                `inline-flex transition-transform duration-300 [&_svg]:h-5 [&_svg]:w-5 ` +
+                (isDarkMode ? 'rotate-180' : 'rotate-0')
+              }
+              dangerouslySetInnerHTML={{ __html: scopedCircleHalfBlackSvg }}
             />
-          </Button>
+          </button>
         </div>
 
         {/* Navigation Items */}
         <div className="flex-1 overflow-y-auto">
           <nav className="space-y-0">
-            {NAV_ITEMS.map((item) => (
+            {visibleItems.map((item) => (
               <CollapsibleNavItem
                 key={item.label}
                 item={item}
@@ -139,12 +163,26 @@ export function MobileNavDrawer({ onNavigate }: MobileNavDrawerProps) {
           </nav>
         </div>
 
-        {/* Sign Up Button - Bottom */}
+        {/* Sign Up / Log Out Button - Bottom */}
         <div className="p-4 border-t border-border/40">
           <DrawerClose asChild>
-            <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium h-10 text-base">
-              Sign Up
-            </Button>
+            {!isLoggedIn ? (
+              <Button className="w-full" onClick={handleNavigate}>
+                Sign Up
+              </Button>
+            ) : (
+              <Button
+                variant="destructive"
+                className="w-full flex items-center gap-2"
+                onClick={() => {
+                  logout()
+                  window.location.href = "/"
+                }}
+              >
+                <LogOut className="h-4 w-4" />
+                Log Out
+              </Button>
+            )}
           </DrawerClose>
         </div>
       </DrawerContent>

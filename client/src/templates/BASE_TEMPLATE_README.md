@@ -2,21 +2,21 @@
 
 Learn how to create new pages using the BASE_PAGE_TEMPLATE.
 
-> **Note:** This template is designed for a Vite + React app (see `client/package.json` and `src/main.tsx`). 
-> Adjust any React Router or component import paths based on your project's actual routing configuration.
+> **Note:** This template is for a **Vite + React + React Router** app. The app is wrapped globally with `AppLayout` (from `src/layout.tsx`), which provides the Navbar and Toaster on every page.
 
 ---
 
 ## What is the Base Template?
 
-**File:** `BASE_PAGE_TEMPLATE.tsx`
+**File:** [BASE_PAGE_TEMPLATE.tsx](./BASE_PAGE_TEMPLATE.tsx)
 
-**What it does:** Provides the standard layout structure for all pages in the design system. Includes:
-- Navbar at top
-- Footer at bottom
-- Proper responsive spacing
-- Correct max-width (1600px)
-- Flexible content area
+**What it does:** Provides the standard layout structure for all pages. Includes:
+- **Sticky Navbar** (provided by global AppLayout - already on every page)
+- **Footer** (imported per-page, positioned sticky at bottom)
+- Proper responsive spacing and breakpoints
+- Correct max-width (1700px section-container)
+- Flexible content area that pushes footer down
+- Dark mode support via ThemeContext
 
 ---
 
@@ -29,47 +29,59 @@ Learn how to create new pages using the BASE_PAGE_TEMPLATE.
 3. **Copy structure:**
 
 ```tsx
-import { Navbar } from '@/components/layout/Navbar'
-import { Footer } from '@/components/layout/Footer'
+import { Footer } from '@/components/ui/layout/Footer'
 
 export default function YourPageName() {
   return (
-    <>
-      <Navbar logoSrc="/msclogo.svg" />
-      
+    <div className="flex flex-col min-h-screen">
       <main className="flex-1">
-        <div className="mx-auto max-w-[1600px] px-4 sm:px-8 md:px-12 py-8">
-          {/* Your content goes here */}
+        <div className="section-container py-8">
+          {/* Your page content here */}
         </div>
       </main>
-
       <Footer />
-    </>
+    </div>
   )
 }
 ```
 
-4. **Register the route** in `src/App.tsx` using React Router or your routing library
+4. **Register the route** in `src/App.tsx` using React Router
+
+**Note:** The **Navbar is already provided** by `AppLayout` in `src/layout.tsx`, so you don't import it in your page.
 
 ---
 
 ## Template Structure Explained
 
-### 1. Client Component Declaration
+### 1. Wrapper Container
 ```tsx
-'use client'
+<div className="flex flex-col min-h-screen">
+  <main className="flex-1">...</main>
+  <Footer />
+</div>
 ```
-**Why:** Allows use of React hooks like `useState`, `useEffect`  
-**When to remove:** If page has no interactivity
+**Why:** Ensures footer sticks to bottom on short pages
+- `min-h-screen` - Container takes full viewport height
+- `flex-1` on main - Content expands to fill available space
+- Footer positioned last
 
-### 2. Navbar
+**Note:** This is NOT a 'use client' component - React Router handles client-side rendering in Vite
+
+### 2. Main Content Area
 ```tsx
-<Navbar logoSrc="/msclogo.svg" />
+<main className="flex-1">
+  <div className="section-container py-8">
+    {/* Content */}
+  </div>
+</main>
 ```
-**What it does:** Sticky header with navigation, search, theme toggle  
-**Props:**
-- `logoSrc` - Path to logo file
-- Optional: customize in layout components
+**What it does:** 
+- `<main>` - Semantic HTML for page content
+- `flex-1` - Expands to fill available space (footer stays at bottom)
+- `section-container` - Global max-width class (defined in globals.css)
+- `py-8` - Vertical padding (32px top/bottom)
+
+**Note:** Navbar is NOT here - it's provided globally by AppLayout in `src/layout.tsx`
 
 ### 3. Main Content Area
 ```tsx
@@ -88,13 +100,38 @@ export default function YourPageName() {
 - Tablet (640px+): 32px padding
 - Desktop (768px+): 48px padding
 
-**`py-8`** - Vertical padding (32px top/bottom)
-
-### 4. Footer
+### 3. Footer
 ```tsx
 <Footer />
 ```
-**What it does:** Company info, social links, copyright
+**What it does:** 
+- Located at bottom of page
+- Has separate components: Logo | Contact Us | Follow Us | Partner Button
+- Responsive breakpoints:
+  - Below 860px: Mobile stacked layout
+  - 860px+: Desktop 4-column grid
+- Address text wraps below 1190px
+- Dark mode logo variants
+
+**Customization:**
+See [Footer Component Documentation](#footer) for details.
+
+### 4. Global AppLayout
+
+Every page is wrapped by this hierarchy (in `src/main.tsx`):
+
+```tsx
+<AppLayout>
+  <App />  {/* Your routes */}
+</AppLayout>
+```
+
+**AppLayout provides:**
+- **NavbarWrapper** - Sticky navigation (on every page automatically)
+- **Toaster** - Sonner notifications (bottom-right)
+- Consistent global styling
+
+**You don't need to import Navbar** on your page - it's already there!
 
 ---
 
@@ -102,18 +139,26 @@ export default function YourPageName() {
 
 ### Responsive Breakpoints
 
-Use Tailwind breakpoints for responsive design:
+Standard Tailwind breakpoints - mobile-first approach:
 
 ```tsx
-// Mobile first approach
 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
 
 /* 
-- grid-cols-1: Mobile (< 640px) - 1 column
-- md:grid-cols-2: Tablet (640px+) - 2 columns
-- lg:grid-cols-3: Desktop (1024px+) - 3 columns
+- Default (mobile): < 640px - 1 column
+- sm: 640px+
+- md: 768px+ (2 columns)
+- lg: 1024px+ (3 columns)
+- xl: 1280px+
+- 2xl: 1536px+
 */
 ```
+
+**Custom breakpoints** (in Footer.tsx and other components):
+- `860px` - Footer mobile/desktop toggle
+- `1024px (lg:)` - Navbar menu toggle  
+- `1190px` - Address text wrapping
+- `1700px` - section-container max-width
 
 ### Spacing Scale
 
@@ -127,17 +172,27 @@ Use Tailwind spacing classes:
 
 ### Typography
 
-Use typography utilities from `src/styles/typography.css`:
+Use Tailwind text utilities with responsive sizing:
 
 ```tsx
-<h1 className="heading-h1">Main Title (50px)</h1>
-<h2 className="heading-h2">Section Title (30px)</h2>
-<h3 className="heading-h3">Subsection (25px)</h3>
-<h4 className="heading-h4">Small heading (22px)</h4>
-<p className="body-text">Regular text (20px)</p>
-<p className="body-small">Small text (16px)</p>
-<p className="body-tiny">Tiny text (12px)</p>
+// Responsive headings
+<h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-bold">Title</h1>
+<h2 className="text-3xl sm:text-4xl md:text-5xl font-bold">Subtitle</h2>
+
+// Body text
+<p className="text-sm md:text-base lg:text-lg">Body text</p>
+<p className="text-xs sm:text-sm md:text-base">Small text</p>
+
+// Special utilities
+.gradient-text - 4-color Microsoft gradient
+.section-container - Max-width container (1700px)
+.section-padding - Responsive padding
 ```
+
+**Font system** (from globals.css):
+- Font family: `--font-inter` (Inter font)
+- Color tokens: `text-foreground`, `text-muted-foreground`, etc.
+- All inherit from CSS variables for dark mode support
 
 ---
 

@@ -101,7 +101,7 @@ export function SearchPopover() {
               {SEARCH_CATEGORIES.map((category) => (
                 <label
                   key={category.id}
-                  className="flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 hover:bg-muted"
+                  className="flex cursor-pointer items-center gap-3 px-3 py-2 hover:bg-muted"
                 >
                   <input
                     type="radio"

@@ -32,19 +32,11 @@ export const NAV_ITEMS: NavItem[] = [
     type: 'group',
     label: 'Activities',
     submenu: [
-      { label: 'Community Events', href: '/activities/events' },
-      { label: 'Workshops', href: '/activities/workshops' },
-      { label: 'Network Meetups', href: '/activities/meetups' },
+      { label: 'Events', href: '/activities' },
+      { label: 'Upcoming Events', href: '/activities?tab=upcoming' },
+      { label: 'Past Events', href: '/activities?tab=past' },
     ],
   },
-  {
-    type: 'group',
-    label: 'Learn',
-    submenu: [
-      { label: 'Tutorials', href: '/learn/tutorials' },
-      { label: 'Documentation', href: '/learn/docs' },
-      { label: 'Resources', href: '/learn/resources' },
-    ],
-  },
+  { label: 'Learn', href: '/learn' },
   { label: 'Partners', href: '/partners' },
 ]
