@@ -6,7 +6,8 @@ import { NavbarRight } from './NavbarRight'
 import { MobileNavDrawer } from './MobileNavDrawer'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { getInitials } from '@/lib/utils'
-import { useState } from 'react'
+// import { useState } from 'react'
+import { useAuth } from '@/context/authContext' 
 
 
   /*** Logo source path (default: MSC logo asset)*/
@@ -85,8 +86,8 @@ export function Navbar({
   logoAlt = 'Logo',
   className = '',
 }: Readonly<NavbarProps>) {
-  const [isLoggedIn] = useState(false) // TODO: Connect to auth context/backend
-  const [userName] = useState('') // TODO: Get from auth context/backend
+
+  const { isLoggedIn, user } = useAuth()
 
   return (
     <header
@@ -98,7 +99,7 @@ export function Navbar({
         <nav className="relative flex h-16 w-full items-center justify-between gap-2 lg:gap-4">
           {/* MOBILE/TABLET: Hamburger Menu Drawer - Left */}
           <div className="lg:hidden z-20 flex-shrink-0">
-            <MobileNavDrawer isLoggedIn={isLoggedIn} />
+            <MobileNavDrawer />
           </div>
 
           {/* DESKTOP: Logo Left, MOBILE: Logo Right */}
@@ -115,7 +116,7 @@ export function Navbar({
           <div className="lg:hidden flex-1 flex justify-center z-10">
             {isLoggedIn && (
               <Avatar className="h-10 w-10 border-2 border-primary cursor-pointer">
-                <AvatarFallback className="font-semibold">{getInitials(userName)}</AvatarFallback>
+                <AvatarFallback className="font-semibold">{getInitials(user?.fullName ?? '')}</AvatarFallback>
               </Avatar>
             )}
           </div>
@@ -137,7 +138,7 @@ export function Navbar({
 
           {/* RIGHT: Search, Theme Toggle, Sign In (Desktop) / Avatar (Mobile logged in) */}
           <div className="flex items-center gap-1 ml-auto z-10 hidden lg:flex justify-end pr-4">
-            <NavbarRight isLoggedIn={isLoggedIn} userName={userName} />
+            <NavbarRight />
           </div>
         </nav>
       </div>

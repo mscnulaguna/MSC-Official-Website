@@ -6,9 +6,11 @@ import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react"
 import abstractIcon from '@/assets/shapes/abstracticons.svg'
-import { getApiBaseUrl } from "@/lib/api"
+import { useAuth } from "@/context/authContext"
 
-const API_BASE_URL = getApiBaseUrl()
+// import { getApiBaseUrl } from "@/lib/api"
+// const API_BASE_URL = getApiBaseUrl()
+
 const NU_EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@students\.nu-laguna\.edu\.ph$/
 
 function validate(email: string, password: string) {
@@ -33,6 +35,7 @@ const BackgroundSVG = (): JSX.Element => (
 )
 
 export default function LoginPage(): JSX.Element {
+  const { login } = useAuth()
   const [email, setEmail]       = useState("")
   const [password, setPassword] = useState("")
   const [showPass, setShowPass] = useState(false)
@@ -61,33 +64,21 @@ export default function LoginPage(): JSX.Element {
   const clearApiErr = () => setApiError("")
 
   const handleSubmit = async () => {
-    setTouched({ email: true, password: true })
-    if (!isValid) return
+  setTouched({ email: true, password: true })
+  if (!isValid) return
 
-    setLoading(true)
-    setApiError("")
+  setLoading(true)
+  setApiError("")
 
-    try {
-      const res = await fetch(`${API_BASE_URL}/auth/login`, {
-        method:  "POST",
-        headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({ email, password }),
-      })
-      const data = await res.json()
-
-      if (!res.ok) {
-        setApiError(data?.message || "Invalid email or password. Please try again.")
-      } else {
-        localStorage.setItem("msc_token",   data.token)
-        localStorage.setItem("msc_refresh", data.refreshToken)
-        window.location.href = "/dashboard"
-      }
-    } catch {
-      setApiError("Unable to reach the server. Check your connection and try again.")
-    } finally {
-      setLoading(false)
-    }
+  try {
+    await login(email, password) 
+    window.location.href = "/"
+  } catch (err) {
+    setApiError(err instanceof Error ? err.message : "Invalid email or password. Please try again.")
+  } finally {
+    setLoading(false)
   }
+}
 
   return (
     <div className="font-sans h-screen flex flex-col overflow-hidden">

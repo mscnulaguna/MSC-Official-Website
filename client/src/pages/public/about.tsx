@@ -1,6 +1,7 @@
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useLocation } from "react-router-dom"
 import bulbBg from "@/assets/icons/about-bg-bulb.svg"
 import targetBg from "@/assets/icons/about-bg-target.svg"
 import missionIcon from "@/assets/icons/missionIcon.svg"
@@ -320,6 +321,19 @@ export default function AboutPage() {
   const [activeTeam, setActiveTeam] = useState(teamKeys[0] ?? "")
   const activeTeamData = TEAMS[activeTeam] ?? TEAMS[teamKeys[0]]
 
+  const location = useLocation()
+
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.slice(1);
+      const el = document.getElementById(id);
+
+      setTimeout(() => {
+        el?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    }
+  }, [location.hash]);
+
   return (
     <div className="min-h-[70vh] w-full overflow-x-hidden pb-24 font-sans">
       {/* Section 1: Vision and Mission */}
@@ -380,7 +394,7 @@ export default function AboutPage() {
       </section>
 
       {/* Section 2: What We Do */}
-      <section className="w-full bg-secondary section-padding-md">
+      <section id="perks" className="w-full bg-secondary section-padding-md">
         <div className="section-container">
           <div className="mx-auto w-full max-w-5xl text-center">
           <h1 className={`pb-8 text-5xl sm:text-6xl lg:text-7xl font-bold inline-block gradient-text`}>
@@ -404,7 +418,7 @@ export default function AboutPage() {
       </section>
 
       {/* Section 3: Meet the Team */}
-      <section className="w-full section-padding-md">
+      <section id="team" className="w-full section-padding-md">
         <div className="section-container">
           <div className="mx-auto w-full max-w-7xl text-center">
           <h1 className={`pb-8 text-5xl sm:text-6xl lg:text-7xl font-bold inline-block gradient-text`}>

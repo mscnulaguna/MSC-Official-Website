@@ -10,6 +10,8 @@ import abstracticon from '@/assets/shapes/abstracticons.svg';
 import { getApiBaseUrl } from '@/lib/api';
 import '@/styles/home.css';
 import { useEffect, useState, type JSX } from 'react';
+import { useAuth } from '@/context/authContext';
+import { useNavigate } from 'react-router-dom';
 
 const API_BASE = getApiBaseUrl();
 
@@ -234,12 +236,30 @@ function eventToActivity(event: Event): Activity {
 export default function Home(): JSX.Element {
   const { currentWordIndex, displayText } = useTypingAnimation(TYPING_WORDS);
   const { isDarkMode } = useTheme();
+  const { isLoggedIn } = useAuth();
   const gridOpacity = isDarkMode ? 'opacity-10' : 'opacity-20';
 
   const [perks] = useState<Perk[]>(FALLBACK_PERKS);
   const [events, setEvents] = useState<Event[]>(FALLBACK_EVENTS);
   const [partners, setPartners] = useState<Partner[]>(FALLBACK_PARTNERS);
   const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
+  const handleSignIn = () => {
+    navigate('/login')
+  }
+  const handleJoinEvent = () => {
+    navigate('/events')
+  }
+  const handleExploreMore = () => {
+    document.getElementById('explore')?.scrollIntoView({ behavior: 'smooth' });
+  }
+  const handleMeetMembers = () => {
+    navigate('/about#team')
+  }
+  const viewPerks = () => {
+    navigate('/about#perks')
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -321,8 +341,12 @@ export default function Home(): JSX.Element {
             <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto mt-6 px-4 sm:px-0">The Microsoft Student Community at NU Laguna empowers students to learn, connect, and build the future.</p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
-              <Button size="lg" className="min-w-[150px] btn-primary">Join an Event</Button>
-              <Button size="lg" variant="outlineInfo" className="min-w-[150px]">Explore More</Button>
+              {isLoggedIn ? (
+                <Button size="lg" className="min-w-[150px] btn-primary" onClick={handleJoinEvent}>Join an Event</Button>
+              ):(
+                <Button size="lg" className="min-w-[150px] btn-primary" onClick={handleSignIn}>Sign In</Button>
+              )}
+              <Button size="lg" variant="outlineInfo" className="min-w-[150px]" onClick={handleExploreMore}>Explore More</Button>
             </div>
           </div>
         </div>
@@ -349,7 +373,7 @@ export default function Home(): JSX.Element {
       </section>
 
       {/* Community introduction with video and mission description */}
-      <section className="w-full bg-secondary/50 section-padding-lg flex justify-center border-b border-border/30">
+      <section id="explore" className="w-full bg-secondary/50 section-padding-lg flex justify-center border-b border-border/30">
         <div className="section-container text-center">
           <h1 className="text-4xl sm:text-4xl md:text-5xl lg:text-7xl font-bold inline-block gradient-text">
             WHO WE ARE
@@ -393,7 +417,7 @@ export default function Home(): JSX.Element {
                 </CardDescription>
               </CardContent>
             </Card>
-            <Button size="lg" variant="outlineSuccess" className="mt-1 sm:mt-2 md:mt-3">Meet Our Members</Button>
+            <Button size="lg" variant="outlineSuccess" className="mt-1 sm:mt-2 md:mt-3" onClick={handleMeetMembers}>Meet Our Members</Button>
           </div>
         </div>
       </section>
@@ -422,7 +446,7 @@ export default function Home(): JSX.Element {
             </div>
           )}
 
-          <div className="text-center"><Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">View All Perks</Button></div>
+          <div className="text-center"><Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground" onClick={viewPerks}>View All Perks</Button></div>
         </div>
       </section>
 
