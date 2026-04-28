@@ -1,1557 +1,722 @@
-import { useState, useEffect } from 'react';
-import { Layout } from '@/components/ui/layout/Layout';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { 
+  Upload, Trash2, X, Eye, Flag, MapPin, 
+  CalendarDays, Clock, Plus, ChevronLeft, ChevronRight, ImageIcon 
+} from 'lucide-react';
+
+// MSC Official UI Components
+import { AdminLayout } from '@/components/ui/layout';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
-import { Upload, Trash2, X, Eye, Flag, MapPin, CalendarDays, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-// Configuration
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://api.msc-nulaguna.org/v1';
-const DEV_MODE = true;
+// --- CONFIGURATION ---
+const API_BASE = "https://api.msc-nulaguna.org/v1";
 
-// Utility function to validate file type (PNG or JPG only)
-const validateFileType = (file: File): boolean => {
-  return ['image/png', 'image/jpeg'].includes(file.type);
-};
+// --- HELPERS ---
+const getInitials = (name: string) => 
+  name.split(" ").filter(Boolean).slice(0, 2).map((n) => n[0].toUpperCase()).join("");
 
-// Utility function to crop image to 1x1 aspect ratio
-const cropImageTo1x1 = (file: File): Promise<File> => {
-  return new Promise((resolve, reject) => {
+const autoCropTo1x1 = (file: File): Promise<File> => {
+  return new Promise((resolve) => {
     const img = new Image();
     img.onload = () => {
       const canvas = document.createElement('canvas');
       const size = Math.min(img.width, img.height);
-      canvas.width = size;
-      canvas.height = size;
-      
+      canvas.width = canvas.height = size;
       const ctx = canvas.getContext('2d');
-      if (!ctx) {
-        reject(new Error('Failed to get canvas context'));
-        return;
+      if (ctx) {
+        ctx.drawImage(img, (img.width - size) / 2, (img.height - size) / 2, size, size, 0, 0, size, size);
+        canvas.toBlob(blob => blob && resolve(new File([blob], file.name, { type: file.type })), file.type);
       }
-      
-      const x = (img.width - size) / 2;
-      const y = (img.height - size) / 2;
-      ctx.drawImage(img, x, y, size, size, 0, 0, size, size);
-      
-      canvas.toBlob((blob) => {
-        if (blob) {
-          const croppedFile = new File([blob], file.name, { type: file.type });
-          resolve(croppedFile);
-        } else {
-          reject(new Error('Failed to crop image'));
-        }
-      }, file.type);
-    };
-    img.onerror = () => {
-      reject(new Error('Failed to load image'));
     };
     img.src = URL.createObjectURL(file);
   });
 };
 
-interface Guild {
-  id: string;
-  name: string;
-}
+// --- INTERFACES ---
+interface Speaker { id: string; name: string; bio: string; photo: File | null; title?: string; }
+interface Organizer { id: string; name: string; email: string; photo: File | null; }
+interface Session { id: string; time: string; title: string; speaker: string; description: string; }
+interface EventPhoto { id: string; file: File; }
+interface Guild { id: string; name: string; }
 
-const FALLBACK_GUILDS: Guild[] = [
-  { id: '1', name: 'Tech Guild' },
-  { id: '2', name: 'Design Guild' },
-  { id: '3', name: 'Business Guild' },
-];
-
-interface Organizer {
-  id: string;
-  name: string;
-  email: string;
-  photo?: File;
-}
-
-interface Speaker {
-  id: string;
-  name: string;
-  bio: string;
-  photo?: File;
-}
-
-interface Session {
-  id: string;
-  time: string;
-  title: string;
-  speaker: string;
-  description: string;
-}
-
-interface EventPhoto {
-  id: string;
-  file: File;
-}
+type EventStatus = 'draft' | 'upcoming' | 'completed';
 
 interface EventFormData {
-  title: string;
-  type: string;
-  description: string;
-  guildId: string;
-  status: string;
-  coverImage?: File;
-  eventDate: string;
-  eventTime: string;
-  venueName: string;
-  location: string;
-  platformLink: string;
-  maxParticipants: number;
-  registrationDeadline: string;
-  registrationOpen: boolean;
-  requiresApproval: boolean;
-  publishEvent: boolean;
-  organizers: Organizer[];
-  speakers: Speaker[];
-  sessions: Session[];
+  title: string; type: string; description: string; guildId: string; status: EventStatus;
+  venueName: string; location: string; platformLink: string;
+  startDate: string; startTime: string; endDate: string; endTime: string;
+  maxParticipants: number; registrationDeadline: string;
+  registrationOpen: boolean; requiresApproval: boolean; publishEvent: boolean;
+  organizers: Organizer[]; speakers: Speaker[]; sessions: Session[];
+  coverImage: File | null;
 }
 
-// Organizer Card Component
-const OrganizerCard = ({
-  organizer,
-  index,
-  onUpdateField,
-  onRemove,
-  onPhotoChange,
-}: {
-  organizer: Organizer;
-  index: number;
-  onUpdateField: (field: keyof Omit<Organizer, 'photo'>, value: string) => void;
-  onRemove: () => void;
-  onPhotoChange: (photo: File | undefined) => void;
-}) => {
-  const [photoError, setPhotoError] = useState('');
-
-  const handlePhotoChange = async (file: File | undefined) => {
-    if (file) {
-      if (!validateFileType(file)) {
-        setPhotoError('Only PNG or JPG files are allowed');
-        return;
-      }
-      try {
-        const croppedFile = await cropImageTo1x1(file);
-        setPhotoError('');
-        onPhotoChange(croppedFile);
-      } catch (err) {
-        setPhotoError('Failed to process image');
-      }
-    } else {
-      onPhotoChange(undefined);
-    }
-  };
-
-  return (
-    <Card>
-      <CardContent className="space-y-4 p-4">
-        <div className="flex items-center justify-between">
-          <h3 className="font-semibold text-sm">Organizer {index + 1}</h3>
-          {index > 0 && (
-            <Button variant="ghost" size="sm" onClick={onRemove}>
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          )}
-        </div>
-        
-        {/* Photo Upload */}
-        <div className="flex flex-col items-center gap-2">
-          <div className="h-24 w-24 rounded-lg border-2 border-border flex items-center justify-center bg-muted/30 overflow-hidden">
-            {organizer.photo ? (
-              <img
-                src={URL.createObjectURL(organizer.photo)}
-                alt="Organizer"
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <Upload className="h-6 w-6 text-muted-foreground" />
-            )}
-          </div>
-          {photoError && <p className="text-xs text-destructive">{photoError}</p>}
-          <label className="inline-block">
-            <span className="text-xs text-primary hover:underline cursor-pointer">Upload photo (PNG or JPG)</span>
-            <input
-              type="file"
-              accept="image/png,image/jpeg"
-              onChange={(e) => handlePhotoChange(e.target.files?.[0])}
-              className="hidden"
-            />
-          </label>
-        </div>
-
-        <div className="space-y-2">
-          <div className="space-y-1">
-            <Label htmlFor={`org-name-${organizer.id}`} className="text-xs">Name</Label>
-            <Input
-              id={`org-name-${organizer.id}`}
-              placeholder="Organizer Name"
-              value={organizer.name}
-              onChange={(e) => onUpdateField('name', e.target.value)}
-            />
-          </div>
-          <div className="space-y-1">
-            <Label htmlFor={`org-email-${organizer.id}`} className="text-xs">Email</Label>
-            <Input
-              id={`org-email-${organizer.id}`}
-              type="email"
-              placeholder="organizer@example.com"
-              value={organizer.email}
-              onChange={(e) => onUpdateField('email', e.target.value)}
-            />
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
-
-// Speaker Card Component
-const SpeakerCard = ({
-  speaker,
-  index,
-  onUpdateField,
-  onRemove,
-  onPhotoChange,
-}: {
-  speaker: Speaker;
-  index: number;
-  onUpdateField: (field: keyof Omit<Speaker, 'photo'>, value: string) => void;
-  onRemove: () => void;
-  onPhotoChange: (photo: File | undefined) => void;
-}) => {
-  const [photoError, setPhotoError] = useState('');
-
-  const handlePhotoChange = async (file: File | undefined) => {
-    if (file) {
-      if (!validateFileType(file)) {
-        setPhotoError('Only PNG or JPG files are allowed');
-        return;
-      }
-      try {
-        const croppedFile = await cropImageTo1x1(file);
-        setPhotoError('');
-        onPhotoChange(croppedFile);
-      } catch (err) {
-        setPhotoError('Failed to process image');
-      }
-    } else {
-      onPhotoChange(undefined);
-    }
-  };
-
-  return (
-    <Card className="border-2 border-primary">
-      <CardContent className="space-y-4 p-4">
-        <div className="flex items-center justify-between">
-          <h3 className="font-semibold text-sm">Speaker {index + 1}</h3>
-          <Button variant="ghost" size="sm" onClick={onRemove}>
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
-
-        {/* Photo Upload */}
-        <div className="flex flex-col items-center gap-2">
-          <div className="h-32 w-32 rounded-lg border-2 border-primary flex items-center justify-center bg-muted/30 overflow-hidden">
-            {speaker.photo ? (
-              <img
-                src={URL.createObjectURL(speaker.photo)}
-                alt="Speaker"
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <Upload className="h-6 w-6 text-muted-foreground" />
-            )}
-          </div>
-          {photoError && <p className="text-xs text-destructive">{photoError}</p>}
-          <label className="inline-block">
-            <span className="text-xs text-primary hover:underline cursor-pointer">Upload photo (PNG or JPG)</span>
-            <input
-              type="file"
-              accept="image/png,image/jpeg"
-              onChange={(e) => handlePhotoChange(e.target.files?.[0])}
-              className="hidden"
-            />
-          </label>
-        </div>
-
-        <div className="space-y-2">
-          <div className="space-y-1">
-            <Label htmlFor={`speaker-name-${speaker.id}`} className="text-xs">Name</Label>
-            <Input
-              id={`speaker-name-${speaker.id}`}
-              placeholder="Speaker Name"
-              value={speaker.name}
-              onChange={(e) => onUpdateField('name', e.target.value)}
-            />
-          </div>
-          <div className="space-y-1">
-            <Label htmlFor={`speaker-bio-${speaker.id}`} className="text-xs">Bio</Label>
-            <Textarea
-              id={`speaker-bio-${speaker.id}`}
-              placeholder="Speaker bio..."
-              value={speaker.bio}
-              onChange={(e) => onUpdateField('bio', e.target.value)}
-              className="resize-none"
-              rows={3}
-            />
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
-
-// Session Card Component
-const SessionCard = ({
-  session,
-  onUpdateField,
-  onRemove,
-}: {
-  session: Session;
-  onUpdateField: (field: keyof Session, value: string) => void;
-  onRemove: () => void;
-}) => (
-  <Card>
-    <CardContent className="space-y-4 p-4">
-      <div className="flex items-center justify-between">
-        <h3 className="font-semibold text-sm">Session</h3>
-        <Button variant="ghost" size="sm" onClick={onRemove}>
-          <Trash2 className="h-4 w-4" />
-        </Button>
+// --- REUSABLE PHOTO UPLOAD COMPONENT ---
+const PhotoUploadZone = ({ file, onUpload, label, square = true }: { file: any, onUpload: (f: File) => void, label: string, square?: boolean }) => (
+  <div className={`relative flex flex-col items-center justify-center border border-dashed border-border bg-muted/10 hover:bg-muted/30 transition-colors cursor-pointer rounded-none ${square ? 'aspect-square w-28' : 'min-h-[200px] w-full'}`}>
+    <input 
+      type="file" 
+      className="absolute inset-0 opacity-0 cursor-pointer" 
+      accept="image/*"
+      onChange={async (e) => {
+        const f = e.target.files?.[0];
+        if (f) onUpload(square ? await autoCropTo1x1(f) : f);
+      }}
+    />
+    {file ? (
+      <img src={URL.createObjectURL(file)} className="w-full h-full object-cover" alt="Preview" />
+    ) : (
+      <div className="text-center p-4">
+        <Upload className="mx-auto h-6 w-6 text-muted-foreground mb-2" />
+        <p className="text-xs font-medium text-muted-foreground">{label}</p>
       </div>
-      <div className="space-y-2">
-        <div className="space-y-1">
-          <Label htmlFor={`session-time-${session.id}`} className="text-xs">Time</Label>
-          <Input
-            id={`session-time-${session.id}`}
-            placeholder="10:00 AM - 11:00 AM"
-            value={session.time}
-            onChange={(e) => onUpdateField('time', e.target.value)}
-          />
-        </div>
-        <div className="space-y-1">
-          <Label htmlFor={`session-title-${session.id}`} className="text-xs">Title</Label>
-          <Input
-            id={`session-title-${session.id}`}
-            placeholder="Session title"
-            value={session.title}
-            onChange={(e) => onUpdateField('title', e.target.value)}
-          />
-        </div>
-        <div className="space-y-1">
-          <Label htmlFor={`session-speaker-${session.id}`} className="text-xs">Speaker Name</Label>
-          <Input
-            id={`session-speaker-${session.id}`}
-            placeholder="Speaker name"
-            value={session.speaker}
-            onChange={(e) => onUpdateField('speaker', e.target.value)}
-          />
-        </div>
-        <div className="space-y-1">
-          <Label htmlFor={`session-description-${session.id}`} className="text-xs">Description</Label>
-          <Textarea
-            id={`session-description-${session.id}`}
-            placeholder="Session description..."
-            value={session.description}
-            onChange={(e) => onUpdateField('description', e.target.value)}
-            className="resize-none"
-            rows={3}
-          />
-        </div>
-      </div>
-    </CardContent>
-  </Card>
+    )}
+  </div>
 );
 
-// Cover Image Upload Component
-const CoverImageUpload = ({
-  coverImage,
-  onImageChange,
-}: {
-  coverImage?: File;
-  onImageChange: (image: File | undefined) => void;
-}) => {
-  const [error, setError] = useState('');
+export default function CreateEventPage() {
+  const navigate = useNavigate(); // Added Router hook
 
-  const handleImageChange = async (file: File | undefined) => {
-    if (file) {
-      if (!validateFileType(file)) {
-        setError('Only PNG or JPG files are allowed');
-        return;
-      }
-      try {
-        const croppedFile = await cropImageTo1x1(file);
-        setError('');
-        onImageChange(croppedFile);
-      } catch (err) {
-        setError('Failed to process image');
-      }
-    } else {
-      onImageChange(undefined);
-    }
-  };
-
-  return (
-    <div className="flex flex-col items-center gap-2">
-      <div className="h-32 w-full rounded-lg border-2 border-border flex items-center justify-center bg-muted/30 overflow-hidden">
-        {coverImage ? (
-          <img
-            src={URL.createObjectURL(coverImage)}
-            alt="Cover"
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <Upload className="h-6 w-6 text-muted-foreground" />
-        )}
-      </div>
-      {error && <p className="text-xs text-destructive">{error}</p>}
-      <label className="inline-block">
-        <span className="text-xs text-primary hover:underline cursor-pointer">Upload cover image (PNG or JPG)</span>
-        <input
-          type="file"
-          accept="image/png,image/jpeg"
-          onChange={(e) => handleImageChange(e.target.files?.[0])}
-          className="hidden"
-        />
-      </label>
-    </div>
-  );
-};
-
-// Event Photos Component with Slideshow and Gallery
-const EventPhotosComponent = ({
-  photos,
-  onAddPhotos,
-  onRemovePhoto,
-}: {
-  photos: EventPhoto[];
-  onAddPhotos: (files: File[]) => void;
-  onRemovePhoto: (id: string) => void;
-}) => {
-  const [isDragging, setIsDragging] = useState(false);
-  const [activeTab, setActiveTab] = useState('gallery');
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [uploadError, setUploadError] = useState('');
-
-  const handleDrop = async (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const files = Array.from(e.dataTransfer.files);
-    await processFiles(files);
-  };
-
-  const processFiles = async (files: File[]) => {
-    const validFiles: File[] = [];
-    const invalidFiles: string[] = [];
-
-    for (const file of files) {
-      if (!validateFileType(file)) {
-        invalidFiles.push(file.name);
-      } else {
-        validFiles.push(file);
-      }
-    }
-
-    if (invalidFiles.length > 0) {
-      setUploadError(`Invalid file types: ${invalidFiles.join(', ')}. Only PNG and JPG allowed.`);
-    } else {
-      setUploadError('');
-    }
-
-    if (validFiles.length > 0) {
-      onAddPhotos(validFiles);
-    }
-  };
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % photos.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + photos.length) % photos.length);
-  };
-
-  return (
-    <Card>
-      <CardHeader>
-        <div className="space-y-1">
-          <h3 className="text-lg font-semibold">Event Photos</h3>
-          <p className="text-sm text-muted-foreground">Upload photos that will appear in the event gallery after the event.</p>
-        </div>
-      </CardHeader>
-      <Separator />
-      <CardContent className="space-y-4 pt-4">
-        <div
-          className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer ${
-            isDragging ? 'border-primary bg-primary/5' : 'border-border hover:border-muted-foreground'
-          }`}
-          onDrop={handleDrop}
-          onDragOver={(e) => {
-            e.preventDefault();
-            setIsDragging(true);
-          }}
-          onDragLeave={() => setIsDragging(false)}
-        >
-          <Upload className="mx-auto h-8 w-8 mb-2 text-muted-foreground" />
-          <p className="text-sm font-semibold mb-1">Drag and drop images here</p>
-          <p className="text-xs text-muted-foreground">or</p>
-          <label className="inline-block mt-2">
-            <span className="text-xs text-primary hover:underline cursor-pointer">browse files (PNG or JPG)</span>
-            <input
-              type="file"
-              multiple
-              accept="image/png,image/jpeg"
-              onChange={(e) => {
-                if (e.target.files) {
-                  processFiles(Array.from(e.target.files));
-                }
-              }}
-              className="hidden"
-            />
-          </label>
-        </div>
-
-        {uploadError && <p className="text-xs text-destructive">{uploadError}</p>}
-
-        {photos.length > 0 && (
-          <div>
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="slideshow">Slideshow</TabsTrigger>
-                <TabsTrigger value="gallery">Gallery</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="slideshow" className="space-y-4">
-                {photos.length > 0 && (
-                  <div className="space-y-4">
-                    <div className="relative bg-muted/30 rounded-lg overflow-hidden aspect-video flex items-center justify-center">
-                      <img
-                        src={URL.createObjectURL(photos[currentSlide].file)}
-                        alt={`Slide ${currentSlide + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                      {photos.length > 1 && (
-                        <>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="absolute left-2 top-1/2 -translate-y-1/2"
-                            onClick={prevSlide}
-                          >
-                            <ChevronLeft className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="absolute right-2 top-1/2 -translate-y-1/2"
-                            onClick={nextSlide}
-                          >
-                            <ChevronRight className="h-4 w-4" />
-                          </Button>
-                        </>
-                      )}
-                    </div>
-
-                    {/* Thumbnails */}
-                    {photos.length > 1 && (
-                      <div className="flex gap-2 overflow-x-auto pb-2">
-                        {photos.map((photo, index) => (
-                          <button
-                            key={photo.id}
-                            onClick={() => setCurrentSlide(index)}
-                            className={`flex-shrink-0 h-16 w-16 rounded border-2 overflow-hidden ${
-                              currentSlide === index ? 'border-primary' : 'border-border'
-                            }`}
-                          >
-                            <img
-                              src={URL.createObjectURL(photo.file)}
-                              alt={`Thumbnail ${index + 1}`}
-                              className="w-full h-full object-cover"
-                            />
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </TabsContent>
-
-              <TabsContent value="gallery" className="space-y-4">
-                <div className="grid grid-cols-3 gap-3">
-                  {photos.map((photo) => (
-                    <div
-                      key={photo.id}
-                      className="group relative border border-border rounded overflow-hidden bg-muted/30 aspect-square flex items-center justify-center cursor-pointer hover:border-primary transition-colors"
-                      onClick={() => setPreviewImage(URL.createObjectURL(photo.file))}
-                    >
-                      <img
-                        src={URL.createObjectURL(photo.file)}
-                        alt="Gallery item"
-                        className="w-full h-full object-cover"
-                      />
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="absolute inset-0 h-full w-full opacity-0 group-hover:opacity-100 rounded"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onRemovePhoto(photo.id);
-                        }}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </TabsContent>
-            </Tabs>
-          </div>
-        )}
-
-        {/* Image Preview Modal */}
-        {previewImage && (
-          <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setPreviewImage(null)}>
-            <div className="relative max-w-3xl max-h-[90vh] w-full" onClick={(e) => e.stopPropagation()}>
-              <img src={previewImage} alt="Preview" className="w-full h-full object-contain rounded-lg" />
-              <Button variant="ghost" size="sm" className="absolute top-2 right-2" onClick={() => setPreviewImage(null)}>
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  );
-};
-
-// Main Create Event Page Component
-export default function CreateNewEventPage() {
-  const [formData, setFormData] = useState<EventFormData>({
-    title: '',
-    type: '',
-    description: '',
-    guildId: '',
-    status: 'draft',
-    coverImage: undefined,
-    eventDate: '',
-    eventTime: '',
-    venueName: '',
-    location: '',
-    platformLink: '',
-    maxParticipants: 0,
-    registrationDeadline: '',
-    registrationOpen: true,
-    requiresApproval: false,
-    publishEvent: false,
-    organizers: [{ id: '1', name: '', email: '' }],
-    speakers: [],
-    sessions: [],
-  });
+  const [activeTab, setActiveTab] = useState('event');
+  const [showPreview, setShowPreview] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false); // API Loading State
 
   const [eventPhotos, setEventPhotos] = useState<EventPhoto[]>([]);
   const [guilds, setGuilds] = useState<Guild[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [showPreview, setShowPreview] = useState(false);
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [activeTab, setActiveTab] = useState('details');
+  const [currentSlide, setCurrentSlide] = useState(0);
 
-  // Fetch guilds on mount
+  const [formData, setFormData] = useState<EventFormData>({
+    title: '', type: '', description: '', guildId: '', status: 'draft',
+    venueName: '', location: '', platformLink: '',
+    startDate: '', startTime: '', endDate: '', endTime: '',
+    maxParticipants: 0, registrationDeadline: '',
+    registrationOpen: true, requiresApproval: false, publishEvent: false, coverImage: null,
+    organizers: [{ id: '1', name: '', email: '', photo: null }],
+    speakers: [], sessions: []
+  });
+
+  const update = (field: keyof EventFormData, value: any) => setFormData(p => ({ ...p, [field]: value }));
+  const isCompleted = formData.status === 'completed';
+
+  // Fetch Guilds
   useEffect(() => {
     const fetchGuilds = async () => {
       try {
-        const response = await fetch(`${API_BASE}/guilds`);
-        if (response.ok) {
-          const data = await response.json();
-          setGuilds(data.data || []);
-        } else {
-          setGuilds(FALLBACK_GUILDS);
-        }
-      } catch {
-        setGuilds(FALLBACK_GUILDS);
+        const res = await fetch(`${API_BASE}/guilds`);
+        if (!res.ok) throw new Error("Failed to fetch guilds");
+        const json = await res.json();
+        setGuilds(json.data || []);
+      } catch (err) {
+        setGuilds([{ id: '1', name: 'Technology Guild' }, { id: '2', name: 'Design Guild' }]); // Fallback
       }
     };
     fetchGuilds();
   }, []);
 
-  // Update form field
-  const updateFormField = (field: keyof EventFormData, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  // Organizer handlers
-  const handleAddOrganizer = () => {
-    const newOrganizer: Organizer = {
-      id: Date.now().toString(),
-      name: '',
-      email: '',
-    };
-    setFormData(prev => ({
-      ...prev,
-      organizers: [...prev.organizers, newOrganizer],
-    }));
-  };
-
-  const handleUpdateOrganizer = (id: string, field: keyof Omit<Organizer, 'photo'>, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      organizers: prev.organizers.map(org =>
-        org.id === id ? { ...org, [field]: value } : org
-      ),
-    }));
-  };
-
-  const handleOrganizerPhotoChange = (id: string, photo: File | undefined) => {
-    setFormData(prev => ({
-      ...prev,
-      organizers: prev.organizers.map(org =>
-        org.id === id ? { ...org, photo } : org
-      ),
-    }));
-  };
-
-  const handleRemoveOrganizer = (id: string) => {
-    setFormData(prev => ({
-      ...prev,
-      organizers: prev.organizers.filter(org => org.id !== id),
-    }));
-  };
-
-  // Speaker handlers
-  const handleAddSpeaker = () => {
-    const newSpeaker: Speaker = {
-      id: Date.now().toString(),
-      name: '',
-      bio: '',
-    };
-    setFormData(prev => ({
-      ...prev,
-      speakers: [...prev.speakers, newSpeaker],
-    }));
-  };
-
-  const handleUpdateSpeaker = (id: string, field: keyof Omit<Speaker, 'photo'>, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      speakers: prev.speakers.map(speaker =>
-        speaker.id === id ? { ...speaker, [field]: value } : speaker
-      ),
-    }));
-  };
-
-  const handleSpeakerPhotoChange = (id: string, photo: File | undefined) => {
-    setFormData(prev => ({
-      ...prev,
-      speakers: prev.speakers.map(speaker =>
-        speaker.id === id ? { ...speaker, photo } : speaker
-      ),
-    }));
-  };
-
-  const handleRemoveSpeaker = (id: string) => {
-    setFormData(prev => ({
-      ...prev,
-      speakers: prev.speakers.filter(speaker => speaker.id !== id),
-    }));
-  };
-
-  // Session handlers
-  const handleAddSession = () => {
-    const newSession: Session = {
-      id: Date.now().toString(),
-      time: '',
-      title: '',
-      speaker: '',
-      description: '',
-    };
-    setFormData(prev => ({
-      ...prev,
-      sessions: [...prev.sessions, newSession],
-    }));
-  };
-
-  const handleUpdateSession = (id: string, field: keyof Session, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      sessions: prev.sessions.map(session =>
-        session.id === id ? { ...session, [field]: value } : session
-      ),
-    }));
-  };
-
-  const handleRemoveSession = (id: string) => {
-    setFormData(prev => ({
-      ...prev,
-      sessions: prev.sessions.filter(session => session.id !== id),
-    }));
-  };
-
-  // Event Photos handlers
-  const handleAddPhotos = (files: File[]) => {
-    const newPhotos = files.map(file => ({
-      id: Date.now().toString() + Math.random(),
-      file,
-    }));
-    setEventPhotos(prev => [...prev, ...newPhotos]);
-  };
-
-  const handleRemovePhoto = (id: string) => {
-    setEventPhotos(prev => prev.filter(photo => photo.id !== id));
-  };
-
-  // Preview handler
-  const handleOpenPreview = () => {
-    if (!formData.title.trim()) {
-      setError('Event title is required');
-      return;
-    }
-    setError('');
-    setShowPreview(true);
-  };
-
-  // Confirmation handlers
-  const handleConfirmCreate = () => {
-    setShowConfirmDialog(false);
-    handleCreateEvent();
-  };
-
-  // Create event handler
-  const handleCreateEvent = async () => {
-    setLoading(true);
+  // --- API POST HANDLER ---
+  const handleSave = async () => {
+    setIsSubmitting(true);
     try {
-      if (DEV_MODE) {
-        console.log('DEV MODE: Event data:', formData);
-        setLoading(false);
-        alert(`Event "${formData.title}" created successfully (DEV MODE)`);
-        // Reset form
-        setFormData({
-          title: '',
-          type: '',
-          description: '',
-          guildId: '',
-          status: 'draft',
-          coverImage: undefined,
-          eventDate: '',
-          eventTime: '',
-          venueName: '',
-          location: '',
-          platformLink: '',
-          maxParticipants: 0,
-          registrationDeadline: '',
-          registrationOpen: true,
-          requiresApproval: false,
-          publishEvent: false,
-          organizers: [{ id: '1', name: '', email: '' }],
-          speakers: [],
-          sessions: [],
-        });
-        setEventPhotos([]);
-        setShowPreview(false);
-        return;
-      }
+      // 1. Transform form data to match the API contract expected by events-dashboard
+      const payload = {
+        title: formData.title,
+        description: formData.description,
+        type: formData.type,
+        status: formData.status,
+        startDate: formData.startDate,
+        startTime: formData.startTime,
+        location: formData.venueName || formData.location, // use venue name natively
+        maxParticipants: formData.maxParticipants,
+        registered: 0, // Fresh events start with 0
+        guildId: formData.guildId,
+        coverImage: null // Assuming file upload logic gets handled by a separate media endpoint later
+      };
 
-      const formDataObj = new FormData();
-      formDataObj.append('title', formData.title);
-      formDataObj.append('type', formData.type);
-      formDataObj.append('description', formData.description);
-      formDataObj.append('guildId', formData.guildId);
-      formDataObj.append('status', formData.status);
-      formDataObj.append('eventDate', formData.eventDate);
-      formDataObj.append('eventTime', formData.eventTime);
-      formDataObj.append('venueName', formData.venueName);
-      formDataObj.append('location', formData.location);
-      formDataObj.append('platformLink', formData.platformLink);
-      formDataObj.append('maxParticipants', formData.maxParticipants.toString());
-      formDataObj.append('registrationDeadline', formData.registrationDeadline);
-      formDataObj.append('registrationOpen', formData.registrationOpen.toString());
-      formDataObj.append('requiresApproval', formData.requiresApproval.toString());
-      formDataObj.append('publishEvent', formData.publishEvent.toString());
-      formDataObj.append('organizers', JSON.stringify(formData.organizers));
-      formDataObj.append('speakers', JSON.stringify(formData.speakers));
-      formDataObj.append('sessions', JSON.stringify(formData.sessions));
-
-      if (formData.coverImage) {
-        formDataObj.append('coverImage', formData.coverImage);
-      }
-
-      eventPhotos.forEach((photo, index) => {
-        formDataObj.append(`photos[${index}]`, photo.file);
-      });
-
-      const response = await fetch(`${API_BASE}/events`, {
+      // 2. Post to API
+      const res = await fetch(`${API_BASE}/events`, {
         method: 'POST',
-        body: formDataObj,
+        headers: {
+          'Content-Type': 'application/json',
+          // 'Authorization': `Bearer ${token}` // Include token logic here if required by auth
+        },
+        body: JSON.stringify(payload),
       });
 
-      if (response.ok) {
-        alert(`Event "${formData.title}" created successfully!`);
-        setShowPreview(false);
-        // Reset form
-        setFormData({
-          title: '',
-          type: '',
-          description: '',
-          guildId: '',
-          status: 'draft',
-          coverImage: undefined,
-          eventDate: '',
-          eventTime: '',
-          venueName: '',
-          location: '',
-          platformLink: '',
-          maxParticipants: 0,
-          registrationDeadline: '',
-          registrationOpen: true,
-          requiresApproval: false,
-          publishEvent: false,
-          organizers: [{ id: '1', name: '', email: '' }],
-          speakers: [],
-          sessions: [],
-        });
-        setEventPhotos([]);
-      } else {
-        setError('Failed to create event');
-      }
+      if (!res.ok) throw new Error('Failed to create event');
+
+      // 3. Navigate back to dashboard on success to force reload
+      navigate('/admin/event-status');
+
     } catch (err) {
-      setError('Error creating event: ' + (err instanceof Error ? err.message : 'Unknown error'));
+      console.error("Error saving event:", err);
+      // Ideally trigger a toast notification here
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Layout hideFooter>
-      <section className="section-container py-16">
-        <div className="mb-8 flex items-center justify-between">
+    <AdminLayout>
+      <section className="section-container section-padding font-inter py-8 relative">
+        
+        {/* Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div>
-            <h1 className="text-3xl font-bold">Create Event</h1>
-            <p className="mt-2 text-muted-foreground">Create a new event for your guild</p>
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">Create New Event</h1>
+            <p className="text-muted-foreground mt-1 text-sm">Configure event details and logistics.</p>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleOpenPreview}
-            className="gap-2"
-          >
-            <Eye className="h-4 w-4" />
-            Preview Event
+          <Button variant="outlinePrimary" onClick={() => setShowPreview(true)}>
+            <Eye/> Preview Mode
           </Button>
         </div>
 
-        {error && (
-          <div className="mb-6 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
-            {error}
+        {/* Navigation Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <div className="flex justify-center w-full mb-8">
+            <TabsList className="grid w-full max-w-2xl grid-cols-4 rounded-none">
+              <TabsTrigger value="event" className="rounded-none">Event</TabsTrigger>
+              <TabsTrigger value="speakers" className="rounded-none">Speakers</TabsTrigger>
+              <TabsTrigger value="agenda" className="rounded-none">Agenda</TabsTrigger>
+              <TabsTrigger value="media" disabled={!isCompleted} className="rounded-none">Gallery</TabsTrigger>
+            </TabsList>
           </div>
-        )}
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="w-fit">
-            <TabsTrigger value="details">Details</TabsTrigger>
-            <TabsTrigger value="speakers">Speakers</TabsTrigger>
-            <TabsTrigger value="agenda">Agenda</TabsTrigger>
-            <TabsTrigger value="photos">Event Photos</TabsTrigger>
-          </TabsList>
-
-          {/* DETAILS TAB */}
-          <TabsContent value="details" className="space-y-6">
-            {/* Event Details Card */}
-            <Card>
-              <CardHeader>
-                <div className="space-y-1">
-                  <h2 className="text-lg font-semibold">Event Details</h2>
-                  <p className="text-sm text-muted-foreground">Basic information about your event.</p>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="title">Event Title *</Label>
-                  <Input
-                    id="title"
-                    placeholder="Enter event title"
-                    value={formData.title}
-                    onChange={(e) => updateFormField('title', e.target.value)}
-                  />
-                </div>
-
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="type">Event Type</Label>
-                    <Select value={formData.type} onValueChange={(value) => updateFormField('type', value)}>
-                      <SelectTrigger id="type">
-                        <SelectValue placeholder="Select type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Seminar">Seminar</SelectItem>
-                        <SelectItem value="Workshop">Workshop</SelectItem>
-                        <SelectItem value="Microsoft Teams">Microsoft Teams</SelectItem>
-                        <SelectItem value="Other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="guild">Guild</Label>
-                    <Select value={formData.guildId} onValueChange={(value) => updateFormField('guildId', value)}>
-                      <SelectTrigger id="guild">
-                        <SelectValue placeholder="Select guild" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {guilds.map(guild => (
-                          <SelectItem key={guild.id} value={guild.id}>{guild.name}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="status">Status</Label>
-                  <Select value={formData.status} onValueChange={(value) => updateFormField('status', value)}>
-                    <SelectTrigger id="status">
-                      {formData.status === 'upcoming' && <Badge>Upcoming</Badge>}
-                      {formData.status === 'completed' && <Badge variant="success">Completed</Badge>}
-                      {formData.status === 'draft' && <Badge variant="outline">Draft</Badge>}
-                      {!formData.status && <SelectValue placeholder="Select status" />}
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="draft">Draft</SelectItem>
-                      <SelectItem value="upcoming">Upcoming</SelectItem>
-                      <SelectItem value="completed">Completed</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    placeholder="Enter event description"
-                    value={formData.description}
-                    onChange={(e) => updateFormField('description', e.target.value)}
-                    className="resize-none"
-                    rows={4}
-                  />
-                </div>
-
-                {/* Cover Image Upload */}
-                <div className="space-y-2">
-                  <Label>Cover Image</Label>
-                  <CoverImageUpload
-                    coverImage={formData.coverImage}
-                    onImageChange={(image) => updateFormField('coverImage', image)}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Event Schedule Card */}
-            <Card>
-              <CardHeader>
-                <h2 className="text-lg font-semibold">Event Schedule</h2>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="eventDate">Event Date</Label>
-                    <Input
-                      id="eventDate"
-                      type="date"
-                      value={formData.eventDate}
-                      onChange={(e) => updateFormField('eventDate', e.target.value)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="eventTime">Event Time</Label>
-                    <Input
-                      id="eventTime"
-                      type="time"
-                      value={formData.eventTime}
-                      onChange={(e) => updateFormField('eventTime', e.target.value)}
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Venue Card */}
-            <Card>
-              <CardHeader>
-                <h2 className="text-lg font-semibold">Venue</h2>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="venue">Venue Name</Label>
-                  <Input
-                    id="venue"
-                    placeholder="e.g., Lecture Hall A"
-                    value={formData.venueName}
-                    onChange={(e) => updateFormField('venueName', e.target.value)}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="location">Location</Label>
-                  <Input
-                    id="location"
-                    placeholder="e.g., Building B, Floor 3"
-                    value={formData.location}
-                    onChange={(e) => updateFormField('location', e.target.value)}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="platform">Platform Link (Optional)</Label>
-                  <Input
-                    id="platform"
-                    placeholder="e.g., https://teams.microsoft.com/..."
-                    value={formData.platformLink}
-                    onChange={(e) => updateFormField('platformLink', e.target.value)}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Registration Card */}
-            <Card>
-              <CardHeader>
-                <h2 className="text-lg font-semibold">Registration</h2>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="maxParticipants">Max Participants</Label>
-                    <Input
-                      id="maxParticipants"
-                      type="number"
-                      placeholder="0 for unlimited"
-                      value={formData.maxParticipants}
-                      onChange={(e) => updateFormField('maxParticipants', parseInt(e.target.value) || 0)}
-                      min="0"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="deadline">Registration Deadline</Label>
-                    <Input
-                      id="deadline"
-                      type="date"
-                      value={formData.registrationDeadline}
-                      onChange={(e) => updateFormField('registrationDeadline', e.target.value)}
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Checkbox
-                      id="registrationOpen"
-                      checked={formData.registrationOpen}
-                      onCheckedChange={(checked) => updateFormField('registrationOpen', checked)}
-                    />
-                    <Label htmlFor="registrationOpen" className="font-normal">Registration is open</Label>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <Checkbox
-                      id="requiresApproval"
-                      checked={formData.requiresApproval}
-                      onCheckedChange={(checked) => updateFormField('requiresApproval', checked)}
-                    />
-                    <Label htmlFor="requiresApproval" className="font-normal">Requires approval</Label>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <Checkbox
-                      id="publishEvent"
-                      checked={formData.publishEvent}
-                      onCheckedChange={(checked) => updateFormField('publishEvent', checked)}
-                    />
-                    <Label htmlFor="publishEvent" className="font-normal">Publish event</Label>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Organizers Card */}
-            <Card>
-              <CardHeader>
-                <h2 className="text-lg font-semibold">Organizers</h2>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {formData.organizers.map((organizer, index) => (
-                  <OrganizerCard
-                    key={organizer.id}
-                    organizer={organizer}
-                    index={index}
-                    onUpdateField={(field, value) =>
-                      handleUpdateOrganizer(organizer.id, field, value)
-                    }
-                    onPhotoChange={(photo) =>
-                      handleOrganizerPhotoChange(organizer.id, photo)
-                    }
-                    onRemove={() => handleRemoveOrganizer(organizer.id)}
-                  />
-                ))}
-                <Button variant="outline" onClick={handleAddOrganizer} className="w-full">
-                  + Add Organizer
-                </Button>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* SPEAKERS TAB */}
-          <TabsContent value="speakers" className="space-y-6">
-            <div className="flex justify-center">
-              <div className="grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 w-full">
-                {formData.speakers.map((speaker, index) => (
-                  <div key={speaker.id} className="col-span-1">
-                    <SpeakerCard
-                      speaker={speaker}
-                      index={index}
-                      onUpdateField={(field, value) =>
-                        handleUpdateSpeaker(speaker.id, field, value)
-                      }
-                      onPhotoChange={(photo) =>
-                        handleSpeakerPhotoChange(speaker.id, photo)
-                      }
-                      onRemove={() => handleRemoveSpeaker(speaker.id)}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="flex justify-center">
-              <Button variant="outline" onClick={handleAddSpeaker}>
-                + Add Speaker
-              </Button>
-            </div>
-          </TabsContent>
-
-          {/* AGENDA TAB */}
-          <TabsContent value="agenda" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <div className="space-y-1">
-                  <h2 className="text-lg font-semibold">Agenda</h2>
-                  <p className="text-sm text-muted-foreground">Create the Event Schedule</p>
-                </div>
-              </CardHeader>
-            </Card>
-
-            <div className="flex justify-center">
-              <div className="max-w-3xl w-full space-y-4">
-                {formData.sessions.map((session) => (
-                  <SessionCard
-                    key={session.id}
-                    session={session}
-                    onUpdateField={(field, value) =>
-                      handleUpdateSession(session.id, field, value)
-                    }
-                    onRemove={() => handleRemoveSession(session.id)}
-                  />
-                ))}
-                <Button variant="outline" onClick={handleAddSession} className="w-full">
-                  + Add Session
-                </Button>
-              </div>
-            </div>
-          </TabsContent>
-
-          {/* EVENT PHOTOS TAB */}
-          <TabsContent value="photos" className="space-y-6">
-            <EventPhotosComponent
-              photos={eventPhotos}
-              onAddPhotos={handleAddPhotos}
-              onRemovePhoto={handleRemovePhoto}
-            />
-          </TabsContent>
-        </Tabs>
-
-        {/* ACTION BUTTONS */}
-        <div className="mt-8 flex gap-4 pb-16">
-          <Button variant="outline" className="w-1/4" onClick={() => window.history.back()}>
-            Cancel
-          </Button>
-          <Button
-            className="w-3/4"
-            onClick={() => setShowConfirmDialog(true)}
-            disabled={loading || !formData.title.trim()}
-          >
-            {loading ? 'Creating...' : 'Create Event'}
-          </Button>
-        </div>
-
-        {/* PREVIEW - Full Page Overlay */}
-        {showPreview && (
-          <div className="fixed inset-0 z-50 bg-background overflow-y-auto">
-            <div className="w-full border-b border-border">
-              {/* Cover Image Placeholder */}
-              <div className="relative h-48 w-full overflow-hidden bg-gradient-to-br from-muted to-muted/50 sm:h-64">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <p className="text-sm text-muted-foreground">[Event Cover Image Preview]</p>
-                </div>
-                {/* Gradient overlay */}
-                <div className="pointer-events-none absolute inset-y-0 right-0 w-44 bg-gradient-to-l from-background to-transparent sm:w-72" />
-              </div>
-            </div>
-
-            <section className="section-container section-padding-md">
-              <div className="grid gap-8 pt-2 sm:pt-4 lg:grid-cols-[1fr_360px]">
-                {/* LEFT COLUMN - Main Content */}
-                <div className="space-y-6">
-                  <section aria-label="Event details" className="space-y-6">
-                    <div className="space-y-3">
+          <div>
+            
+            {/* =========================================
+                TAB: EVENT DETAILS
+                ========================================= */}
+            {activeTab === 'event' && (
+              <div className="space-y-8">
+                
+                {/* Card 1: Event Details */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Event Details</CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-6 space-y-6">
+                    <div className="space-y-2">
+                      <Label>Event Title</Label>
+                      <Input placeholder="Enter event title" value={formData.title} onChange={e => update('title', e.target.value)} />
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <h1 className="text-3xl font-bold sm:text-4xl">{formData.title || 'Untitled Event'}</h1>
-                        <div>
-                          {formData.status === 'upcoming' && <Badge>Upcoming</Badge>}
-                          {formData.status === 'completed' && <Badge variant="success">Completed</Badge>}
-                          {formData.status === 'draft' && <Badge variant="outline">Draft</Badge>}
-                        </div>
+                        <Label>Event Type</Label>
+                        <Select value={formData.type} onValueChange={v => update('type', v)}>
+                          <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Workshop">Workshop</SelectItem>
+                            <SelectItem value="Seminar">Seminar</SelectItem>
+                            <SelectItem value="Competition">Competition</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Organizer Guild</Label>
+                        <Select value={formData.guildId} onValueChange={v => update('guildId', v)}>
+                          <SelectTrigger><SelectValue placeholder="Select guild" /></SelectTrigger>
+                          <SelectContent>
+                            {guilds.map(g => (
+                              <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
 
-                    {formData.description && (
-                      <div className="space-y-2">
-                        <h2 className="text-lg font-bold">About</h2>
-                        <p className="text-sm leading-relaxed text-muted-foreground">{formData.description}</p>
-                      </div>
-                    )}
+                    <div className="space-y-2">
+                      <Label>Event Status</Label>
+                      <Select value={formData.status} onValueChange={v => update('status', v as EventStatus)}>
+                        <SelectTrigger><SelectValue placeholder="Select status" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="draft">Draft</SelectItem>
+                          <SelectItem value="upcoming">Upcoming</SelectItem>
+                          <SelectItem value="completed">Completed</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-                    {/* Organized By Section */}
-                    {formData.organizers.some(o => o.name) && (
-                      <div className="space-y-3">
-                        <Separator />
-                        <h2 className="text-lg font-bold">Organized by</h2>
-                        <div className="grid max-w-2xl gap-4 sm:grid-cols-2">
-                          {formData.organizers.map((org) =>
-                            org.name ? (
-                              <div key={org.id} className="flex w-full max-w-sm items-center gap-3">
-                                <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center flex-shrink-0 overflow-hidden">
-                                  {org.photo ? (
-                                    <img src={URL.createObjectURL(org.photo)} alt={org.name} className="w-full h-full object-cover" />
-                                  ) : (
-                                    <span className="text-xs font-semibold text-muted-foreground">
-                                      {org.name
-                                        .split(' ')
-                                        .filter(Boolean)
-                                        .slice(0, 2)
-                                        .map((n) => n[0].toUpperCase())
-                                        .join('')}
-                                    </span>
-                                  )}
-                                </div>
-                                <div className="leading-tight">
-                                  <p className="text-sm font-semibold">{org.name}</p>
-                                  {org.email && <p className="text-xs text-muted-foreground">{org.email}</p>}
-                                </div>
-                              </div>
-                            ) : null
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </section>
+                    <div className="space-y-2">
+                      <Label>Event Description</Label>
+                      <Textarea placeholder="Detailed event description..." value={formData.description} onChange={e => update('description', e.target.value)} />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label>Cover Image</Label>
+                      <PhotoUploadZone square={false} file={formData.coverImage} onUpload={f => update('coverImage', f)} label="Drag or click to upload 16:9 banner" />
+                    </div>
+                  </CardContent>
+                </Card>
 
-                  {/* Speakers Section */}
-                  {formData.speakers.some(s => s.name) && (
-                    <section aria-label="Event speakers" className="space-y-4 pt-12">
-                      <h2 className="text-2xl font-bold text-center">Event Speakers</h2>
-                      <div className="mx-auto grid max-w-5xl justify-items-center gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                        {formData.speakers.map((speaker, index) =>
-                          speaker.name ? (
-                            <Card key={speaker.id} className="border-2 border-primary w-full max-w-sm">
-                              <CardContent className="space-y-2 p-4 text-center">
-                                <div className="mx-auto h-32 w-32 rounded-lg border-2 border-primary flex items-center justify-center bg-muted/30 overflow-hidden">
-                                  {speaker.photo ? (
-                                    <img
-                                      src={URL.createObjectURL(speaker.photo)}
-                                      alt={speaker.name}
-                                      className="w-full h-full object-cover"
-                                    />
-                                  ) : (
-                                    <span className="text-xs font-semibold text-muted-foreground">
-                                      {speaker.name
-                                        .split(' ')
-                                        .filter(Boolean)
-                                        .slice(0, 2)
-                                        .map((n) => n[0].toUpperCase())
-                                        .join('')}
-                                    </span>
-                                  )}
-                                </div>
-                                <div>
-                                  <p className="text-xs text-muted-foreground font-medium">Speaker {index + 1}</p>
-                                  <p className="text-sm font-semibold">{speaker.name}</p>
-                                  {speaker.bio ? (
-                                    <p className="text-xs text-muted-foreground line-clamp-2">{speaker.bio}</p>
-                                  ) : (
-                                    <p className="text-xs text-muted-foreground">Speaker</p>
-                                  )}
-                                </div>
-                              </CardContent>
-                            </Card>
-                          ) : null
-                        )}
-                      </div>
-                    </section>
-                  )}
+                {/* Card 2: Event Schedule */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Event Schedule</CardTitle>
+                  </CardHeader>
+                  <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <div className="space-y-2"><Label>Start Date</Label><Input type="date" value={formData.startDate} onChange={e => update('startDate', e.target.value)} /></div>
+                      <div className="space-y-2"><Label>End Date</Label><Input type="date" value={formData.endDate} onChange={e => update('endDate', e.target.value)} /></div>
+                    </div>
+                    <div className="space-y-4">
+                      <div className="space-y-2"><Label>Start Time</Label><Input type="time" value={formData.startTime} onChange={e => update('startTime', e.target.value)} /></div>
+                      <div className="space-y-2"><Label>End Time</Label><Input type="time" value={formData.endTime} onChange={e => update('endTime', e.target.value)} /></div>
+                    </div>
+                  </CardContent>
+                </Card>
 
-                  {/* Agenda Section */}
-                  {formData.sessions.some(s => s.title) && (
-                    <section aria-label="Event agenda" className="space-y-4 pt-12">
-                      <h2 className="text-2xl font-bold text-center">Event Agenda</h2>
-                      <div className="mx-auto w-full max-w-3xl space-y-3">
-                        {formData.sessions.map((session) =>
-                          session.title ? (
-                            <Card key={session.id}>
-                              <CardContent className="p-4 space-y-2">
-                                <div className="flex items-center justify-between">
-                                  <h3 className="font-semibold">{session.title}</h3>
-                                  {session.time && (
-                                    <span className="text-xs font-semibold text-muted-foreground">{session.time}</span>
-                                  )}
-                                </div>
-                                {session.speaker && <p className="text-sm text-muted-foreground">Speaker: {session.speaker}</p>}
-                                {session.description && <p className="text-sm text-muted-foreground leading-relaxed">{session.description}</p>}
-                              </CardContent>
-                            </Card>
-                          ) : null
-                        )}
-                      </div>
-                    </section>
-                  )}
+                {/* Card 3: Venue */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Venue</CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-6 space-y-4">
+                    <div className="space-y-2"><Label>Venue Name</Label><Input className="rounded-none" placeholder="e.g., Lecture Hall A" value={formData.venueName} onChange={e => update('venueName', e.target.value)} /></div>
+                    <div className="space-y-2"><Label>Location</Label><Input className="rounded-none" placeholder="e.g., Building B, Floor 3" value={formData.location} onChange={e => update('location', e.target.value)} /></div>
+                    <div className="space-y-2"><Label>Platform Link (Optional)</Label><Input className="rounded-none" placeholder="e.g., https://teams.microsoft.com/..." value={formData.platformLink} onChange={e => update('platformLink', e.target.value)} /></div>
+                  </CardContent>
+                </Card>
 
-                  {/* Event Photos Section */}
-                  {eventPhotos.length > 0 && (
-                    <section aria-label="Event photos" className="space-y-4 pt-12">
-                      <h2 className="text-2xl font-bold text-center">Event Photos</h2>
-                      <div className="mx-auto grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                        {eventPhotos.map((photo) => (
-                          <div key={photo.id} className="group w-full overflow-hidden border border-border rounded bg-muted/30 transition-colors hover:border-primary aspect-square flex items-center justify-center">
-                            <img
-                              src={URL.createObjectURL(photo.file)}
-                              alt="Event photo"
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </section>
-                  )}
-                </div>
+                {/* Card 4: Registration */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Registration</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2"><Label>Max Participants</Label><Input type="number" className="rounded-none" placeholder="0 for unlimited" value={formData.maxParticipants || ''} onChange={e => update('maxParticipants', parseInt(e.target.value))} /></div>
+                      <div className="space-y-2"><Label>Registration Deadline</Label><Input type="date" className="rounded-none" value={formData.registrationDeadline} onChange={e => update('registrationDeadline', e.target.value)} /></div>
+                    </div>
+                  </CardContent>
+                </Card>
 
-                {/* RIGHT COLUMN - Info Card */}
-                <div className="space-y-4 h-fit">
-                  <Card>
-                    <CardHeader>
-                      <h3 className="text-lg font-bold">What you need to know</h3>
-                    </CardHeader>
-                    <CardContent className="space-y-3 text-sm">
-                      {formData.type && (
-                        <div className="flex items-start gap-3">
-                          <Flag className="mt-0.5 h-4 w-4 text-muted-foreground" />
-                          <div>
-                            <p className="font-semibold">Event Type</p>
-                            <p className="text-muted-foreground">{formData.type}</p>
-                          </div>
+                {/* Card 5: Organizers */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Organizers</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {formData.organizers.map((org, i) => (
+                      <div key={org.id} className="flex flex-col sm:flex-row gap-6 p-9 border border-border relative items-start bg-muted/5">
+                        <PhotoUploadZone square={true} file={org.photo} onUpload={f => { const n = [...formData.organizers]; n[i].photo = f; update('organizers', n); }} label="Photo" />
+                        <div className="flex-1 space-y-4 w-full">
+                          <div className="space-y-2"><Label>Name</Label><Input placeholder="Organizer Name" value={org.name} onChange={e => { const n = [...formData.organizers]; n[i].name = e.target.value; update('organizers', n); }} /></div>
+                          <div className="space-y-2"><Label>Email</Label><Input placeholder="organizer@example.com" value={org.email} onChange={e => { const n = [...formData.organizers]; n[i].email = e.target.value; update('organizers', n); }} /></div>
                         </div>
-                      )}
-                      {formData.eventDate && (
-                        <div className="flex items-start gap-3">
-                          <CalendarDays className="mt-0.5 h-4 w-4 text-muted-foreground" />
-                          <div>
-                            <p className="font-semibold">Event Date</p>
-                            <p className="text-muted-foreground">{formData.eventDate}</p>
-                          </div>
-                        </div>
-                      )}
-                      {formData.eventTime && (
-                        <div className="flex items-start gap-3">
-                          <Clock className="mt-0.5 h-4 w-4 text-muted-foreground" />
-                          <div>
-                            <p className="font-semibold">Event Time</p>
-                            <p className="text-muted-foreground">{formData.eventTime}</p>
-                          </div>
-                        </div>
-                      )}
-                      {formData.venueName && (
-                        <div className="flex items-start gap-3">
-                          <MapPin className="mt-0.5 h-4 w-4 text-muted-foreground" />
-                          <div>
-                            <p className="font-semibold">Venue</p>
-                            <p className="text-muted-foreground">{formData.venueName}</p>
-                          </div>
-                        </div>
-                      )}
-                      {formData.location && (
-                        <div className="flex items-start gap-3">
-                          <MapPin className="mt-0.5 h-4 w-4 text-muted-foreground" />
-                          <div>
-                            <p className="font-semibold">Location</p>
-                            <p className="text-muted-foreground">{formData.location}</p>
-                          </div>
-                        </div>
-                      )}
-                      {formData.registrationDeadline && (
-                        <div className="flex items-start gap-3">
-                          <CalendarDays className="mt-0.5 h-4 w-4 text-muted-foreground" />
-                          <div>
-                            <p className="font-semibold">Registration Deadline</p>
-                            <p className="text-muted-foreground">{formData.registrationDeadline}</p>
-                          </div>
-                        </div>
-                      )}
-                      {formData.maxParticipants > 0 && (
-                        <div className="flex items-start gap-3">
-                          <Clock className="mt-0.5 h-4 w-4 text-muted-foreground" />
-                          <div>
-                            <p className="font-semibold">Max Participants</p>
-                            <p className="text-muted-foreground">{formData.maxParticipants}</p>
-                          </div>
-                        </div>
-                      )}
+                        {i > 0 && <Button variant="ghost" size="icon" className="absolute top-2 right-2 text-destructive hover:bg-destructive/10" onClick={() => update('organizers', formData.organizers.filter(o => o.id !== org.id))}><Trash2 className="h-4 w-4"/></Button>}
+                      </div>
+                    ))}
+                    <Button variant="outlinePrimary" className="w-full" onClick={() => update('organizers', [...formData.organizers, { id: Date.now().toString(), name: '', email: '', photo: null }])}>
+                      <Plus/> Add Organizer
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                {/* Card 6: Settings */}
+                <Card>
+                  <CardHeader className='border-b border-border'>
+                    <CardTitle>Settings</CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-4 space-y-2">
+                    <div className="flex items-center justify-between py-3 border-b border-border">
+                      <Label htmlFor="registrationOpen">Registration is Open</Label>
+                      <Checkbox id="registrationOpen" checked={formData.registrationOpen} onCheckedChange={c => update('registrationOpen', !!c)} />
+                    </div>
+                    <div className="flex items-center justify-between py-3 border-b border-border">
+                      <Label htmlFor="requiresApproval">Requires Approval</Label>
+                      <Checkbox id="requiresApproval" checked={formData.requiresApproval} onCheckedChange={c => update('requiresApproval', !!c)} />
+                    </div>
+                    <div className="flex items-center justify-between py-3">
+                      <Label htmlFor="publishEvent">Publish Event</Label>
+                      <Checkbox id="publishEvent" checked={formData.publishEvent} onCheckedChange={c => update('publishEvent', !!c)} />
+                    </div>
+                  </CardContent>
+                </Card>
+
+              </div>
+            )}
+
+            {/* =========================================
+                TAB: SPEAKERS 
+                ========================================= */}
+            {activeTab === 'speakers' && (
+              <div className="grid grid-cols-1 gap-6">
+                {formData.speakers.map((s, i) => (
+                  <Card key={s.id} className=" relative pt-6">
+                    <Button variant="ghost" size="icon" className="absolute top-2 right-2 text-destructive hover:bg-destructive/10" onClick={() => update('speakers', formData.speakers.filter(sp => sp.id !== s.id))}><Trash2/></Button>
+                    <CardContent className="flex flex-col items-center space-y-4 flex-1">
+                      <PhotoUploadZone square={true} file={s.photo} onUpload={f => {
+                        const n = [...formData.speakers]; n[i].photo = f; update('speakers', n);
+                      }} label="Speaker Photo" />
+                      <div className="w-full space-y-2">
+                        <Label>Full Name</Label>
+                        <Input placeholder="e.g. John Doe" value={s.name} onChange={e => { const n = [...formData.speakers]; n[i].name = e.target.value; update('speakers', n); }} />
+                      </div>
+                      <div className="w-full space-y-2">
+                        <Label>Role / Title</Label>
+                        <Textarea placeholder="Short background..." value={s.title || ''} onChange={e => { const n = [...formData.speakers]; n[i].title = e.target.value; update('speakers', n); }} />
+                      </div>
                     </CardContent>
                   </Card>
+                ))}
+                 
+                <Button variant="outlinePrimary" className="w-full" onClick={() => update('speakers', [...formData.speakers, { id: Date.now().toString(), name: '', bio: '', title: '', photo: null }])}>
+                  <div>
+                    <Plus/>
+                  </div>
+                  <span>Add Guest Speaker</span>
+                </Button>
+              </div>
+            )}
+            
 
-                  <Button variant="outline" onClick={() => setShowPreview(false)} className="w-full">
-                    Close Preview
-                  </Button>
+{/* =========================================
+                TAB: AGENDA 
+                ========================================= */}
+            {activeTab === 'agenda' && (
+              <div className="space-y-6">
+                 {formData.sessions.map((sess, i) => (
+                   <Card key={sess.id}>
+                     <CardHeader className="flex flex-row justify-between">
+                       <CardTitle>
+                         Session {i + 1}
+                       </CardTitle>
+                       <Button 
+                         variant="ghost" 
+                         className="text-destructive hover:text-destructive" 
+                         onClick={() => update('sessions', formData.sessions.filter(a => a.id !== sess.id))}
+                       >
+                         <X/>
+                       </Button>
+                     </CardHeader>
+
+                     <CardContent className=" space-y-6">
+                       <div className="space-y-2">
+                         <div className="space-y-2">
+                           <Label>Time</Label>
+                           <Input 
+                             type="time" 
+                             value={sess.time} 
+                             onChange={e => { const n = [...formData.sessions]; n[i].time = e.target.value; update('sessions', n); }} 
+                           />
+                         </div>
+                         <div className="space-y-2">
+                           <Label>Session Title</Label>
+                           <Input 
+                             placeholder="e.g. Opening Remarks" 
+                             value={sess.title} 
+                             onChange={e => { const n = [...formData.sessions]; n[i].title = e.target.value; update('sessions', n); }} 
+                           />
+                         </div>
+                       </div>
+                       
+                       <div className="space-y-2">
+                         <Label>Speaker (Optional)</Label>
+                         <Input 
+                           placeholder="Enter speaker name" 
+                           value={sess.speaker} 
+                           onChange={e => { const n = [...formData.sessions]; n[i].speaker = e.target.value; update('sessions', n); }} 
+                         />
+                       </div>
+                     </CardContent>
+
+                   </Card>
+                 ))}
+
+                 {/* Add Session Button */}
+                 <Button 
+                   variant="outlinePrimary" 
+                    className="w-full"
+                   onClick={() => update('sessions', [...formData.sessions, { id: Date.now().toString(), time: '', title: '', speaker: '', description: '' }])}
+                 >
+                   <Plus/> Add Session
+                 </Button>
+              </div>
+            )}
+
+            {/* =========================================
+                TAB: MEDIA (Gallery Only visible if completed) 
+                ========================================= */}
+            {activeTab === 'media' && (
+               <div>
+                 {isCompleted ? (
+                   <Card>
+                     <CardHeader>
+                       <CardTitle>Event Photos</CardTitle>
+                     </CardHeader>
+                     <CardContent>
+                       <div className="border border-dashed p-12 text-center cursor-pointer">
+                         <input type="file" multiple className="hidden" id="multi-upload" accept="image/*" onChange={(e) => {
+                            const files = Array.from(e.target.files || []);
+                            const newPhotos = files.map(f => ({ id: Math.random().toString(), file: f }));
+                            setEventPhotos(p => [...p, ...newPhotos]);
+                         }} />
+                         <label htmlFor="multi-upload" className="cursor-pointer block">
+                           <Upload className="mx-auto h-8 w-8  mb-4" />
+                           <p>Click to upload gallery photos</p>
+                           <p className="text-xs text-muted-foreground">Select multiple PNG or JPG files.</p>
+                         </label>
+                       </div>
+
+                       {eventPhotos.length > 0 && (
+                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+                           {eventPhotos.map(p => (
+                             <div key={p.id} className="aspect-square relative group overflow-hidden border border-border">
+                               <img src={URL.createObjectURL(p.file)} className="w-full h-full object-cover" alt="Gallery" />
+                               <Button variant="destructive" size="icon" className="absolute top-2 right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => setEventPhotos(prev => prev.filter(item => item.id !== p.id))}><X /></Button>
+                             </div>
+                           ))}
+                         </div>
+                       )}
+                     </CardContent>
+                   </Card>
+                 ) : (
+                   <div>
+                     <ImageIcon />
+                     <h3>Media Gallery Disabled</h3>
+                     <p>The gallery is only available when the event status is set to "Completed".</p>
+                   </div>
+                 )}
+               </div>
+            )}
+
+            {/* Global Form Footer Actions */}
+            <div className="flex gap-4 pt-6">
+              <Button 
+                variant="outline" 
+                className="flex-1" 
+                onClick={() => navigate('/admin/event-status')} // Link back to dashboard
+              >
+                Discard Draft
+              </Button>
+              <Button 
+                variant="default" 
+                className="flex-1"
+                onClick={handleSave}
+                disabled={isSubmitting} // Connect logic here
+              >
+                {isSubmitting ? 'Saving...' : 'Save Event'}
+              </Button>
+            </div>
+
+          </div>
+        </Tabs>
+
+        {/* =========================================
+            LIVE PREVIEW MODAL (Mirrors Event Details)
+            ========================================= */}
+        {showPreview && (
+          <div className="fixed inset-0 z-[100] bg-background overflow-y-auto animate-in fade-in duration-200">
+            <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border p-4 flex justify-between items-center shadow-sm">
+               <div className="flex items-center gap-2">
+                 <Badge variant="outline" className="bg-brand-blue text-white border-brand-blue rounded-none font-bold">PREVIEW MODE</Badge>
+               </div>
+               <Button variant="ghost" size="icon" className="rounded-none" onClick={() => setShowPreview(false)}><X /></Button>
+            </nav>
+
+            <div className="pb-20">
+              {/* Hero Banner Section */}
+              <div className="w-full border-b border-border bg-muted">
+                <div className="relative h-48 w-full overflow-hidden sm:h-80">
+                  {formData.coverImage ? (
+                     <img src={URL.createObjectURL(formData.coverImage)} className="h-full w-full object-cover" alt={formData.title} />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center w-full h-full text-muted-foreground bg-muted/50 gap-2">
+                      <ImageIcon className="h-8 w-8 opacity-50" />
+                      <span className="text-sm font-medium uppercase tracking-wider">No Cover Image</span>
+                    </div>
+                  )}
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
                 </div>
               </div>
-            </section>
+
+              <section className="section-container section-padding-md">
+                <div className="grid gap-8 pt-4 lg:grid-cols-[1fr_360px]">
+                  
+                  {/* Left Column: Core Data */}
+                  <div className="space-y-8">
+                    <section aria-label="Event summary">
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <h1 className="text-3xl font-bold sm:text-5xl text-foreground tracking-tight">
+                            {formData.title || "Event Title"}
+                          </h1>
+                          <div className="flex items-center gap-2">
+                            <Badge className={isCompleted ? "bg-muted text-muted-foreground rounded-none" : "bg-[var(--color-brand-blue)] text-white rounded-none"}>
+                              {isCompleted ? "Completed" : formData.status === 'draft' ? 'Draft' : 'Upcoming'}
+                            </Badge>
+                            {formData.type && (
+                              <Badge variant="outline" className="border-border text-muted-foreground uppercase rounded-none">
+                                {formData.type}
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="space-y-3 pt-2">
+                          <h2 className="text-xl font-bold text-foreground">About the Event</h2>
+                          <p className="text-base leading-relaxed text-muted-foreground whitespace-pre-wrap">
+                            {formData.description || "The event description will be rendered here."}
+                          </p>
+                        </div>
+                      </div>
+                    </section>
+
+                    {/* Organized By */}
+                    {formData.organizers.length > 0 && formData.organizers[0].name && (
+                      <div className="space-y-3">
+                        <Separator className="bg-border" />
+                        <h2 className="text-lg font-bold text-foreground">Organized by</h2>
+                        <div className="grid max-w-2xl gap-4 sm:grid-cols-2">
+                          {formData.organizers.map((org) => (
+                            <div key={org.id} className="flex w-full max-w-sm items-center gap-3">
+                              <Avatar className="border border-border">
+                                {org.photo && <AvatarImage src={URL.createObjectURL(org.photo)} alt={org.name} />}
+                                <AvatarFallback className="bg-muted text-muted-foreground">{getInitials(org.name || "A")}</AvatarFallback>
+                              </Avatar>
+                              <div className="leading-tight">
+                                <p className="text-sm font-semibold text-foreground">{org.name}</p>
+                                {org.email && <p className="text-xs text-muted-foreground">{org.email}</p>}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Right Column: Details Sidebar Card */}
+                  <aside className="space-y-6">
+                    <Card className="border-border bg-card shadow-sm sticky top-24 rounded-none">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-lg font-bold text-foreground">Event Information</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4 text-sm">
+                        <div className="flex items-start gap-3">
+                          <Flag className="mt-0.5 h-5 w-5 text-[var(--color-brand-blue)]" />
+                          <div>
+                            <p className="font-semibold text-foreground uppercase text-[10px] tracking-wider">Format</p>
+                            <p className="text-muted-foreground">{formData.type || "TBA"}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <MapPin className="mt-0.5 h-5 w-5 text-[var(--color-brand-blue)]" />
+                          <div>
+                            <p className="font-semibold text-foreground uppercase text-[10px] tracking-wider">Venue</p>
+                            <p className="text-muted-foreground">{formData.venueName || "TBA"}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <CalendarDays className="mt-0.5 h-5 w-5 text-[var(--color-brand-blue)]" />
+                          <div>
+                            <p className="font-semibold text-foreground uppercase text-[10px] tracking-wider">Date</p>
+                            <p className="text-muted-foreground">{formData.startDate || "TBA"}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <Clock className="mt-0.5 h-5 w-5 text-[var(--color-brand-blue)]" />
+                          <div>
+                            <p className="font-semibold text-foreground uppercase text-[10px] tracking-wider">Time</p>
+                            <p className="text-muted-foreground">{formData.startTime || "TBA"}</p>
+                          </div>
+                        </div>
+                      </CardContent>
+                      <Separator className="bg-border" />
+                      <div className="p-4 space-y-3">
+                        {!isCompleted && (
+                          <Button className="w-full bg-[var(--color-brand-blue)] hover:opacity-90 text-white font-bold rounded-none">
+                            Register Now
+                          </Button>
+                        )}
+                        <Button variant="outline" className="w-full border-border text-foreground hover:bg-muted font-medium rounded-none" onClick={() => setShowPreview(false)}>
+                          Close Preview
+                        </Button>
+                      </div>
+                    </Card>
+                  </aside>
+                </div>
+
+                {/* Lifecycle Dependent Sections (Completed Only) */}
+                {isCompleted && (
+                  <div className="mt-12 space-y-16">
+                    {/* Speakers */}
+                    {formData.speakers.length > 0 && formData.speakers[0].name && (
+                      <section aria-label="Event speakers" className="space-y-4 pt-12">
+                        <h2 className="text-2xl font-bold text-center text-foreground">Event Speakers</h2>
+                        <div className="mx-auto grid max-w-5xl justify-items-center gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                          {formData.speakers.map((speaker) => (
+                            <Card key={speaker.id} className="w-full max-w-sm border-border bg-card rounded-none shadow-none">
+                              <CardContent className="space-y-2 p-4 text-center">
+                                <Avatar className="mx-auto h-20 w-20 border border-border">
+                                  {speaker.photo && <AvatarImage src={URL.createObjectURL(speaker.photo)} alt={speaker.name} />}
+                                  <AvatarFallback className="bg-muted text-muted-foreground">{getInitials(speaker.name || "S")}</AvatarFallback>
+                                </Avatar>
+                                <div className="space-y-1 mt-2">
+                                  <p className="text-sm font-semibold text-foreground">{speaker.name || "Guest Speaker"}</p>
+                                  <p className="text-xs text-muted-foreground leading-snug">{speaker.title || "Speaker Title"}</p>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
+                      </section>
+                    )}
+
+                    {/* Photos */}
+                    {eventPhotos.length > 0 && (
+                      <section aria-label="Event photos" className="space-y-4 pt-12">
+                        <h2 className="text-2xl font-bold text-center text-foreground">Event Photos</h2>
+                        <Tabs defaultValue="gallery" className="mx-auto w-full max-w-5xl">
+                          <div className="flex justify-center">
+                            <TabsList className="w-fit mb-5 bg-muted border border-border rounded-none">
+                              <TabsTrigger value="gallery" className="rounded-none">Gallery</TabsTrigger>
+                              <TabsTrigger value="slideshow" className="rounded-none">Slideshow</TabsTrigger>
+                            </TabsList>
+                          </div>
+
+                          <TabsContent value="gallery">
+                            <div className="mx-auto grid max-w-5xl gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                              {eventPhotos.map((photo) => (
+                                <div key={photo.id} className="group relative aspect-video w-full overflow-hidden border border-border bg-muted rounded-none">
+                                  <img src={URL.createObjectURL(photo.file)} className="h-full w-full object-cover" />
+                                </div>
+                              ))}
+                            </div>
+                          </TabsContent>
+
+                          <TabsContent value="slideshow" className="relative group">
+                            <div className="aspect-video w-full overflow-hidden border border-border bg-muted rounded-none">
+                              <img src={URL.createObjectURL(eventPhotos[currentSlide].file)} className="h-full w-full object-cover" />
+                            </div>
+                            {eventPhotos.length > 1 && (
+                              <>
+                                <Button variant="secondary" size="icon" className="absolute left-4 top-1/2 -translate-y-1/2 rounded-none opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => setCurrentSlide(p => (p === 0 ? eventPhotos.length - 1 : p - 1))}><ChevronLeft className="h-4 w-4" /></Button>
+                                <Button variant="secondary" size="icon" className="absolute right-4 top-1/2 -translate-y-1/2 rounded-none opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => setCurrentSlide(p => (p === eventPhotos.length - 1 ? 0 : p + 1))}><ChevronRight className="h-4 w-4" /></Button>
+                              </>
+                            )}
+                          </TabsContent>
+                        </Tabs>
+                      </section>
+                    )}
+                  </div>
+                )}
+              </section>
+            </div>
           </div>
         )}
-
-        {/* CONFIRMATION ALERT DIALOG */}
-        <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Create Event?</AlertDialogTitle>
-              <AlertDialogDescription>
-                Are you sure you want to create "{formData.title}"? This action cannot be undone immediately.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={handleConfirmCreate} disabled={loading}>
-                {loading ? 'Creating...' : 'Create Event'}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
       </section>
-    </Layout>
+    </AdminLayout>
   );
 }

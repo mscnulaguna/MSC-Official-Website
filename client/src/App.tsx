@@ -1,4 +1,11 @@
+// External libraries
 import { Routes, Route, useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
+
+// Components
+import { Footer } from "@/components/ui/layout/Footer"
+
+// Pages
 import Home from '@/pages/public/home'
 import AboutPage from '@/pages/public/about'
 import PartnersPage from '@/pages/public/partners'
@@ -7,20 +14,31 @@ import GuildJoin from '@/pages/public/guild-join'
 import Activities from './pages/public/activities'
 import EventDetails from '@/pages/public/event-details'
 import Login from '@/pages/public/login'
-import { useEffect } from 'react'
-import { Footer } from "@/components/ui/layout/Footer"
+import ForgotPasswordPage from '@/pages/public/forgot-password'
+import ResetPasswordPage from '@/pages/public/reset-password'
+import ProfilePage from "@/pages/public/profile"
 import FallbackPage from "./pages/fallback/fallback-page"
+
+// Admin Pages
 import MembersPage from "@/pages/admin/members"
 import CreateNewEventPage from "@/pages/admin/create-event"
-import ProfilePage from "@/pages/public/profile"
-import { sampleMember } from '@/data/mockMember'
+import EventStatus from "@/pages/admin/event-status"
+import AddPartnersPage from "@/pages/admin/add-partners"
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '') || "http://localhost:5000"
+// Data / Utils
+import { sampleMember } from '@/data/mockMember'
+import { getApiBaseUrl } from '@/lib/api'
+
+const API_BASE_URL = getApiBaseUrl()
 
 const FOOTER_HIDE_PATHS = new Set([
   '/login',
+  '/forgot-password',
+  '/reset-password',
   '/admin/members',
   '/admin/create-event',
+  '/admin/event-status',
+  '/admin/add-partners',
   '/coming-soon',
   '/maintenance',
   '/access-restricted',
@@ -35,9 +53,13 @@ const KNOWN_PATHS = new Set([
   '/activities',
   '/partners',
   '/login',
+  '/forgot-password',
+  '/reset-password',
   '/profile',
   '/admin/members',
+  '/admin/event-status',
   '/admin/create-event',
+  '/admin/add-partners',
   '/coming-soon',
   '/maintenance',
   '/access-restricted',
@@ -55,7 +77,7 @@ export default function App() {
 
   const fetchMessage = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/hello`, { cache: 'no-store' })
+      const res = await fetch(`${API_BASE_URL}/hello`, { cache: 'no-store' })
       if (!res.ok) throw new Error(`Request failed: ${res.status}`)
       const data = await res.json()
       console.log('Backend response:', data?.message ?? data)
@@ -78,8 +100,13 @@ export default function App() {
         <Route path="/activities/:eventId" element={<EventDetails />} />
         <Route path="/partners" element={<PartnersPage />} />
         <Route path='/profile' element={<ProfilePage member={sampleMember}/>} />
+
         <Route path='/admin/members' element={<MembersPage />} />
         <Route path='/admin/create-event' element={<CreateNewEventPage />} />
+        <Route path='/admin/event-status' element={<EventStatus />} />
+        <Route path='/admin/add-partners' element={<AddPartnersPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password"  element={<ResetPasswordPage />} />
 
         {/* fallback demos  */}
         <Route path="/coming-soon"         element={<FallbackPage type="coming-soon" />} />
