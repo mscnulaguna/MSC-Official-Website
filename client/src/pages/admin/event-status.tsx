@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Plus, Search, CalendarDays, ImageIcon, X, Clock, MapPin, Users
@@ -16,7 +16,7 @@ import { Progress } from "@/components/ui/progress";
 import { EmptyState } from "@/components/ui/empty-state";
 
 // --- CONFIGURATION ---
-const API_BASE = "https://api.msc-nulaguna.org/v1";
+const API_BASE = "[https://api.msc-nulaguna.org/v1](https://api.msc-nulaguna.org/v1)";
 
 // --- INTERFACES ---
 type EventStatus = 'upcoming' | 'draft' | 'completed';
@@ -46,7 +46,7 @@ const normalizeEventStatus = (status?: string, date?: string, endDate?: string):
   const normalizedStatus = status?.toLowerCase()
 
   if (normalizedStatus === 'upcoming' || normalizedStatus === 'draft' || normalizedStatus === 'completed') {
-    return normalizedStatus
+    return normalizedStatus as EventStatus
   }
 
   if (normalizedStatus === 'past') {

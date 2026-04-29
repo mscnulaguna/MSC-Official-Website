@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Upload, Trash2, X, Eye, Flag, MapPin, 
@@ -7,7 +7,8 @@ import {
 
 // MSC Official UI Components
 import { AdminLayout } from '@/components/ui/layout';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+// TS6133 fix: removed unused CardFooter
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

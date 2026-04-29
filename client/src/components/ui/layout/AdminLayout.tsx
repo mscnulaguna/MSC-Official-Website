@@ -96,7 +96,8 @@ function AdminNavLinks({
 }
 
 function ThemeToggleButton() {
-  const { isDarkMode, toggleDarkMode } = useTheme()
+  // TS6133 fix: removed unused isDarkMode
+  const { toggleDarkMode } = useTheme()
   const instanceId = useId()
 
   const scopedCircleHalfBlackSvg = useMemo(() => {
@@ -273,5 +274,3 @@ export function AdminLayout({ children }: Readonly<{ children: ReactNode }>) {
     </div>
   )
 }
-
-export default AdminLayout
