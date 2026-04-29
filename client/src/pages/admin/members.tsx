@@ -777,7 +777,16 @@ function MembersTab({
                             {member.role.charAt(0).toUpperCase() + member.role.slice(1)}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-muted-foreground align-middle text-left">{formatDate(member.memberSince)}</TableCell>
+                        <TableCell className="text-muted-foreground align-middle text-left">
+                          {(() => {
+                            const memberCreatedAt = (member as User & { created_at?: string | null }).created_at
+                            const memberSince = member.memberSince ?? memberCreatedAt
+
+                            return memberSince && !Number.isNaN(new Date(memberSince).getTime())
+                              ? formatDate(memberSince)
+                              : '—'
+                          })()}
+                        </TableCell>
                         <TableCell className="text-right align-middle pr-6">
                           <div className="flex justify-end gap-2">
                             <Button variant="ghost" size="sm" onClick={() => onEditMember(member.id)} className="text-blue-600 hover:text-blue-700">
