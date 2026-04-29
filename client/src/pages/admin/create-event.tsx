@@ -18,9 +18,10 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getApiBaseUrl } from '@/lib/api';
 
 // --- CONFIGURATION ---
-const API_BASE = "https://api.msc-nulaguna.org/v1";
+const API_BASE = getApiBaseUrl();
 
 // --- HELPERS ---
 const getInitials = (name: string) => 
@@ -29,17 +30,23 @@ const getInitials = (name: string) =>
 const autoCropTo1x1 = (file: File): Promise<File> => {
   return new Promise((resolve) => {
     const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
     img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const size = Math.min(img.width, img.height);
-      canvas.width = canvas.height = size;
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        ctx.drawImage(img, (img.width - size) / 2, (img.height - size) / 2, size, size, 0, 0, size, size);
-        canvas.toBlob(blob => blob && resolve(new File([blob], file.name, { type: file.type })), file.type);
+      try {
+        const canvas = document.createElement('canvas');
+        const size = Math.min(img.width, img.height);
+        canvas.width = canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, (img.width - size) / 2, (img.height - size) / 2, size, size, 0, 0, size, size);
+          canvas.toBlob(blob => blob && resolve(new File([blob], file.name, { type: file.type })), file.type);
+        }
+      } finally {
+        URL.revokeObjectURL(objectUrl);
       }
     };
-    img.src = URL.createObjectURL(file);
+    img.onerror = () => URL.revokeObjectURL(objectUrl);
+    img.src = objectUrl;
   });
 };
 
@@ -109,6 +116,35 @@ export default function CreateEventPage() {
   const update = (field: keyof EventFormData, value: any) => setFormData(p => ({ ...p, [field]: value }));
   const isCompleted = formData.status === 'completed';
 
+  const combineDateTime = (date: string, time: string) => {
+    return new Date(`${date}T${time}`).toISOString()
+  }
+
+  const uploadCoverImage = async (file: File) => {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      throw new Error('Missing authentication token')
+    }
+
+    const formData = new FormData()
+    formData.append('coverImage', file)
+
+    const response = await fetch(`${API_BASE}/events/upload/cover`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    })
+
+    if (!response.ok) {
+      throw new Error('Failed to upload event cover image')
+    }
+
+    const data = await response.json()
+    return data.imageUrl as string
+  }
+
   // Fetch Guilds
   useEffect(() => {
     const fetchGuilds = async () => {
@@ -128,19 +164,26 @@ export default function CreateEventPage() {
   const handleSave = async () => {
     setIsSubmitting(true);
     try {
+      const token = localStorage.getItem('token')
+      if (!token) {
+        throw new Error('Missing authentication token')
+      }
+
+      const date = combineDateTime(formData.startDate, formData.startTime)
+      const endDate = combineDateTime(formData.endDate || formData.startDate, formData.endTime || formData.startTime)
+      const coverImage = formData.coverImage ? await uploadCoverImage(formData.coverImage) : null
+
       // 1. Transform form data to match the API contract expected by events-dashboard
       const payload = {
         title: formData.title,
         description: formData.description,
-        type: formData.type,
-        status: formData.status,
-        startDate: formData.startDate,
-        startTime: formData.startTime,
-        location: formData.venueName || formData.location, // use venue name natively
-        maxParticipants: formData.maxParticipants,
-        registered: 0, // Fresh events start with 0
+        date,
+        endDate,
+        venue: formData.venueName || formData.location,
+        capacity: formData.maxParticipants,
+        type: formData.type.toLowerCase(),
         guildId: formData.guildId,
-        coverImage: null // Assuming file upload logic gets handled by a separate media endpoint later
+        coverImage,
       };
 
       // 2. Post to API
@@ -148,7 +191,7 @@ export default function CreateEventPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // 'Authorization': `Bearer ${token}` // Include token logic here if required by auth
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       });
@@ -217,9 +260,10 @@ export default function CreateEventPage() {
                         <Select value={formData.type} onValueChange={v => update('type', v)}>
                           <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Workshop">Workshop</SelectItem>
-                            <SelectItem value="Seminar">Seminar</SelectItem>
-                            <SelectItem value="Competition">Competition</SelectItem>
+                            <SelectItem value="workshop">Workshop</SelectItem>
+                            <SelectItem value="seminar">Seminar</SelectItem>
+                            <SelectItem value="competition">Competition</SelectItem>
+                            <SelectItem value="social">Social</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>

@@ -42,6 +42,30 @@ interface Guild {
   name: string;
 }
 
+const normalizeEventStatus = (status?: string, date?: string, endDate?: string): EventStatus => {
+  const normalizedStatus = status?.toLowerCase()
+
+  if (normalizedStatus === 'upcoming' || normalizedStatus === 'draft' || normalizedStatus === 'completed') {
+    return normalizedStatus
+  }
+
+  if (normalizedStatus === 'past') {
+    return 'completed'
+  }
+
+  const referenceDate = endDate || date
+  if (!referenceDate) {
+    return 'draft'
+  }
+
+  const parsedDate = new Date(referenceDate)
+  if (Number.isNaN(parsedDate.getTime())) {
+    return 'draft'
+  }
+
+  return parsedDate.getTime() >= Date.now() ? 'upcoming' : 'completed'
+}
+
 // Fallback Mock Data matching the create-event.tsx form data
 const FALLBACK_EVENTS: EventData[] = [
   {
@@ -111,6 +135,7 @@ export default function EventsDashboard() {
           const eventsJson = await eventsRes.json();
           const normalize = (e: any) => {
             const startDate = e.date || e.startDate || ''
+            const endDate = e.endDate || ''
             let startTime = e.startTime || ''
             if (!startTime && startDate) {
               const d = new Date(startDate)
@@ -120,11 +145,14 @@ export default function EventsDashboard() {
               ...e,
               startDate,
               startTime,
+              endDate,
               location: e.venue || e.location || '',
               maxParticipants: e.capacity ?? e.maxParticipants ?? 0,
               registered: e.registered ?? 0,
               guildId: (e.guild && e.guild.id) ? e.guild.id : (e.guildId || undefined),
               coverImage: e.coverImage || e.imageUrl || null,
+              status: normalizeEventStatus(e.status, startDate, endDate),
+              type: (e.type || '').toLowerCase(),
             }
           }
           setEvents((eventsJson.data || []).map(normalize));
@@ -154,7 +182,7 @@ export default function EventsDashboard() {
     const matchesSearch = evt.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           evt.description.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesGuild = filterGuild === 'all' || evt.guildId === filterGuild;
-    const matchesType = filterType === 'all' || evt.type === filterType;
+    const matchesType = filterType === 'all' || evt.type.toLowerCase() === filterType.toLowerCase();
     
     return matchesTab && matchesSearch && matchesGuild && matchesType;
   });
@@ -222,10 +250,10 @@ export default function EventsDashboard() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="Workshop">Workshop</SelectItem>
-                <SelectItem value="Seminar">Seminar</SelectItem>
-                <SelectItem value="Competition">Competition</SelectItem>
-                <SelectItem value="Social">Social</SelectItem>
+                <SelectItem value="workshop">Workshop</SelectItem>
+                <SelectItem value="seminar">Seminar</SelectItem>
+                <SelectItem value="competition">Competition</SelectItem>
+                <SelectItem value="social">Social</SelectItem>
               </SelectContent>
             </Select>
 
@@ -318,7 +346,7 @@ export default function EventsDashboard() {
                           <Button 
                             variant="outlinePrimary" 
                             className="w-full" 
-                            onClick={() => navigate(`/admin/events/edit/${evt.id}`)}
+                            onClick={() => navigate('/admin/create-event')}
                           >
                             Edit Event
                           </Button>

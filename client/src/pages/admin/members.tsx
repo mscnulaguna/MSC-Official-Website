@@ -14,20 +14,20 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { CheckCircle2, Trash2, Edit, AlertCircle, Upload, Copy, Search, FileDown, X, Download } from 'lucide-react'
 import { getInitials } from '@/lib/utils'
+import { getApiBaseUrl } from '@/lib/api'
 
 // ============================================================================
 // CONSTANTS
 // ============================================================================
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://api.msc-nulaguna.org/v1'
-const DEV_MODE = true // Set to true to skip API calls and show success state instantly
+const API_BASE = getApiBaseUrl()
+const DEV_MODE = import.meta.env.VITE_DEV_MODE === 'true'
 
 const ROLE_OPTIONS = [
   { label: 'All Roles', value: 'all' },
   { label: 'Member', value: 'member' },
   { label: 'Officer', value: 'officer' },
   { label: 'Admin', value: 'admin' },
-  { label: 'Partner', value: 'partner' },
 ]
 
 const STATUS_OPTIONS = [
@@ -68,7 +68,7 @@ const COURSE_OPTIONS = [
 const ROLE_REGISTER_OPTIONS = [
   { label: 'Member', value: 'member' },
   { label: 'Officer', value: 'officer' },
-  { label: 'Partner', value: 'partner' },
+  { label: 'Admin', value: 'admin' },
 ]
 
 // ============================================================================
@@ -87,6 +87,7 @@ const FALLBACK_MEMBERS: User[] = [
     guilds: [],
     qrCode: 'QR001',
     memberSince: '2024-01-15',
+    isActive: true,
   },
   {
     id: '2',
@@ -99,6 +100,7 @@ const FALLBACK_MEMBERS: User[] = [
     guilds: [],
     qrCode: 'QR002',
     memberSince: '2024-02-20',
+    isActive: false,
   },
 ]
 
@@ -113,10 +115,13 @@ interface User {
   studentId: string
   yearLevel: number
   course: string
-  role: 'member' | 'officer' | 'admin' | 'partner'
+  role: 'member' | 'officer' | 'admin'
   guilds: any[]
   qrCode: string
   memberSince: string
+  isActive?: boolean
+  requiresPasswordChange?: boolean
+  created_at?: string
 }
 
 interface RegisterFormData {
@@ -125,7 +130,7 @@ interface RegisterFormData {
   studentId: string
   yearLevel: string
   course: string
-  role: 'member' | 'officer' | 'partner'
+  role: 'member' | 'officer' | 'admin'
   photoFile?: File
 }
 
@@ -147,7 +152,6 @@ const formatDate = (dateString: string): string => {
 const getRoleBadgeClass = (role: string): string => {
   switch (role.toLowerCase()) {
     case 'member': return 'border-green-500 text-green-700 dark:text-green-400'
-    case 'partner': return 'border-yellow-500 text-yellow-700 dark:text-yellow-400'
     case 'officer':
     case 'admin':
     case 'staff': return 'border-blue-500 text-blue-700 dark:text-blue-400'
@@ -375,7 +379,7 @@ function BulkImportModal({ onImportComplete }: { onImportComplete: () => void })
           <DialogDescription>
             Upload a CSV file containing member data. Required columns: <span className="font-mono text-xs text-foreground bg-muted px-1 py-0.5 rounded">email, fullName, studentId, yearLevel, course, role</span>
             <br />
-            <span className="text-xs text-muted-foreground mt-2 block">Note: Role must be 'member', 'officer', or 'partner'.</span>
+            <span className="text-xs text-muted-foreground mt-2 block">Note: Role must be 'member', 'officer', or 'admin'.</span>
           </DialogDescription>
         </DialogHeader>
 
@@ -1061,10 +1065,17 @@ export default function MembersPage() {
       const params = new URLSearchParams({
         page: '1', pageSize: '50',
         ...(roleFilter && roleFilter !== 'all' && { role: roleFilter }),
-        ...(statusFilter && statusFilter !== 'all' && { status: statusFilter }),
       })
 
-      const res = await fetch(`${API_BASE}/users?${params.toString()}`)
+      const token = localStorage.getItem('token')
+      if (!token) throw new Error('Missing authentication token')
+
+      const res = await fetch(`${API_BASE}/admin/users?${params.toString()}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+        },
+      })
       if (!res.ok) throw new Error('Failed to fetch members')
 
       const json = await res.json()
@@ -1076,7 +1087,7 @@ export default function MembersPage() {
     } finally {
       setLoading(false)
     }
-  }, [roleFilter, statusFilter]) 
+  }, [roleFilter]) 
 
   const filteredMembers = useMemo(() => {
     return allMembers.filter((member) => {
@@ -1087,10 +1098,13 @@ export default function MembersPage() {
         member.studentId.toLowerCase().includes(searchLower)
       
       const matchesRole = roleFilter === 'all' || member.role.toLowerCase() === roleFilter.toLowerCase()
+      const matchesStatus =
+        statusFilter === 'all' ||
+        (statusFilter === 'active' ? member.isActive !== false : member.isActive === false)
       
-      return matchesSearch && matchesRole
+      return matchesSearch && matchesRole && matchesStatus
     })
-  }, [allMembers, searchTerm, roleFilter])
+  }, [allMembers, searchTerm, roleFilter, statusFilter])
 
   useEffect(() => {
     if (activeTab === 'members') fetchMembers()
@@ -1139,6 +1153,7 @@ export default function MembersPage() {
       const payload = {
         email: formData.email, password: tempPassword, fullName: formData.fullName,
         studentId: formData.studentId, yearLevel: parseInt(formData.yearLevel), course: formData.course,
+        role: formData.role,
       }
 
       if (DEV_MODE) {

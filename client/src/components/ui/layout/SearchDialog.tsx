@@ -164,6 +164,10 @@ export function SearchDialog({
   const handleSearch = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault()
 
+    if (!searchQuery.trim()) {
+      return
+    }
+
     const firstMatch = filteredItems.find((item) => item.href)
     if (firstMatch?.href) {
       navigate(firstMatch.href)

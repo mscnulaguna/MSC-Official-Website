@@ -1,25 +1,25 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Separator } from '@/components/ui/separator'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Trash2, Edit, AlertCircle, Upload, Search, Building2, Globe, ExternalLink, Plus } from 'lucide-react'
 import { AdminLayout } from '@/components/ui/layout'
+import { getApiBaseUrl } from '@/lib/api'
 
 // ============================================================================
 // CONSTANTS & TYPES
 // ============================================================================
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://api.msc-nulaguna.org/v1'
-const DEV_MODE = true // Set to true to skip API calls and simulate responses
+const API_BASE = getApiBaseUrl()
+const DEV_MODE = import.meta.env.VITE_DEV_MODE === 'true'
 
 const TIER_OPTIONS = [
   { label: 'All Tiers', value: 'all' },
@@ -183,11 +183,16 @@ function AddPartnerModal({ isOpen, onOpenChange, onSuccess }: AddPartnerModalPro
         return
       }
 
+      const token = localStorage.getItem('token')
+      if (!token) {
+        throw new Error('Missing authentication token')
+      }
+
       const res = await fetch(`${API_BASE}/partners`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(payload)
       })
