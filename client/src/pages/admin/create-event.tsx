@@ -71,28 +71,45 @@ interface EventFormData {
 }
 
 // --- REUSABLE PHOTO UPLOAD COMPONENT ---
-const PhotoUploadZone = ({ file, onUpload, label, square = true }: { file: any, onUpload: (f: File) => void, label: string, square?: boolean }) => (
-  <div className={`relative flex flex-col items-center justify-center border border-dashed border-border bg-muted/10 hover:bg-muted/30 transition-colors cursor-pointer rounded-none ${square ? 'aspect-square w-28' : 'min-h-[200px] w-full'}`}>
-    <input 
-      type="file" 
-      className="absolute inset-0 opacity-0 cursor-pointer" 
-      accept="image/*"
-      onChange={async (e) => {
-        const f = e.target.files?.[0];
-        if (f) onUpload(square ? await autoCropTo1x1(f) : f);
-      }}
-    />
-    {file ? (
-      <img src={URL.createObjectURL(file)} className="w-full h-full object-cover" alt="Preview" />
-    ) : (
-      <div className="text-center p-4">
-        <Upload className="mx-auto h-6 w-6 text-muted-foreground mb-2" />
-        <p className="text-xs font-medium text-muted-foreground">{label}</p>
-      </div>
-    )}
-  </div>
-);
+const PhotoUploadZone = ({ file, onUpload, label, square = true }: { file: any, onUpload: (f: File) => void, label: string, square?: boolean }) => {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (!file) {
+      setPreviewUrl(null);
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(file);
+    setPreviewUrl(objectUrl);
+
+    return () => {
+      URL.revokeObjectURL(objectUrl);
+    };
+  }, [file]);
+
+  return (
+    <div className={`relative flex flex-col items-center justify-center border border-dashed border-border bg-muted/10 hover:bg-muted/30 transition-colors cursor-pointer rounded-none ${square ? 'aspect-square w-28' : 'min-h-[200px] w-full'}`}>
+      <input 
+        type="file" 
+        className="absolute inset-0 opacity-0 cursor-pointer" 
+        accept="image/*"
+        onChange={async (e) => {
+          const f = e.target.files?.[0];
+          if (f) onUpload(square ? await autoCropTo1x1(f) : f);
+        }}
+      />
+      {previewUrl ? (
+        <img src={previewUrl} className="w-full h-full object-cover" alt="Preview" />
+      ) : (
+        <div className="text-center p-4">
+          <Upload className="mx-auto h-6 w-6 text-muted-foreground mb-2" />
+          <p className="text-xs font-medium text-muted-foreground">{label}</p>
+        </div>
+      )}
+    </div>
+  );
+};
 export default function CreateEventPage() {
   const navigate = useNavigate(); // Added Router hook
 
