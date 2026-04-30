@@ -52,7 +52,7 @@ async function createPartner(partnerData) {
     // Insert partner record with default bronze tier
     const [result] = await connection.query(
       `INSERT INTO partners (name, description, logo_url, website_url, created_by) 
-       VALUES (?, ?, ?, ?, ?, ?)`,
+       VALUES (?, ?, ?, ?, ?)`,
       [name, description, logo_url, website_url, created_by]
     );
 

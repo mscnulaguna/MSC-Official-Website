@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useId, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import {
   Dialog, DialogContent, DialogDescription,
@@ -63,6 +63,8 @@ function LogoUploadField({
   onDragLeave,
   onRemove,
 }: LogoUploadFieldProps) {
+  const uploadId = useId()
+
   return (
     <div
       onDragOver={onDragOver}
@@ -72,7 +74,7 @@ function LogoUploadField({
         previewUrl
           ? "border-border bg-background"
           : dragOver
-          ? "border-var(--color-brand-blue) bg-blue-50 dark:bg-blue-900/10"
+          ? "border-var[(--color-brand-blue)] bg-blue-50 dark:bg-blue-900/10"
           : "border-border hover:border-muted-foreground hover:bg-muted/30"
       }`}
     >
@@ -110,7 +112,7 @@ function LogoUploadField({
       )}
       <input
         ref={fileInputRef}
-        id="logo-upload"
+        id={uploadId}
         type="file"
         accept="image/png,image/jpeg,image/svg+xml"
         onChange={(e) => e.target.files?.[0] && onPhotoChange(e.target.files[0])}
