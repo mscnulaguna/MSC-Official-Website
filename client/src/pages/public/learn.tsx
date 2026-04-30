@@ -3,89 +3,77 @@ import { Card, CardContent } from "../../components/ui/card"
 import { Badge } from "../../components/ui/badge"
 import { Button } from "../../components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar"
+import { BannerDisplay } from "../../components/ui/custom"
 import { Link } from "react-router-dom"
 import { Users } from "lucide-react"
 import { getInitials } from "../../lib/utils"
+import {
+  getStoredGuilds,
+  resolveGuildBadges,
+  type Guild as AdminGuild,
+} from "../../data/mockGuildAdmin"
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api"
-const USE_API = false // Set to true when backend is ready
-
-// Unified Guild interface matching API contract
-interface Guild {
-  id: string
-  name: string
-  slug: string
-  description: string
-  memberCount?: number
-  roadmap?: any[]
-  resources?: any[]
-  leads?: any[]
-}
+type Guild = AdminGuild
 
 const fallbackAvatar = "/images/default-avatar.png"
 
-// fallback guilds sample data in case API fails or returns empty list
-// Fallback guilds matching unified Guild interface
-const FALLBACK_GUILDS: Guild[] = [
-  {
-    id: "1",
-    name: "Web Development",
-    slug: "webdev",
-    description: "Learn React, Tailwind, and modern web development tools. Build responsive applications with expert guidance.",
-    memberCount: 2847,
-  },
-  {
-    id: "2",
-    name: "UI/UX Design",
-    slug: "uiux",
-    description: "Master user interface and experience design principles. Create beautiful and functional designs that users love.",
-    memberCount: 1624,
-  },
-  {
-    id: "3",
-    name: "Cybersecurity",
-    slug: "cybersecurity",
-    description: "Explore cybersecurity fundamentals and ethical hacking. Protect systems and learn defensive strategies.",
-    memberCount: 892,
-  },
-]
+const BADGE_VARIANTS = ["info", "destructive", "success", "warning"] as const
 
-const STATIC_BADGES = [
-  { label: "Destructive", variant: "destructive" as const },
-  { label: "Success", variant: "success" as const },
-  { label: "Warning", variant: "warning" as const },
-  { label: "Info", variant: "info" as const },
-]
+function getBadgeVariant(label: string, index: number) {
+  const value = label.toLowerCase()
+
+  if (value.includes("frontend") || value.includes("ui") || value.includes("design")) {
+    return "info" as const
+  }
+
+  if (value.includes("backend") || value.includes("security") || value.includes("automation")) {
+    return "destructive" as const
+  }
+
+  if (value.includes("full") || value.includes("data") || value.includes("machine") || value.includes("cloud")) {
+    return "success" as const
+  }
+
+  if (value.includes("web") || value.includes("research") || value.includes("workflow")) {
+    return "warning" as const
+  }
+
+  return BADGE_VARIANTS[index % BADGE_VARIANTS.length]
+}
 
 // Visual header banner with guild name avatar
 const GuildBanner = ({ guild }: { guild: Guild }): JSX.Element => {
-  const initials = getInitials(guild.name)
-
   return (
-    <div className="relative h-40 w-full overflow-hidden rounded-none">
-      <div className="h-full w-full bg-primary" />
-
+    <BannerDisplay
+      imageUrl={guild.image_url}
+      position={guild.bannerPosition}
+      alt={`${guild.name} banner`}
+      className="relative h-48 w-full overflow-hidden rounded-none bg-primary"
+    >
       <div className="absolute bottom-3 right-3 flex items-center gap-2 px-2 py-1">
         <Avatar className="h-8 w-8 border border-border bg-card">
-          <AvatarImage src={fallbackAvatar} alt={`${guild.name} avatar`} />
-          <AvatarFallback className="text-xs font-medium">{initials}</AvatarFallback>
+          <AvatarImage src={fallbackAvatar} alt={`${guild.leaderName} avatar`} />
+          <AvatarFallback className="text-xs font-medium">{getInitials(guild.leaderName)}</AvatarFallback>
         </Avatar>
-        <p className="text-sm text-white">{guild.name}</p>
+        <p className="text-sm text-white font-medium">{guild.name}</p>
       </div>
-    </div>
+    </BannerDisplay>
   )
 }
 
-// Display status badges for guild
-const GuildBadges = (): JSX.Element => (
-  <div className="flex justify-center gap-2">
-    {STATIC_BADGES.map((badge) => (
-      <Badge key={badge.label} variant={badge.variant}>
-        {badge.label}
-      </Badge>
-    ))}
-  </div>
-)
+const GuildBadges = ({ guild }: { guild: Guild }): JSX.Element => {
+  const badges = resolveGuildBadges(guild)
+
+  return (
+    <div className="flex flex-wrap justify-center gap-2">
+      {badges.map((badge, index) => (
+        <Badge key={badge} variant={getBadgeVariant(badge, index)}>
+          {badge}
+        </Badge>
+      ))}
+    </div>
+  )
+}
 
 // Display member count and join button footer
 const GuildFooter = ({ guild }: { guild: Guild }): JSX.Element => {
@@ -93,11 +81,15 @@ const GuildFooter = ({ guild }: { guild: Guild }): JSX.Element => {
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <Users className="h-4 w-4" aria-hidden="true" />
-        <span>{guild.memberCount ? `${guild.memberCount.toLocaleString()} members` : "Members"}</span>
+        <span>
+          {typeof guild.memberCount === "number"
+            ? `${guild.memberCount.toLocaleString()} members`
+            : "Members"}
+        </span>
       </div>
 
       <Button asChild>
-        <Link to={`/learn/${guild.id}`}>Join</Link>
+        <Link to={`/learn/${guild.slug}`}>Join</Link>
       </Button>
     </div>
   )
@@ -114,7 +106,7 @@ const GuildCard = ({ guild }: { guild: Guild }): JSX.Element => (
     <GuildBanner guild={guild} />
     <CardContent className="space-y-4 py-6">
       <GuildDescription description={guild.description} />
-      <GuildBadges />
+      <GuildBadges guild={guild} />
       <GuildFooter guild={guild} />
     </CardContent>
   </Card>
@@ -123,7 +115,7 @@ const GuildCard = ({ guild }: { guild: Guild }): JSX.Element => (
 // Loading placeholder skeleton for guild card
 const GuildSkeleton = (): JSX.Element => (
   <Card className="w-full overflow-hidden border border-border py-0 animate-pulse">
-    <div className="h-40 w-full bg-muted" />
+    <div className="h-48 w-full bg-muted" />
     <CardContent className="space-y-4 py-6">
       <div className="h-4 w-2/3 rounded bg-muted" />
       <div className="h-3 w-full rounded bg-muted" />
@@ -149,47 +141,24 @@ export default function LearnPage(): JSX.Element {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const fetchGuilds = async () => {
-      try {
-        setLoading(true)
-        setError(null)
-
-        // Use fallback data when API is disabled
-        if (!USE_API) {
-          setGuilds(FALLBACK_GUILDS)
-          setLoading(false)
-          return
-        }
-
-        const res = await fetch(`${API_BASE}/guilds`)
-
-        if (!res.ok) {
-          throw new Error(`API error: ${res.status} ${res.statusText}`)
-        }
-
-        const contentType = res.headers.get("content-type")
-        if (!contentType?.includes("application/json")) {
-          throw new Error("API returned non-JSON response (server may be unavailable)")
-        }
-
-        const json = await res.json()
-        const guildData = json.data ?? json
-
-        if (!Array.isArray(guildData)) {
-          throw new Error("API returned an invalid guild list")
-        }
-
-        setGuilds(guildData)
-      } catch (err: unknown) {
-        const errorMsg = err instanceof Error ? err.message : "Failed to load guilds"
-        setError(errorMsg)
-        setGuilds(FALLBACK_GUILDS)
-      } finally {
-        setLoading(false)
-      }
+    const loadGuilds = () => {
+      setLoading(true)
+      setError(null)
+      setGuilds(getStoredGuilds())
+      setLoading(false)
     }
 
-    fetchGuilds()
+    loadGuilds()
+
+    const handleGuildDataUpdate = () => {
+      loadGuilds()
+    }
+
+    window.addEventListener("guild-data-updated", handleGuildDataUpdate)
+
+    return () => {
+      window.removeEventListener("guild-data-updated", handleGuildDataUpdate)
+    }
   }, [])
 
   return (

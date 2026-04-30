@@ -7,6 +7,9 @@ import GuildJoin from '@/pages/public/guild-join'
 import Activities from './pages/public/activities'
 import EventDetails from '@/pages/public/event-details'
 import Login from '@/pages/public/login'
+import CreateGuildsPage from '@/pages/admin/create-guilds'
+import GuildDetailsPage from '@/pages/admin/guild-details'
+import AdminDashboardPage from '@/pages/admin/dashboard'
 import { useEffect } from 'react'
 import { Footer } from "@/components/ui/layout/Footer"
 import FallbackPage from "./pages/fallback/fallback-page"
@@ -22,6 +25,8 @@ const FOOTER_HIDE_PATHS = new Set([
   '/access-restricted',
   '/no-announcements',
   '/something-went-wrong',
+  '/admin/create-guilds',
+  '/admin/dashboard',
 ])
 
 const KNOWN_PATHS = new Set([
@@ -32,6 +37,9 @@ const KNOWN_PATHS = new Set([
   '/partners',
   '/login',
   '/profile',
+  '/admin/create-guilds',
+  '/admin/guilds',
+  '/admin/dashboard',
   '/coming-soon',
   '/maintenance',
   '/access-restricted',
@@ -43,9 +51,13 @@ export default function App() {
   const location = useLocation()
   
   const isDynamicKnown = /^\/activities\/[^/]+$/.test(location.pathname)
-  const isKnownPath = KNOWN_PATHS.has(location.pathname) || isDynamicKnown
+  const isAdminGuildDetailsPath = /^\/admin\/guilds\/[^/]+$/.test(location.pathname)
+  const isKnownPath = KNOWN_PATHS.has(location.pathname) || isDynamicKnown || isAdminGuildDetailsPath
 
-  const showFooter = !FOOTER_HIDE_PATHS.has(location.pathname) && isKnownPath
+  const showFooter =
+    !FOOTER_HIDE_PATHS.has(location.pathname) &&
+    !isAdminGuildDetailsPath &&
+    isKnownPath
 
   const fetchMessage = async () => {
     try {
@@ -67,11 +79,14 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/learn" element={<LearnPage />} />
-        <Route path="/learn/:guildId" element={<GuildJoin />} />
+        <Route path="/learn/:guildName" element={<GuildJoin />} />
         <Route path="/activities" element={<Activities />} />
         <Route path="/activities/:eventId" element={<EventDetails />} />
         <Route path="/partners" element={<PartnersPage />} />
         <Route path='/profile' element={<ProfilePage member={sampleMember}/>} />
+        <Route path="/admin/create-guilds" element={<CreateGuildsPage />} />
+        <Route path="/admin/guilds/:slug" element={<GuildDetailsPage />} />
+        <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
 
         {/* fallback demos  */}
         <Route path="/coming-soon"         element={<FallbackPage type="coming-soon" />} />

@@ -24,6 +24,12 @@ import {
 import { getInitials } from "@/lib/utils"
 import { Users, ExternalLink, ChevronLeft } from "lucide-react"
 import purplesnow from "@/assets/shapes/purplesnow.svg"
+import {
+  getActiveGuildRoadmap,
+  getMockGuildBySlug,
+  getStoredGuildResources,
+  MOCK_GUILD_RESOURCES,
+} from "@/data/mockGuildAdmin"
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api"
 const USE_API = false // Set to true when backend is ready
@@ -35,6 +41,8 @@ interface Guild {
   slug: string
   description: string
   memberCount?: number
+  leaderName?: string
+  image_url?: string | null
   roadmap?: any[]
   resources?: any[]
   leads?: any[]
@@ -49,28 +57,6 @@ interface JoinGuildFormData {
 }
 
 const fallbackAvatar = "/images/default-avatar.png"
-
-// fallback guilds sample data
-const FALLBACK_GUILDS: Guild[] = [
-  {
-    id: "1",
-    name: "Web Development",
-    slug: "webdev",
-    description: "Learn React, Tailwind, and modern web development tools. Build responsive applications with expert guidance. Master modern web development fundamentals and best practices.\n\nExplore advanced concepts including state management, performance optimization, and scalable architecture patterns for production applications.",
-  },
-  {
-    id: "2",
-    name: "UI/UX Design",
-    slug: "uiux",
-    description: "Master user interface and experience design principles. Create beautiful and functional designs that users love. Learn the fundamentals of visual hierarchy and user-centered design.\n\nDevelop skills in prototyping, wireframing, and usability testing to build intuitive digital experiences.",
-  },
-  {
-    id: "3",
-    name: "Cybersecurity",
-    slug: "cybersecurity",
-    description: "Explore cybersecurity fundamentals and ethical hacking. Protect systems and learn defensive strategies from industry experts.\n\nUnderstand threat modeling, vulnerability assessment, and incident response techniques to secure modern infrastructure.",
-  },
-]
 
 
 
@@ -89,33 +75,74 @@ const ROADMAP_ITEMS = Array.from({ length: 7 }, (_, i) => ({
   description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.`,
 }))
 
-// Learning resources placeholder data
-const RESOURCES = [
-  {
-    id: 1,
-    title: "Figma for Beginners",
-    description: "Link",
-    level: "Beginner",
-    variant: "info" as const,
-    url: "#",
-  },
-  {
-    id: 2,
-    title: "Advanced React Patterns",
-    description: "Link",
-    level: "Advanced",
-    variant: "destructive" as const,
-    url: "#",
-  },
-  {
-    id: 3,
-    title: "Intermediate Web Design",
-    description: "Link",
-    level: "Intermediate",
-    variant: "success" as const,
-    url: "#",
-  },
-]
+// Get active roadmap from localStorage or use defaults
+function getRoadmapForGuild(guildSlug?: string): { items: Array<{ id: string; number: number; title: string; description: string }>; photoUrl: string | null } {
+  if (!guildSlug) return { items: ROADMAP_ITEMS, photoUrl: null }
+
+  try {
+    const activeRoadmap = getActiveGuildRoadmap(guildSlug)
+    if (activeRoadmap && Array.isArray(activeRoadmap.steps)) {
+      const items = activeRoadmap.steps.map((step: { id: string; title: string; description: string }, index: number) => ({
+        id: step.id || `step-${index}`,
+        number: index + 1,
+        title: step.title,
+        description: step.description,
+      }))
+      return { items, photoUrl: activeRoadmap.photoDataUrl || null }
+    }
+  } catch (err) {
+    console.error("Error reading roadmap from localStorage:", err)
+  }
+
+  return { items: ROADMAP_ITEMS, photoUrl: null }
+}
+
+type ResourceCard = {
+  id: string
+  title: string
+  description: string
+  level: string
+  variant: "info" | "destructive" | "success" | "warning"
+  url: string
+}
+
+function formatResourceLevel(level: string): string {
+  if (level === "intermediate") {
+    return "Intermediate"
+  }
+
+  if (level === "advanced") {
+    return "Advanced"
+  }
+
+  return "Beginner"
+}
+
+function getResourceVariant(level: string): ResourceCard["variant"] {
+  if (level === "advanced") {
+    return "destructive"
+  }
+
+  if (level === "intermediate") {
+    return "success"
+  }
+
+  return "info"
+}
+
+function getResourcesForGuild(guildSlug?: string): ResourceCard[] {
+  const storedResources = getStoredGuildResources(guildSlug)
+  const source = storedResources.length > 0 ? storedResources : MOCK_GUILD_RESOURCES
+
+  return source.map((resource) => ({
+    id: resource.id,
+    title: resource.title,
+    description: `${resource.type.toUpperCase()} · ${formatResourceLevel(resource.level)}`,
+    level: formatResourceLevel(resource.level),
+    variant: getResourceVariant(resource.level),
+    url: resource.url,
+  }))
+}
 
 // Join guild form dialog with member application fields
 interface JoinGuildDialogProps {
@@ -280,71 +307,55 @@ const JoinGuildDialog = ({
 
 export default function GuildJoin() {
   const params = useParams()
-  const guildId = params.guildId || ""
+  const guildName = params.guildName || ""
   const [guild, setGuild] = useState<Guild | null>(null)
+  const [roadmapItems, setRoadmapItems] = useState(ROADMAP_ITEMS)
+  const [roadmapPhotoUrl, setRoadmapPhotoUrl] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [selectedRoadmapItem, setSelectedRoadmapItem] = useState<string | undefined>(undefined)
   const [isJoinDialogOpen, setIsJoinDialogOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedTab, setSelectedTab] = useState("all")
+  const [resources, setResources] = useState<ResourceCard[]>([])
 
-  // Fetch guild data from API
+  // Fetch guild data from mock data by slug
   useEffect(() => {
-    const fetchGuild = async () => {
-      if (!guildId) {
-        setLoading(false)
-        setError("Guild ID not found")
-        return
-      }
-
-      try {
-        setLoading(true)
-        setError(null)
-
-        // Use fallback data when API is disabled
-        if (!USE_API) {
-          const fallback = FALLBACK_GUILDS.find((g) => g.id === guildId)
-          setGuild(fallback || null)
-          setLoading(false)
-          return
-        }
-
-        const res = await fetch(`${API_BASE}/guilds/${guildId}`)
-        
-        if (!res.ok) {
-          throw new Error(`Failed to load guild: ${res.status} ${res.statusText}`)
-        }
-
-        const contentType = res.headers.get("content-type")
-        if (!contentType?.includes("application/json")) {
-          throw new Error("API returned non-JSON response")
-        }
-
-        const json = await res.json()
-        const guildData = json.data?.guild || json.data || json.guild || json
-        
-        if (!guildData || typeof guildData !== "object") {
-          throw new Error("Invalid guild data format")
-        }
-        
-        setGuild(guildData)
-      } catch (err: unknown) {
-        const errorMsg = err instanceof Error ? err.message : "Failed to load guild"
-        setError(errorMsg)
-        // Use fallback guild from FALLBACK_GUILDS
-        const fallback = FALLBACK_GUILDS.find((g) => g.id === guildId)
-        setGuild(fallback || null)
-      } finally {
-        setLoading(false)
-      }
+    if (!guildName) {
+      setLoading(false)
+      setError("Guild name not found")
+      return
     }
 
-    fetchGuild()
-  }, [guildId])
+    try {
+      setLoading(true)
+      setError(null)
+
+      // Get guild from mock admin guilds by slug
+      const guildData = getMockGuildBySlug(guildName)
+      
+      if (!guildData) {
+        throw new Error(`Guild not found: ${guildName}`)
+      }
+
+      setGuild(guildData)
+      
+      // Load roadmap from localStorage
+      const { items, photoUrl } = getRoadmapForGuild(guildName)
+      setRoadmapItems(items)
+      setRoadmapPhotoUrl(photoUrl)
+      setResources(getResourcesForGuild(guildName))
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : "Failed to load guild"
+      setError(errorMsg)
+      setGuild(null)
+    } finally {
+      setLoading(false)
+    }
+  }, [guildName])
 
   const filteredResources = useMemo(() => {
-    let filtered = RESOURCES
+    let filtered = resources
 
     // Filter by tab
     if (selectedTab !== "all") {
@@ -364,7 +375,7 @@ export default function GuildJoin() {
     }
 
     return filtered
-  }, [searchQuery, selectedTab])
+  }, [resources, searchQuery, selectedTab])
 
   if (loading) {
     return (
@@ -433,7 +444,7 @@ export default function GuildJoin() {
               <div className="flex gap-4 items-center">
                 <div className="flex-shrink-0">
                   <img
-                    src={purplesnow}
+                    src={guild.image_url || purplesnow}
                     alt="Guild icon"
                     className="h-[60px] w-[60px]"
                   />
@@ -516,7 +527,7 @@ export default function GuildJoin() {
               <div className="grid gap-8 lg:grid-cols-[1fr_280px]">
                 <div className="space-y-6">
                   <Accordion type="single" collapsible value={selectedRoadmapItem} onValueChange={setSelectedRoadmapItem}>
-                    {ROADMAP_ITEMS.map((item) => (
+                    {roadmapItems.map((item) => (
                       <AccordionItem key={item.id} value={item.id} className="border-b border-border last:border-b-0">
                         <AccordionTrigger className="flex items-center justify-between hover:no-underline py-3">
                           <div className="flex items-center gap-3">
@@ -538,8 +549,22 @@ export default function GuildJoin() {
                   </Accordion>
                 </div>
 
-                {/* RIGHT COLUMN: Placeholder */}
-                <div className="bg-primary h-96" />
+                {/* RIGHT COLUMN: Roadmap Photo Preview */}
+                <div className="bg-muted rounded-md h-96 flex items-center justify-center overflow-hidden">
+                  {roadmapPhotoUrl ? (
+                    <img 
+                      src={roadmapPhotoUrl} 
+                      alt="Roadmap preview" 
+                      className="w-full h-full object-contain"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center h-full gap-2">
+                      <div className="text-center text-muted-foreground">
+                        <p className="text-sm">No roadmap image uploaded yet</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </CardContent>
           </Card>
