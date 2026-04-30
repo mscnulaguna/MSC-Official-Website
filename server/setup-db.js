@@ -173,7 +173,7 @@ async function setup() {
       id INT AUTO_INCREMENT PRIMARY KEY,
       name VARCHAR(255) UNIQUE NOT NULL,
       description TEXT,
-      logo_url VARCHAR(500),
+      logo_url MEDIUMTEXT,
       website_url VARCHAR(500),
       email VARCHAR(255),
       phone VARCHAR(20),
