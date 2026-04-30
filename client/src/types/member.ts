@@ -4,6 +4,7 @@ export interface EmergencyContact {
 }
 
 export interface Member {
+  id: string;
   fullName: string;
   firstName: string;
   lastName: string;
