@@ -99,7 +99,7 @@ export default function App() {
         <Route path="/activities" element={<Activities />} />
         <Route path="/activities/:eventId" element={<EventDetails />} />
         <Route path="/partners" element={<PartnersPage />} />
-        <Route path='/profile' element={<ProfilePage member={sampleMember}/>} />
+        <Route path='/profile' element={<ProfilePage />} />
 
         <Route path='/admin/members' element={<MembersPage />} />
         <Route path='/admin/create-event' element={<CreateNewEventPage />} />
