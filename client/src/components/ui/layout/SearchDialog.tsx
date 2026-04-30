@@ -1,5 +1,4 @@
-import { useMemo, useState, useRef, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useRef, useEffect } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -17,7 +16,7 @@ import {
 import { Kbd } from '@/components/ui/kbd'
 import { ChevronDown, Check, Search } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
-import { NAV_ITEMS, type NavItem } from '@/config/navigation'
+import { NAV_ITEMS } from '@/config/navigation'
 
 /**
  * SearchDialog Component
@@ -34,69 +33,74 @@ import { NAV_ITEMS, type NavItem } from '@/config/navigation'
  * 4. Help Text
  */
 
-type SearchItem = Readonly<{
-  label: string
-  href?: string
-}>
-
-const normalizeKey = (value: string) =>
+// Normalize category keys for consistent ID generation
+const normalizeCategoryKey = (value: string) =>
   value
     .trim()
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
 
-const flattenNavigationItems = (items: NavItem[]): SearchItem[] => {
-  const flattened: SearchItem[] = []
-
-  items.forEach((item) => {
-    if (item.type === 'group') {
-      flattened.push({ label: item.label })
-      item.submenu.forEach((subitem) => {
-        flattened.push({ label: subitem.label, href: subitem.href })
-      })
-      return
-    }
-
-    flattened.push({ label: item.label, href: item.href })
-  })
-
-  return flattened
+// Build unique category IDs by type (group, link, submenu)
+const buildCategoryId = (
+  kind: 'group' | 'link' | 'submenu',
+  label: string,
+  href?: string
+) => {
+  const source = href ?? label
+  return `${kind}:${normalizeCategoryKey(source)}`
 }
 
-const buildCategories = (items: SearchItem[]) => {
+// Generate filter categories from navigation items with duplicate prevention
+const generateFilterCategories = () => {
   const categories: Array<{ id: string; label: string }> = [
     { id: 'all', label: 'All' },
   ]
-  const seen = new Set<string>(['all'])
+  const seenCategoryIds = new Set(categories.map((category) => category.id))
 
-  items.forEach((item) => {
-    const id = `item:${normalizeKey(item.label)}`
-    if (!seen.has(id)) {
-      seen.add(id)
-      categories.push({ id, label: item.label })
+  const pushCategory = (id: string, label: string) => {
+    if (seenCategoryIds.has(id)) {
+      return
+    }
+    seenCategoryIds.add(id)
+    categories.push({ id, label })
+  }
+
+  NAV_ITEMS.forEach((item) => {
+    if (item.type === 'group') {
+      // Add group label with unique ID
+      pushCategory(buildCategoryId('group', item.label), item.label)
+      // Add submenu items with unique IDs
+      item.submenu.forEach((subitem) => {
+        pushCategory(
+          buildCategoryId('submenu', subitem.label, subitem.href),
+          subitem.label
+        )
+      })
+    } else {
+      // Add simple link with unique ID
+      pushCategory(buildCategoryId('link', item.label, item.href), item.label)
     }
   })
 
   return categories
 }
 
+const SEARCH_CATEGORIES = generateFilterCategories()
+
 type SearchDialogProps = Readonly<{
   open?: boolean
   onOpenChange?: (open: boolean) => void
-  items?: SearchItem[]
 }>
 
 export function SearchDialog({
   open,
   onOpenChange,
-  items,
 }: SearchDialogProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const navigate = useNavigate()
 
   // Use controlled state if provided, otherwise use internal state
   const dialogOpen = open ?? isOpen
@@ -105,29 +109,8 @@ export function SearchDialog({
   const dropdownRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const searchItems = useMemo(() => {
-    return items ?? flattenNavigationItems(NAV_ITEMS)
-  }, [items])
-
-  const searchCategories = useMemo(
-    () => buildCategories(searchItems),
-    [searchItems]
-  )
-
-  const filteredItems = useMemo(() => {
-    const normalizedQuery = searchQuery.trim().toLowerCase()
-
-    return searchItems.filter((item) => {
-      const matchesQuery =
-        normalizedQuery.length === 0 ||
-        item.label.toLowerCase().includes(normalizedQuery)
-
-      const matchesCategory =
-        selectedCategory === 'all' || `item:${normalizeKey(item.label)}` === selectedCategory
-
-      return matchesQuery && matchesCategory
-    })
-  }, [searchItems, searchQuery, selectedCategory])
+  const selectedCategoryLabel =
+    SEARCH_CATEGORIES.find((cat) => cat.id === selectedCategory)?.label || 'All'
 
   /**
    * Close dropdown when clicking outside
@@ -164,18 +147,13 @@ export function SearchDialog({
   const handleSearch = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    if (!searchQuery.trim()) {
-      return
-    }
-
-    const firstMatch = filteredItems.find((item) => item.href)
-    if (firstMatch?.href) {
-      navigate(firstMatch.href)
-    }
+    console.log('Search:', {
+      query: searchQuery,
+      category: selectedCategory,
+    })
 
     setDialogOpen(false)
     setSearchQuery('')
-    setSelectedCategory('all')
   }
 
   /**
@@ -240,7 +218,8 @@ export function SearchDialog({
               className="flex items-center gap-2 text-sm text-foreground transition-colors duration-200 hover:text-primary cursor-pointer outline-none ring-0 ring-offset-0 focus:outline-none focus-visible:outline-none"
               aria-expanded={isDropdownOpen}
             >
-              <span className="font-medium">Filter</span>
+              <span className="font-medium">Filter:</span>
+              <span className="text-muted-foreground font-normal">{selectedCategoryLabel}</span>
               <ChevronDown
                 size={16}
                 className={`transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
@@ -251,7 +230,7 @@ export function SearchDialog({
             {isDropdownOpen && (
               <div className="absolute left-0 top-full z-50 mt-2 w-56 rounded-none bg-background border border-border/40 shadow-none max-h-64 overflow-y-auto">
                 <div className="py-1">
-                  {searchCategories.map((category, index) => (
+                  {SEARCH_CATEGORIES.map((category, index) => (
                     <button
                       key={`${category.id}-${index}`}
                       type="button"
