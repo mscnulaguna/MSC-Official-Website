@@ -22,25 +22,6 @@ function formatYear(n: number): string {
  *  - a plain string "Name / 09171234567"
  *  - null / undefined
  */
-function parseEmergencyContact(raw: unknown): Member["emergencyContact"] {
-  if (!raw) return { name: "—", number: "—" };
-
-  if (typeof raw === "object" && raw !== null) {
-    const o = raw as Record<string, unknown>;
-    return {
-      name:   String(o.name   ?? "—"),
-      number: String(o.number ?? "—"),
-    };
-  }
-
-  const str = String(raw);
-  if (str.includes("/")) {
-    const [name, number] = str.split("/").map((s) => s.trim());
-    return { name, number };
-  }
-
-  return { name: str, number: "—" };
-}
 
 function mapUser(u: Record<string, unknown>): Member {
   const guilds = (u.guilds as { id: string; name: string; slug: string }[]) ?? [];
@@ -67,7 +48,10 @@ function mapUser(u: Record<string, unknown>): Member {
     membershipStatus: u.isActive ? "Active" : "Inactive",
     photo:            String(u.profilePhoto ?? ""),
     qrCode:           u.qrCode ? String(u.qrCode) : null,
-    emergencyContact: parseEmergencyContact(u.emergencyContact),
+    emergencyContact: {
+      name:   u.emergencyContact ? String(u.emergencyContact) : "—",
+      number: u.contactNumber    ? String(u.contactNumber)    : "—",
+    },
     guild:            guilds.length > 0 ? guilds.map((g) => g.name) : null,
   };
 }
@@ -80,6 +64,7 @@ export interface UseProfileReturn {
   error: string | null;
   refetch: () => Promise<void>;
   uploadPhoto: (file: File) => Promise<void>;
+  updateEmergencyContact: (name: string, number: string) => Promise<void>; 
 }
 
 export function useProfile(token: string): UseProfileReturn {
@@ -98,8 +83,8 @@ export function useProfile(token: string): UseProfileReturn {
         const body = (await res.json().catch(() => ({}))) as Record<string, unknown>;
         throw new Error(String(body.message ?? `HTTP ${res.status}`));
       }
-      const data = (await res.json()) as Record<string, unknown>;
-      setMember(mapUser(data));
+      const data = (await res.json()) as { user: Record<string, unknown> };
+      setMember(mapUser(data.user));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load profile");
     } finally {
@@ -133,5 +118,28 @@ export function useProfile(token: string): UseProfileReturn {
     [token, fetchProfile]
   );
 
-  return { member, loading, error, refetch: fetchProfile, uploadPhoto };
+  const updateEmergencyContact = useCallback(
+    async (name: string, number: string) => {
+      const res = await fetch(`${API_BASE}/users/me`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ emergencyContact: name, contactNumber: number }),
+      });
+
+      if (!res.ok) {
+        const body = (await res.json().catch(() => ({}))) as Record<string, unknown>;
+        throw new Error(String(body.message ?? `HTTP ${res.status}`));
+      }
+
+      // PATCH returns the same { user: {...} } shape — reuse mapUser directly
+      const data = (await res.json()) as { user: Record<string, unknown> };
+      setMember(mapUser(data.user));
+    },
+    [token]
+  );
+
+  return { member, loading, error, refetch: fetchProfile, uploadPhoto, updateEmergencyContact };
 }

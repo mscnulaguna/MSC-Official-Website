@@ -19,4 +19,5 @@ export interface Member {
   photo: string;
   qrCode: string | null;
   emergencyContact: EmergencyContact;
+
 }
