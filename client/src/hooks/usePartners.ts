@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react"
 import type { Partner } from "@/types/partners.types"
-import { API_BASE, DEV_MODE, FALLBACK_PARTNERS } from "@/constants/partners.contants"
+import { API_BASE, DEV_MODE, FALLBACK_PARTNERS } from "@/constants/partners.constants"
 
 interface UsePartnersReturn {
   partners: Partner[]

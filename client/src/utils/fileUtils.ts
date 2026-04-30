@@ -14,11 +14,17 @@ export const fileToBase64 = (file: File): Promise<string> => {
  * Validates an image file for type and size constraints.
  * Returns an error message string, or null if valid.
  */
+const ALLOWED_IMAGE_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/svg+xml",
+])
+
 export const validateImageFile = (
   file: File,
   maxSizeMB = 2
 ): string | null => {
-  if (!file.type.startsWith("image/")) {
+  if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
     return "Please select a valid image file (JPG, PNG, SVG)"
   }
   if (file.size > maxSizeMB * 1024 * 1024) {

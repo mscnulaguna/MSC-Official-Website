@@ -16,7 +16,7 @@ router.post('/', authMiddleware, roleMiddleware(['admin']), createNewPartner);
 // Update partners (admins only)
 router.put('/:id', authMiddleware, roleMiddleware(['admin']), updatePartner);
 
-// Delete partners (admins only) - not implemented yet
+// Delete partners (admins only)
 router.delete('/:id', authMiddleware, roleMiddleware(['admin']), deletePartner);
 
 // Export partner router

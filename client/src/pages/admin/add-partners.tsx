@@ -21,7 +21,7 @@ import {
 import { AdminLayout } from "@/components/ui/layout"
 
 import type { Partner, PartnerFormData } from "@/types/partners.types"
-import { API_BASE, DEV_MODE } from "@/constants/partners.contants"
+import { API_BASE, DEV_MODE } from "@/constants/partners.constants"
 import { fileToBase64 } from "@/utils/fileUtils"
 import { usePartners } from "@/hooks/usePartners"
 import { usePartnerForm } from "@/hooks/usePartnerForm"

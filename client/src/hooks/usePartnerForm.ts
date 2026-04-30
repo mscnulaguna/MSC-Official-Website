@@ -38,9 +38,7 @@ export function usePartnerForm({
     ...DEFAULT_FORM,
     ...initialValues,
   })
-  const [previewUrl, setPreviewUrl] = useState<string | null>(
-    initialValues?.logoFile ? null : null
-  )
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [dragOver, setDragOver] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -49,7 +47,7 @@ export function usePartnerForm({
     if (initialValues && isOpen) {
       setFormData({ ...DEFAULT_FORM, ...initialValues, logoFile: undefined })
     }
-  }, [isOpen]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isOpen, initialValues]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Reset when modal closes
   useEffect(() => {

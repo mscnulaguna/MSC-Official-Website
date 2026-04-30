@@ -1,5 +1,4 @@
 // Import database connection pool
-const { update } = require('three/examples/jsm/libs/tween.module.js');
 const pool = require('../config/db');
 
 // Get paginated list of partners sorted by tier then name
