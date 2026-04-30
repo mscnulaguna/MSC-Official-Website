@@ -173,7 +173,7 @@ async function setup() {
       id INT AUTO_INCREMENT PRIMARY KEY,
       name VARCHAR(255) UNIQUE NOT NULL,
       description TEXT,
-      logo_url VARCHAR(500),
+      logo_url MEDIUMTEXT,
       website_url VARCHAR(500),
       email VARCHAR(255),
       phone VARCHAR(20),
@@ -183,6 +183,9 @@ async function setup() {
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
       FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE RESTRICT
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+
+    `ALTER TABLE partners MODIFY COLUMN logo_url MEDIUMTEXT`,
+    `ALTER TABLE partners DROP COLUMN IF EXISTS tier`,
   ];
 
   for (const sql of tables) {

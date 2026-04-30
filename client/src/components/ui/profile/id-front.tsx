@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import mscLogoUrl from "@/assets/logos/msclogo.svg";
-import type { Member } from "@/types/member";
+import type { Member } from "@/types/member.types";
 
 interface IDCardFrontProps {
   member: Member;
