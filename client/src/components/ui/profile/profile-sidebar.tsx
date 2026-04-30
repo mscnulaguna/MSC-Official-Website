@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Mail, Hash, CalendarDays, ShieldCheck, Camera, Loader2 } from "lucide-react";
-import type { Member } from "@/types/member";
+import type { Member } from "@/types/member.types";
 
 interface ProfileSidebarProps {
   member: Member;

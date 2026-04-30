@@ -1,7 +1,7 @@
 import { Shield, User, BookOpen, Hash, Mail, Calendar, Users } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import type { Member } from "@/types/member";
+import type { Member } from "@/types/member.types";
 
 interface QRInfoCardProps {
   member: Member;

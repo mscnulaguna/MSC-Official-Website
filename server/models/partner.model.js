@@ -1,4 +1,5 @@
 // Import database connection pool
+const { update } = require('three/examples/jsm/libs/tween.module.js');
 const pool = require('../config/db');
 
 // Get paginated list of partners sorted by tier then name
@@ -62,9 +63,38 @@ async function createPartner(partnerData) {
   }
 }
 
+async function updatePartner(partnerId, partnerData) {
+  const connection = await pool.getConnection();
+  try {
+    const { name, description, logo_url, website_url } = partnerData;
+
+    await connection.query(
+      `UPDATE partners
+      SET name = ?, description = ?, logo_url = ?, website_url = ?
+      WHERE id = ?`,
+      [name, description, logo_url, website_url, partnerId]
+    );
+
+    return await getPartnerById(partnerId);
+  } finally {
+    connection.release();
+  } 
+}
+
+async function deletePartner(partnerId) {
+  const connection = await pool.getConnection();
+  try {
+    await connection.query(`DELETE FROM partners WHERE id = ?`, [partnerId]);
+  } finally {
+    connection.release();
+  }
+}
+
 // Export all partner database functions
 module.exports = {
   getAllPartners,
   getPartnerById,
   createPartner,
+  updatePartner,
+  deletePartner,
 };
