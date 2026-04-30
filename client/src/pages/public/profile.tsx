@@ -84,6 +84,28 @@ export default function ProfilePage() {
     );
   }
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center gap-3 text-muted-foreground">
+        <Loader2 className="animate-spin" size={20} />
+        <span className="text-sm">Loading your profile...</span>
+      </div>
+    );
+  }
+
+  if (error || !member) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3 text-center px-6">
+          <AlertCircle size={32} className="text-red-400" />
+          <p className="text-sm text-muted-foreground max-w-xs">
+            {error ?? "Unable to load profile. Please try again."}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen font-sans">
       <div className="max-w-6xl mx-auto px-6 pt-10 pb-4 text-right">
