@@ -19,12 +19,6 @@ import ResetPasswordPage from '@/pages/public/reset-password'
 import ProfilePage from "@/pages/public/profile"
 import FallbackPage from "./pages/fallback/fallback-page"
 
-// Admin Pages
-import MembersPage from "@/pages/admin/members"
-import CreateNewEventPage from "@/pages/admin/create-event"
-import EventStatus from "@/pages/admin/event-status"
-import AddPartnersPage from "@/pages/admin/add-partners"
-
 // Data / Utils
 import { sampleMember } from '@/data/mockMember'
 import { getApiBaseUrl } from '@/lib/api'
@@ -35,10 +29,6 @@ const FOOTER_HIDE_PATHS = new Set([
   '/login',
   '/forgot-password',
   '/reset-password',
-  '/admin/members',
-  '/admin/create-event',
-  '/admin/event-status',
-  '/admin/add-partners',
   '/coming-soon',
   '/maintenance',
   '/access-restricted',
@@ -56,10 +46,6 @@ const KNOWN_PATHS = new Set([
   '/forgot-password',
   '/reset-password',
   '/profile',
-  '/admin/members',
-  '/admin/event-status',
-  '/admin/create-event',
-  '/admin/add-partners',
   '/coming-soon',
   '/maintenance',
   '/access-restricted',
