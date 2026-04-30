@@ -183,6 +183,9 @@ async function setup() {
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
       FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE RESTRICT
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+
+    `ALTER TABLE partners MODIFY COLUMN logo_url MEDIUMTEXT`,
+    `ALTER TABLE partners DROP COLUMN IF EXISTS tier`,
   ];
 
   for (const sql of tables) {

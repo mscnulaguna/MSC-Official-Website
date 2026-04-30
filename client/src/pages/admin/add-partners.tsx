@@ -65,7 +65,6 @@ function LogoUploadField({
 }: LogoUploadFieldProps) {
   return (
     <div
-      onClick={() => !previewUrl && fileInputRef.current?.click()}
       onDragOver={onDragOver}
       onDragLeave={onDragLeave}
       onDrop={onDrop}
@@ -73,14 +72,14 @@ function LogoUploadField({
         previewUrl
           ? "border-border bg-background"
           : dragOver
-          ? "border-[var(--color-brand-blue)] bg-blue-50 dark:bg-blue-900/10 cursor-pointer"
-          : "border-border hover:border-muted-foreground hover:bg-muted/30 cursor-pointer"
+          ? "border-var(--color-brand-blue) bg-blue-50 dark:bg-blue-900/10"
+          : "border-border hover:border-muted-foreground hover:bg-muted/30"
       }`}
     >
       {previewUrl ? (
         <div className="flex flex-col items-center">
           <div className="relative w-32 h-32 mx-auto mb-4 bg-white border border-border rounded-md p-2 flex items-center justify-center shadow-sm">
-            <img src={previewUrl} alt="Preview" className="max-w-full max-h-full object-contain" />
+            <img src={previewUrl} alt="Logo preview" className="max-w-full max-h-full object-contain" />
           </div>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" type="button" onClick={() => fileInputRef.current?.click()}>
@@ -91,23 +90,27 @@ function LogoUploadField({
               size="sm"
               type="button"
               className="text-destructive hover:bg-destructive/10"
-              onClick={(e) => { e.stopPropagation(); onRemove() }}
+              onClick={(e) => { e.stopPropagation(); onRemove(); }}
             >
               Remove
             </Button>
           </div>
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center space-y-2 py-4">
+        <label
+          htmlFor="logo-upload"
+          className="flex flex-col items-center justify-center space-y-2 py-4 cursor-pointer"
+        >
           <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center">
             <Upload className="h-6 w-6 text-muted-foreground" />
           </div>
           <p className="text-sm font-medium text-foreground">Click or drag logo to upload</p>
           <p className="text-xs text-muted-foreground">PNG, JPG, or SVG up to 2MB.</p>
-        </div>
+        </label>
       )}
       <input
         ref={fileInputRef}
+        id="logo-upload"
         type="file"
         accept="image/png,image/jpeg,image/svg+xml"
         onChange={(e) => e.target.files?.[0] && onPhotoChange(e.target.files[0])}
@@ -320,14 +323,19 @@ function EditPartnerModal({ isOpen, onOpenChange, partner, onSuccess }: EditPart
         return
       }
 
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Missing authentication token");
+      }
+
       const res = await fetch(`${API_BASE}/partners/${partner.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
-      })
+      });
 
       if (!res.ok) {
         const errorData = await res.json()

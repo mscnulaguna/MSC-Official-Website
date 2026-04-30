@@ -16,7 +16,6 @@ async function listPartners(req, res) {
         logo: partner.logo_url,
         url: partner.website_url,
         bio: partner.description,
-        tier: partner.tier || 'bronze',
       })),
       total: result.total,
       page: result.page,
@@ -123,7 +122,6 @@ async function updatePartner(req, res) {
         logo: partner.logo_url,
         url: partner.website_url,
         bio: partner.description,
-        tier: partner.tier || 'bronze',
       },
     });
   } catch (error) {
