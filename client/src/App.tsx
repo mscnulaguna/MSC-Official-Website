@@ -26,7 +26,6 @@ import EventStatus from "@/pages/admin/event-status"
 import AddPartnersPage from "@/pages/admin/add-partners"
 
 // Data / Utils
-import { sampleMember } from '@/data/mockMember'
 import { getApiBaseUrl } from '@/lib/api'
 
 const API_BASE_URL = getApiBaseUrl()
