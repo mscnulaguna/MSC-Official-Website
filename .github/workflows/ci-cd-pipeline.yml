@@ -95,3 +95,11 @@ jobs:
           app-name: msc-prod-client
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_CLIENT_PROD }}
           images: ghcr.io/${{ env.REPO_LC }}/msc-client:prod
+
+      - name: Set Environment-Specific Variables
+        run: |
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            echo "VITE_API_URL=msc-prod-server-gzgxacashugfbye8.southeastasia-01.azurewebsites.net" >> $GITHUB_ENV
+          else
+            echo "VITE_API_URL=msc-server-duggfme6cgb0bzc4.southeastasia-01.azurewebsites.net" >> $GITHUB_ENV
+          fi
