@@ -189,15 +189,11 @@ async function setup() {
       website_url VARCHAR(500),
       email VARCHAR(255),
       phone VARCHAR(20),
-      tier ENUM('bronze', 'silver', 'gold', 'platinum'),
       created_by INT NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
       FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE RESTRICT
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
-
-    `ALTER TABLE partners MODIFY COLUMN logo_url MEDIUMTEXT`,
-    `ALTER TABLE partners DROP COLUMN IF EXISTS tier`,
   ];
 
   for (const sql of tables) {
@@ -229,26 +225,6 @@ async function setup() {
       ['2021-00001', 'cabasec@students.nu-laguna.edu.ph', hashedPassword, 'Admin User', 4, 'BSIT', 'admin']
     );
     console.log('  Admin user created');
-  }
-
-  // Also seed 3 sample members for testing
-  const sampleUsers = [
-    { studentId: '2021-00002', email: 'member1@students.nu-laguna.edu.ph', fullName: 'Juan Dela Cruz', yearLevel: 2, course: 'BSCS', role: 'member' },
-    { studentId: '2021-00003', email: 'member2@students.nu-laguna.edu.ph', fullName: 'Maria Santos', yearLevel: 3, course: 'BSIT', role: 'officer' },
-    { studentId: '2021-00004', email: 'member3@students.nu-laguna.edu.ph', fullName: 'Jose Reyes', yearLevel: 1, course: 'BSCS', role: 'member' },
-  ];
-
-  for (const user of sampleUsers) {
-    const [exists] = await conn.execute('SELECT id FROM users WHERE email = ?', [user.email]);
-    if (exists.length === 0) {
-      const hashed = await bcrypt.hash('Password123', 10);
-      await conn.execute(
-        `INSERT INTO users (studentId, email, password, fullName, yearLevel, course, role, isActive, requiresPasswordChange)
-         VALUES (?, ?, ?, ?, ?, ?, ?, TRUE, TRUE)`,
-        [user.studentId, user.email, hashed, user.fullName, user.yearLevel, user.course, user.role]
-      );
-      console.log(`  Created: ${user.fullName} (${user.role})`);
-    }
   }
 
   console.log('\n[4/4] Verifying connection...');
