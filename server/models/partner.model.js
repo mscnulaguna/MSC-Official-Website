@@ -14,7 +14,7 @@ async function getAllPartners(page = 1, pageSize = 20) {
       `SELECT p.*, u.fullName as createdByName 
        FROM partners p
        LEFT JOIN users u ON p.created_by = u.id
-       ORDER BY FIELD(p.tier,'platinum','gold','silver','bronze'), p.name
+       ORDER BY p.name
        LIMIT ? OFFSET ?`,
       [pageSize, offset]
     );
@@ -51,12 +51,39 @@ async function createPartner(partnerData) {
 
     // Insert partner record with default bronze tier
     const [result] = await connection.query(
-      `INSERT INTO partners (name, description, logo_url, website_url, tier, created_by) 
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [name, description, logo_url, website_url, tier || 'bronze', created_by]
+      `INSERT INTO partners (name, description, logo_url, website_url, created_by) 
+       VALUES (?, ?, ?, ?, ?)`,
+      [name, description, logo_url, website_url, created_by]
     );
 
     return await getPartnerById(result.insertId);
+  } finally {
+    connection.release();
+  }
+}
+
+async function updatePartner(partnerId, partnerData) {
+  const connection = await pool.getConnection();
+  try {
+    const { name, description, logo_url, website_url } = partnerData;
+
+    await connection.query(
+      `UPDATE partners
+      SET name = ?, description = ?, logo_url = ?, website_url = ?
+      WHERE id = ?`,
+      [name, description, logo_url, website_url, partnerId]
+    );
+
+    return await getPartnerById(partnerId);
+  } finally {
+    connection.release();
+  } 
+}
+
+async function deletePartner(partnerId) {
+  const connection = await pool.getConnection();
+  try {
+    await connection.query(`DELETE FROM partners WHERE id = ?`, [partnerId]);
   } finally {
     connection.release();
   }
@@ -67,4 +94,6 @@ module.exports = {
   getAllPartners,
   getPartnerById,
   createPartner,
+  updatePartner,
+  deletePartner,
 };

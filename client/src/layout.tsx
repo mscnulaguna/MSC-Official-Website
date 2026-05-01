@@ -1,6 +1,7 @@
 import React from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { NavbarWrapper } from "@/components/ui/layout";
+import { useLocation } from "react-router-dom";
 
 /**
  * AppLayout - Global App Wrapper Component
@@ -31,10 +32,13 @@ export default function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const location = useLocation()
+  const showNavbar = !location.pathname.startsWith('/admin')
+
   return (
     <>
       {/* Navbar - Client Component Wrapper (fixed positioning) */}
-      <NavbarWrapper />
+      {showNavbar && <NavbarWrapper />}
         {children}
       {/*
         SONNER TOASTER
