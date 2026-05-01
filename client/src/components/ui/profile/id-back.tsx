@@ -1,4 +1,4 @@
-import type { Member } from "@/types/member";
+import type { Member } from "@/types/member.types";
 
 interface IDCardBackProps {
   member: Member;

@@ -14,11 +14,23 @@ async function connectWithRetry(maxAttempts = 30, delayMs = 2000) {
 
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
     try {
-      return await mysql.createConnection({
-        host: process.env.DB_HOST || 'localhost',
-        user: process.env.DB_USER || 'root',
+      const config = {
+        // .trim() removes any accidental spaces from your .env file
+        host: process.env.DB_HOST ? process.env.DB_HOST.trim() : 'localhost',
+        user: process.env.DB_USER ? process.env.DB_USER.trim() : 'root',
         password: process.env.DB_PASSWORD || '',
-      });
+        // Force SSL unconditionally for this production run
+        ssl: {
+          rejectUnauthorized: false
+        }
+      };
+
+      // Print this out on the first try so we know the new code is running
+      if (attempt === 1) {
+        console.log(`[db-init] Attempting connection to: ${config.host} with SSL FORCEABLY ENABLED.`);
+      }
+
+      return await mysql.createConnection(config);
     } catch (error) {
       lastError = error;
       console.log(
@@ -173,11 +185,10 @@ async function setup() {
       id INT AUTO_INCREMENT PRIMARY KEY,
       name VARCHAR(255) UNIQUE NOT NULL,
       description TEXT,
-      logo_url VARCHAR(500),
+      logo_url MEDIUMTEXT,
       website_url VARCHAR(500),
       email VARCHAR(255),
       phone VARCHAR(20),
-      tier ENUM('bronze', 'silver', 'gold', 'platinum'),
       created_by INT NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -214,26 +225,6 @@ async function setup() {
       ['2021-00001', 'cabasec@students.nu-laguna.edu.ph', hashedPassword, 'Admin User', 4, 'BSIT', 'admin']
     );
     console.log('  Admin user created');
-  }
-
-  // Also seed 3 sample members for testing
-  const sampleUsers = [
-    { studentId: '2021-00002', email: 'member1@students.nu-laguna.edu.ph', fullName: 'Juan Dela Cruz', yearLevel: 2, course: 'BSCS', role: 'member' },
-    { studentId: '2021-00003', email: 'member2@students.nu-laguna.edu.ph', fullName: 'Maria Santos', yearLevel: 3, course: 'BSIT', role: 'officer' },
-    { studentId: '2021-00004', email: 'member3@students.nu-laguna.edu.ph', fullName: 'Jose Reyes', yearLevel: 1, course: 'BSCS', role: 'member' },
-  ];
-
-  for (const user of sampleUsers) {
-    const [exists] = await conn.execute('SELECT id FROM users WHERE email = ?', [user.email]);
-    if (exists.length === 0) {
-      const hashed = await bcrypt.hash('Password123', 10);
-      await conn.execute(
-        `INSERT INTO users (studentId, email, password, fullName, yearLevel, course, role, isActive, requiresPasswordChange)
-         VALUES (?, ?, ?, ?, ?, ?, ?, TRUE, TRUE)`,
-        [user.studentId, user.email, hashed, user.fullName, user.yearLevel, user.course, user.role]
-      );
-      console.log(`  Created: ${user.fullName} (${user.role})`);
-    }
   }
 
   console.log('\n[4/4] Verifying connection...');

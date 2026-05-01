@@ -1,7 +1,7 @@
 import { useState } from "react";
 import IDCardFront from "./id-front";
 import IDCardBack from "./id-back";
-import type { Member } from "@/types/member";
+import type { Member } from "@/types/member.types";
 
 interface FlippableIDCardProps {
   member: Member;
