@@ -36,19 +36,19 @@ interface Perk {
   description: string;
 }
 
-interface Event {
-  id: string;
-  title: string;
-  description: string;
-  date: string;
-  endDate?: string;
-  venue: string;
-  capacity?: number;
-  registered?: number;
-  coverImage: string;
-  registrationOpen: boolean;
-  tag?: string;
-}
+// interface Event {
+//   id: string;
+//   title: string;
+//   description: string;
+//   date: string;
+//   endDate?: string;
+//   venue: string;
+//   capacity?: number;
+//   registered?: number;
+//   coverImage: string;
+//   registrationOpen: boolean;
+//   tag?: string;
+// }
 
 interface Partner {
   id: string;
