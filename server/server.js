@@ -1,7 +1,6 @@
 // Load environment variables
 const dotenv = require('dotenv');
-const path = require('path');
-dotenv.config({ path: path.join(__dirname, '.env') });
+dotenv.config();
 const app = require('./app');
 
 // Use port 80 by default in production, 5000 otherwise
