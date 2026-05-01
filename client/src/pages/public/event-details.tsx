@@ -391,7 +391,10 @@ export default function EventDetails() {
                   <Flag className="mt-0.5 h-4 w-4 text-muted-foreground" />
                   <div>
                     <p className="font-semibold">Event Type</p>
-                    <p className="text-muted-foreground">Microsoft Teams</p>
+                    <p className="text-muted-foreground">{event.type
+                      ? event.type.charAt(0).toUpperCase() + event.type.slice(1).toLowerCase()
+                      : ""}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">

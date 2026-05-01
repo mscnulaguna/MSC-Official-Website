@@ -65,7 +65,7 @@ async function getAllEventsHandler(req, res) {
         guild: event.guild_id ? { id: event.guild_id, name: event.guildName, slug: event.guildSlug } : null,
         speakers,
         agenda,
-        coverImage: event.coverImage,
+        image: event.coverImage,
         type: event.type,
         userRegistered: registrationChecks[index],
       };
@@ -137,7 +137,7 @@ async function getEventByIdHandler(req, res) {
       guild: event.guild_id ? { id: event.guild_id, name: event.guildName, slug: event.guildSlug } : null,
       speakers: event.speakers,
       agenda: event.agenda,
-      coverImage: event.coverImage,
+      image: event.coverImage,
       registrationOpen: event.end_date
         ? new Date(event.end_date) > new Date() && (!event.max_capacity || (event.registeredCount || 0) < event.max_capacity)
         : true,
@@ -164,7 +164,7 @@ async function createNewEvent(req, res) {
       guildId,
       title,
       description,
-      coverImage,
+      image,
       date,
       endDate,
       venue,
@@ -198,7 +198,7 @@ async function createNewEvent(req, res) {
       guild_id: guildId || null,
       title,
       description,
-      coverImage: coverImage || null,
+      image: coverImage || null,
       start_date: date,
       end_date: endDate,
       location: venue,
@@ -232,7 +232,7 @@ async function createNewEvent(req, res) {
       guild: newEvent.guild_id ? { id: newEvent.guild_id, name: newEvent.guildName, slug: newEvent.guildSlug } : null,
       speakers: parsedSpeakers,
       agenda: parsedAgenda,
-      coverImage: newEvent.coverImage,
+      image: newEvent.coverImage,
       type: newEvent.type,
       registrationOpen: true,
     };

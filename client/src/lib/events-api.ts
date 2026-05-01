@@ -22,6 +22,7 @@ type ApiEvent = {
   organizers?: Event["organizers"]
   speakers?: Event["speakers"]
   photos?: Event["photos"]
+  type?: string
 }
 
 type EventsListResponse = {
@@ -64,9 +65,13 @@ function normalizeEvent(raw: ApiEvent): Event {
   const endDate = raw.endDate
   const rawImage = raw.coverImage || raw.image || ""
 
+  console.log('[DEBUG]', { rawImage, API_BASE, final: rawImage.startsWith("/") ? `${API_BASE}${rawImage}` : rawImage })
+
+
    // Prepend API base URL if it's a relative path
+  const staticBase = API_BASE.replace(/\/api\/v1\/?$/, "")
   const image = rawImage && rawImage.startsWith("/")
-    ? `${API_BASE}${rawImage}`
+    ? `${staticBase}${rawImage}`
     : rawImage
 
   if (raw.userRegistered) {
@@ -82,6 +87,7 @@ function normalizeEvent(raw: ApiEvent): Event {
     description: raw.description || "No description provided.",
     status: mapStatus(raw.status, startsAt, endDate),
     image,
+    type: raw.type || "General",
     registered: raw.registered ?? 0,
     capacity: raw.capacity ?? raw.maxParticipants ?? 0,
     organizers: raw.organizers,

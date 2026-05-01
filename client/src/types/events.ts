@@ -35,6 +35,7 @@ export type Event = {
   image: string
   registered: number
   capacity: number
+  type: string
 
   organizers?: EventOrganizer[]
   speakers?: EventSpeaker[]
