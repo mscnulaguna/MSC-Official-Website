@@ -237,71 +237,71 @@ const FALLBACK_PARTNERS: Partner[] = [
   },
 ];
 
-const FALLBACK_ACTIVITY_IMAGE1 = "../../assets/activity-fallback/org.jpg";
-const FALLBACK_ACTIVITY_IMAGE = "../../assets/activity-fallback/org.jpg";
+// const FALLBACK_ACTIVITY_IMAGE1 = "../../assets/activity-fallback/org.jpg";
+// const FALLBACK_ACTIVITY_IMAGE = "../../assets/activity-fallback/org.jpg";
 
-const FALLBACK_EVENTS: Event[] = [
-  {
-    id: "1",
-    coverImage: FALLBACK_ACTIVITY_IMAGE1,
-    tag: "Org Sign-Up",
-    title: "Org Sign-Up",
-    date: "July 17, 2025",
-    description: "Org sign-up event for students to join MSC NU Laguna for the upcoming school year.",
-    venue: "NU Laguna Campus",
-    registrationOpen: false
-  },
-  {
-    id: "2",
-    coverImage: FALLBACK_ACTIVITY_IMAGE,
-    tag: "WORKSHOP",
-    title: "Web Dev Workshop",
-    date: "March 10, 2026",
-    description: "Learn React and build modern web apps with hands-on coding sessions.",
-    venue: "Computer Lab",
-    registrationOpen: true
-  },
-  {
-    id: "3",
-    coverImage: FALLBACK_ACTIVITY_IMAGE,
-    tag: "PANEL",
-    title: "Career Session",
-    date: "March 8, 2026",
-    description: "Microsoft careers and internships panel with industry professionals.",
-    venue: "Auditorium",
-    registrationOpen: false
-  },
-  {
-    id: "4",
-    coverImage: FALLBACK_ACTIVITY_IMAGE,
-    tag: "MEETUP",
-    title: "Community Meetup",
-    date: "March 5, 2026",
-    description: "Networking and social gathering to connect with fellow community members.",
-    venue: "Student Center",
-    registrationOpen: true
-  },
-  {
-    id: "5",
-    coverImage: FALLBACK_ACTIVITY_IMAGE,
-    tag: "WORKSHOP",
-    title: "AI Workshop",
-    date: "March 1, 2026",
-    description: "Introduction to AI and machine learning with practical examples.",
-    venue: "Tech Lab",
-    registrationOpen: true
-  },
-  {
-    id: "6",
-    coverImage: FALLBACK_ACTIVITY_IMAGE,
-    tag: "HACKATHON",
-    title: "Hackathon",
-    date: "February 28, 2026",
-    description: "24-hour coding competition and collaboration to build amazing projects.",
-    venue: "Innovation Hub",
-    registrationOpen: false
-  }
-];
+// const FALLBACK_EVENTS: Event[] = [
+//   {
+//     id: "1",
+//     coverImage: FALLBACK_ACTIVITY_IMAGE1,
+//     tag: "Org Sign-Up",
+//     title: "Org Sign-Up",
+//     date: "July 17, 2025",
+//     description: "Org sign-up event for students to join MSC NU Laguna for the upcoming school year.",
+//     venue: "NU Laguna Campus",
+//     registrationOpen: false
+//   },
+//   {
+//     id: "2",
+//     coverImage: FALLBACK_ACTIVITY_IMAGE,
+//     tag: "WORKSHOP",
+//     title: "Web Dev Workshop",
+//     date: "March 10, 2026",
+//     description: "Learn React and build modern web apps with hands-on coding sessions.",
+//     venue: "Computer Lab",
+//     registrationOpen: true
+//   },
+//   {
+//     id: "3",
+//     coverImage: FALLBACK_ACTIVITY_IMAGE,
+//     tag: "PANEL",
+//     title: "Career Session",
+//     date: "March 8, 2026",
+//     description: "Microsoft careers and internships panel with industry professionals.",
+//     venue: "Auditorium",
+//     registrationOpen: false
+//   },
+//   {
+//     id: "4",
+//     coverImage: FALLBACK_ACTIVITY_IMAGE,
+//     tag: "MEETUP",
+//     title: "Community Meetup",
+//     date: "March 5, 2026",
+//     description: "Networking and social gathering to connect with fellow community members.",
+//     venue: "Student Center",
+//     registrationOpen: true
+//   },
+//   {
+//     id: "5",
+//     coverImage: FALLBACK_ACTIVITY_IMAGE,
+//     tag: "WORKSHOP",
+//     title: "AI Workshop",
+//     date: "March 1, 2026",
+//     description: "Introduction to AI and machine learning with practical examples.",
+//     venue: "Tech Lab",
+//     registrationOpen: true
+//   },
+//   {
+//     id: "6",
+//     coverImage: FALLBACK_ACTIVITY_IMAGE,
+//     tag: "HACKATHON",
+//     title: "Hackathon",
+//     date: "February 28, 2026",
+//     description: "24-hour coding competition and collaboration to build amazing projects.",
+//     venue: "Innovation Hub",
+//     registrationOpen: false
+//   }
+// ];
 
 // Typing animation words with design token colors
 const TYPING_WORDS: TypingWord[] = [
