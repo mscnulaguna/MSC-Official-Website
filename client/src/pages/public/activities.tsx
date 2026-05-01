@@ -1,3 +1,4 @@
+// React runtime is automatic; no hooks needed here (events provided by EventsContext)
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -8,7 +9,7 @@ import { Label } from "@/components/ui/label"
 import { DatePicker } from "@/components/ui/custom"
 import { Link, useSearchParams } from "react-router-dom"
 import type { Event } from "@/types/events"
-import { getPastEvents, getUpcomingEvents } from "@/data/mockEvents"
+import { useEvents } from "@/context/eventsContext"
 import { formatEventDate, formatEventTime } from "@/lib/event-datetime"
 import { Users, Clock, MapPin, CalendarDays } from "lucide-react"
 
@@ -74,9 +75,15 @@ function EventCard({
       </CardContent>
 
       <CardFooter className="pb-3 pt-0">
-        <Button asChild className="w-full">
+        <Button 
+          asChild 
+          variant={event.userRegistered ? "success" : "default"}
+          className="w-full"
+        >
           {/* goes to /activities/:eventId (e.g. /activities/1, /activities/2) */}
-          <Link to={`/activities/${event.id}`}>{ctaLabel}</Link>
+          <Link to={`/activities/${event.id}`}>
+            {event.userRegistered ? "✓ Registered" : ctaLabel}
+          </Link>
         </Button>
       </CardFooter>
     </Card>
@@ -114,10 +121,7 @@ function EventsGrid({
 export default function Activities() {
   const [searchParams, setSearchParams] = useSearchParams()
   const tabParam = searchParams.get('tab') || 'upcoming'
-  
-  // mock data for now - replace w API calls
-  const upcomingEvents = getUpcomingEvents()
-  const pastEvents = getPastEvents()
+  const { upcomingEvents, pastEvents, loading, loadError } = useEvents()
 
 // main page layout
   return (
@@ -173,8 +177,11 @@ export default function Activities() {
           </div>
 
           <TabsContent value="upcoming" className="mt-8">
-            {/* replace w fallback ui */}
-            {upcomingEvents.length === 0 ? (
+            {loading ? (
+              <p className="text-center text-muted-foreground">Loading events...</p>
+            ) : loadError ? (
+              <p className="text-center text-destructive">{loadError}</p>
+            ) : upcomingEvents.length === 0 ? (
               <p className="text-center text-muted-foreground">
                 No upcoming events available at the moment.
               </p>
@@ -184,7 +191,11 @@ export default function Activities() {
           </TabsContent>
 
           <TabsContent value="past" className="mt-8">
-            {pastEvents.length === 0 ? (
+            {loading ? (
+              <p className="text-center text-muted-foreground">Loading events...</p>
+            ) : loadError ? (
+              <p className="text-center text-destructive">{loadError}</p>
+            ) : pastEvents.length === 0 ? (
               <p className="text-center text-muted-foreground">
                 No past events available yet.
               </p>

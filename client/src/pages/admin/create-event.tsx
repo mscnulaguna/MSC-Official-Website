@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { 
   Upload, Trash2, X, Eye, Flag, MapPin, 
   CalendarDays, Clock, Plus, ChevronLeft, ChevronRight, ImageIcon 
@@ -16,10 +16,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getApiBaseUrl } from '@/lib/api';
+import { useAuth } from '@/context/authContext';
 
 // --- CONFIGURATION ---
 const API_BASE = getApiBaseUrl();
@@ -89,7 +91,7 @@ const PhotoUploadZone = ({ file, onUpload, label, square = true }: { file: any, 
   }, [file]);
 
   return (
-    <div className={`relative flex flex-col items-center justify-center border border-dashed border-border bg-muted/10 hover:bg-muted/30 transition-colors cursor-pointer rounded-none ${square ? 'aspect-square w-28' : 'min-h-[200px] w-full'}`}>
+    <div className={`relative flex flex-col items-center justify-center border border-dashed border-border bg-muted/10 hover:bg-muted/30 transition-colors cursor-pointer rounded-none ${square ? 'aspect-square w-28' : 'min-h-50 w-full'}`}>
       <input 
         type="file" 
         className="absolute inset-0 opacity-0 cursor-pointer" 
@@ -112,14 +114,20 @@ const PhotoUploadZone = ({ file, onUpload, label, square = true }: { file: any, 
 };
 export default function CreateEventPage() {
   const navigate = useNavigate(); // Added Router hook
+  const { token: authToken } = useAuth()
+  const [searchParams] = useSearchParams()
+  const editEventId = searchParams.get('id')
 
   const [activeTab, setActiveTab] = useState('event');
   const [showPreview, setShowPreview] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false); // API Loading State
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   const [eventPhotos, setEventPhotos] = useState<EventPhoto[]>([]);
   const [guilds, setGuilds] = useState<Guild[]>([]);
+  const [hasLiveGuilds, setHasLiveGuilds] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [existingCoverImageUrl, setExistingCoverImageUrl] = useState<string | null>(null)
 
   const [formData, setFormData] = useState<EventFormData>({
     title: '', type: '', description: '', guildId: '', status: 'draft',
@@ -135,11 +143,36 @@ export default function CreateEventPage() {
   const isCompleted = formData.status === 'completed';
 
   const combineDateTime = (date: string, time: string) => {
-    return new Date(`${date}T${time}`).toISOString()
+    const normalizedTime = time.length === 5 ? `${time}:00` : time
+    // MySQL DATETIME expects "YYYY-MM-DD HH:MM:SS" in strict mode.
+    return `${date} ${normalizedTime}`
   }
 
-  const uploadCoverImage = async (file: File) => {
-    const token = localStorage.getItem('token')
+  const getDateInputValue = (isoDate?: string) => {
+    if (!isoDate) return ''
+    const parsed = new Date(isoDate)
+    if (Number.isNaN(parsed.getTime())) return ''
+    return parsed.toISOString().slice(0, 10)
+  }
+
+  const getTimeInputValue = (isoDate?: string) => {
+    if (!isoDate) return ''
+    const parsed = new Date(isoDate)
+    if (Number.isNaN(parsed.getTime())) return ''
+    return parsed.toTimeString().slice(0, 5)
+  }
+
+  const mapEventToFormStatus = (startDate?: string, endDate?: string): EventStatus => {
+    const referenceDate = endDate || startDate
+    if (!referenceDate) return 'draft'
+
+    const parsed = new Date(referenceDate)
+    if (Number.isNaN(parsed.getTime())) return 'draft'
+
+    return parsed.getTime() >= Date.now() ? 'upcoming' : 'completed'
+  }
+
+  const uploadCoverImage = async (file: File, token: string) => {
     if (!token) {
       throw new Error('Missing authentication token')
     }
@@ -171,25 +204,125 @@ export default function CreateEventPage() {
         if (!res.ok) throw new Error("Failed to fetch guilds");
         const json = await res.json();
         setGuilds(json.data || []);
+        setHasLiveGuilds(true);
       } catch (err) {
         setGuilds([{ id: '1', name: 'Technology Guild' }, { id: '2', name: 'Design Guild' }]); // Fallback
+        setHasLiveGuilds(false);
       }
     };
     fetchGuilds();
   }, []);
 
+  // Prefill form when coming from Edit Event action (?id=...)
+  useEffect(() => {
+    const loadEventForEditing = async () => {
+      if (!editEventId) return
+
+      try {
+        const res = await fetch(`${API_BASE}/events/${editEventId}`)
+        if (!res.ok) {
+          throw new Error('Failed to load event')
+        }
+
+        const data = await res.json()
+        const parsedSpeakers = Array.isArray(data.speakers) ? data.speakers : []
+        const parsedAgenda = Array.isArray(data.agenda) ? data.agenda : []
+        setExistingCoverImageUrl(data.coverImage || null)
+
+        setFormData((prev) => ({
+          ...prev,
+          title: data.title || '',
+          type: data.type || '',
+          description: data.description || '',
+          guildId: data.guild?.id ? String(data.guild.id) : '',
+          status: mapEventToFormStatus(data.date, data.endDate),
+          venueName: data.venue || '',
+          location: data.venue || '',
+          startDate: getDateInputValue(data.date),
+          startTime: getTimeInputValue(data.date),
+          endDate: getDateInputValue(data.endDate),
+          endTime: getTimeInputValue(data.endDate),
+          maxParticipants: data.capacity ?? 0,
+          coverImage: null,
+          speakers: parsedSpeakers.map((speaker: any, index: number) => ({
+            id: String(speaker.id || index + 1),
+            name: speaker.name || '',
+            bio: speaker.bio || '',
+            title: speaker.title || speaker.bio || '',
+            photo: null,
+          })),
+          sessions: parsedAgenda.map((item: any, index: number) => ({
+            id: String(item.id || index + 1),
+            time: item.time || '',
+            title: item.activity || '',
+            speaker: item.speaker || '',
+            description: item.description || '',
+          })),
+        }))
+      } catch (err) {
+        console.error('Failed to prefill event editor', err)
+      }
+    }
+
+    loadEventForEditing()
+  }, [editEventId])
+
   // --- API POST HANDLER ---
   const handleSave = async () => {
     setIsSubmitting(true);
+    setSubmitError(null)
     try {
-      const token = localStorage.getItem('token')
+      const token = authToken || localStorage.getItem('token')
       if (!token) {
-        throw new Error('Missing authentication token')
+        setSubmitError('Your session has expired. Please sign in again.')
+        navigate('/login')
+        return
+      }
+
+      if (!formData.title.trim()) {
+        throw new Error('Event title is required')
+      }
+
+      if (!formData.description.trim()) {
+        throw new Error('Event description is required')
+      }
+
+      if (!formData.type) {
+        throw new Error('Event type is required')
+      }
+
+      if (!formData.startDate || !formData.startTime) {
+        throw new Error('Start date and time are required')
+      }
+
+      if (!formData.venueName && !formData.location) {
+        throw new Error('Venue is required')
+      }
+
+      if (!Number.isFinite(formData.maxParticipants) || formData.maxParticipants <= 0) {
+        throw new Error('Max participants must be greater than 0')
       }
 
       const date = combineDateTime(formData.startDate, formData.startTime)
       const endDate = combineDateTime(formData.endDate || formData.startDate, formData.endTime || formData.startTime)
-      const coverImage = formData.coverImage ? await uploadCoverImage(formData.coverImage) : null
+      const coverImage = formData.coverImage ? await uploadCoverImage(formData.coverImage, token) : null
+      const selectedGuild = guilds.find((guild) => String(guild.id) === formData.guildId)
+      const guildId = hasLiveGuilds && selectedGuild ? Number(selectedGuild.id) : undefined
+      const speakersPayload = formData.speakers
+        .filter((speaker) => speaker.name.trim().length > 0)
+        .map((speaker) => ({
+          name: speaker.name.trim(),
+          bio: (speaker.bio || speaker.title || '').trim(),
+          photo: null,
+        }))
+      const agendaPayload = formData.sessions
+        .filter((session) => session.title.trim().length > 0 || session.time.trim().length > 0)
+        .map((session) => ({
+          time: session.time,
+          activity: session.title,
+          speaker: session.speaker,
+          description: session.description,
+        }))
 
       // 1. Transform form data to match the API contract expected by events-dashboard
       const payload = {
@@ -198,30 +331,50 @@ export default function CreateEventPage() {
         date,
         endDate,
         venue: formData.venueName || formData.location,
-        capacity: formData.maxParticipants,
-        type: formData.type.toLowerCase(),
-        guildId: formData.guildId,
+        capacity: Number(formData.maxParticipants),
+        type: formData.type.trim().toLowerCase(),
+        guildId,
         coverImage,
+        status: formData.status,
+        speakers: speakersPayload,
+        agenda: agendaPayload,
+        sessions: formData.sessions,
       };
 
-      // 2. Post to API
-      const res = await fetch(`${API_BASE}/events`, {
-        method: 'POST',
+      // 2. Save using POST for create and PUT for edit.
+      const endpoint = editEventId ? `${API_BASE}/events/${editEventId}` : `${API_BASE}/events`
+      const method = editEventId ? 'PUT' : 'POST'
+      const res = await fetch(endpoint, {
+        method,
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          ...payload,
+          coverImage: coverImage || existingCoverImageUrl || null,
+        }),
       });
 
-      if (!res.ok) throw new Error('Failed to create event');
+      if (!res.ok) {
+        let errorMessage = editEventId ? 'Failed to update event' : 'Failed to create event'
+
+        try {
+          const errorPayload = await res.json()
+          errorMessage = errorPayload?.error?.message || errorMessage
+        } catch {
+          // Ignore parse failures and use fallback message.
+        }
+
+        throw new Error(errorMessage)
+      }
 
       // 3. Navigate back to dashboard on success to force reload
       navigate('/admin/event-status');
 
     } catch (err) {
       console.error("Error saving event:", err);
-      // Ideally trigger a toast notification here
+      setSubmitError(err instanceof Error ? err.message : 'Failed to save event')
     } finally {
       setIsSubmitting(false);
     }
@@ -234,13 +387,23 @@ export default function CreateEventPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">Create New Event</h1>
-            <p className="text-muted-foreground mt-1 text-sm">Configure event details and logistics.</p>
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">
+              {editEventId ? 'Edit Event' : 'Create New Event'}
+            </h1>
+            <p className="text-muted-foreground mt-1 text-sm">
+              {editEventId ? 'Review and update event details.' : 'Configure event details and logistics.'}
+            </p>
           </div>
           <Button variant="outlinePrimary" onClick={() => setShowPreview(true)}>
             <Eye/> Preview Mode
           </Button>
         </div>
+
+        {submitError ? (
+          <Alert variant="warning" className="mb-6 rounded-none">
+            <AlertDescription>{submitError}</AlertDescription>
+          </Alert>
+        ) : null}
 
         {/* Navigation Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -580,7 +743,7 @@ export default function CreateEventPage() {
             LIVE PREVIEW MODAL (Mirrors Event Details)
             ========================================= */}
         {showPreview && (
-          <div className="fixed inset-0 z-[100] bg-background overflow-y-auto animate-in fade-in duration-200">
+          <div className="fixed inset-0 z-100 bg-background overflow-y-auto animate-in fade-in duration-200">
             <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border p-4 flex justify-between items-center shadow-sm">
                <div className="flex items-center gap-2">
                  <Badge variant="outline" className="bg-brand-blue text-white border-brand-blue rounded-none font-bold">PREVIEW MODE</Badge>
@@ -600,7 +763,7 @@ export default function CreateEventPage() {
                       <span className="text-sm font-medium uppercase tracking-wider">No Cover Image</span>
                     </div>
                   )}
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+                  <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-background/80 via-transparent to-transparent" />
                 </div>
               </div>
 
@@ -616,7 +779,7 @@ export default function CreateEventPage() {
                             {formData.title || "Event Title"}
                           </h1>
                           <div className="flex items-center gap-2">
-                            <Badge className={isCompleted ? "bg-muted text-muted-foreground rounded-none" : "bg-[var(--color-brand-blue)] text-white rounded-none"}>
+                            <Badge className={isCompleted ? "bg-muted text-muted-foreground rounded-none" : "bg-(--color-brand-blue) text-white rounded-none"}>
                               {isCompleted ? "Completed" : formData.status === 'draft' ? 'Draft' : 'Upcoming'}
                             </Badge>
                             {formData.type && (
@@ -667,28 +830,28 @@ export default function CreateEventPage() {
                       </CardHeader>
                       <CardContent className="space-y-4 text-sm">
                         <div className="flex items-start gap-3">
-                          <Flag className="mt-0.5 h-5 w-5 text-[var(--color-brand-blue)]" />
+                          <Flag className="mt-0.5 h-5 w-5 text-(--color-brand-blue)" />
                           <div>
                             <p className="font-semibold text-foreground uppercase text-[10px] tracking-wider">Format</p>
                             <p className="text-muted-foreground">{formData.type || "TBA"}</p>
                           </div>
                         </div>
                         <div className="flex items-start gap-3">
-                          <MapPin className="mt-0.5 h-5 w-5 text-[var(--color-brand-blue)]" />
+                          <MapPin className="mt-0.5 h-5 w-5 text-(--color-brand-blue)" />
                           <div>
                             <p className="font-semibold text-foreground uppercase text-[10px] tracking-wider">Venue</p>
                             <p className="text-muted-foreground">{formData.venueName || "TBA"}</p>
                           </div>
                         </div>
                         <div className="flex items-start gap-3">
-                          <CalendarDays className="mt-0.5 h-5 w-5 text-[var(--color-brand-blue)]" />
+                          <CalendarDays className="mt-0.5 h-5 w-5 text-(--color-brand-blue)" />
                           <div>
                             <p className="font-semibold text-foreground uppercase text-[10px] tracking-wider">Date</p>
                             <p className="text-muted-foreground">{formData.startDate || "TBA"}</p>
                           </div>
                         </div>
                         <div className="flex items-start gap-3">
-                          <Clock className="mt-0.5 h-5 w-5 text-[var(--color-brand-blue)]" />
+                          <Clock className="mt-0.5 h-5 w-5 text-(--color-brand-blue)" />
                           <div>
                             <p className="font-semibold text-foreground uppercase text-[10px] tracking-wider">Time</p>
                             <p className="text-muted-foreground">{formData.startTime || "TBA"}</p>
@@ -698,7 +861,7 @@ export default function CreateEventPage() {
                       <Separator className="bg-border" />
                       <div className="p-4 space-y-3">
                         {!isCompleted && (
-                          <Button className="w-full bg-[var(--color-brand-blue)] hover:opacity-90 text-white font-bold rounded-none">
+                          <Button className="w-full bg-(--color-brand-blue) hover:opacity-90 text-white font-bold rounded-none">
                             Register Now
                           </Button>
                         )}

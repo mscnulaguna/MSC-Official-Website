@@ -39,4 +39,6 @@ export type Event = {
   organizers?: EventOrganizer[]
   speakers?: EventSpeaker[]
   photos?: EventPhoto[]
+  registrationOpen?: boolean
+  userRegistered?: boolean
 }

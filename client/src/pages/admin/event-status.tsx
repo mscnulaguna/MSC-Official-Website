@@ -14,9 +14,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Progress } from "@/components/ui/progress";
 import { EmptyState } from "@/components/ui/empty-state";
+import { getApiBaseUrl } from '@/lib/api';
 
 // --- CONFIGURATION ---
-const API_BASE = "[https://api.msc-nulaguna.org/v1](https://api.msc-nulaguna.org/v1)";
+const API_BASE = getApiBaseUrl();
 
 // --- INTERFACES ---
 type EventStatus = 'upcoming' | 'draft' | 'completed';
@@ -125,12 +126,20 @@ export default function EventsDashboard() {
   const [filterGuild, setFilterGuild] = useState('all');
   const [filterType, setFilterType] = useState('all');
 
-  // Fetch Events and Guilds
+  // Backend supports upcoming/past/all only. Draft remains a client-side view.
+  const getStatusQuery = (tab: TabStatus) => {
+    if (tab === 'upcoming') return 'upcoming'
+    if (tab === 'completed') return 'past'
+    return 'all'
+  }
+
+  // Fetch events when tab changes to keep API query aligned with backend filters.
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const eventsRes = await fetch(`${API_BASE}/events`);
+        const statusQuery = getStatusQuery(activeTab)
+        const eventsRes = await fetch(`${API_BASE}/events?status=${statusQuery}`);
         if (eventsRes.ok) {
           const eventsJson = await eventsRes.json();
           const normalize = (e: any) => {
@@ -160,11 +169,6 @@ export default function EventsDashboard() {
           setEvents(FALLBACK_EVENTS);
         }
 
-        const guildsRes = await fetch(`${API_BASE}/guilds`);
-        if (guildsRes.ok) {
-          const guildsJson = await guildsRes.json();
-          setGuilds(guildsJson.data || []);
-        }
       } catch (err) {
         console.warn("API Error, utilizing fallback data");
         setEvents(FALLBACK_EVENTS);
@@ -173,7 +177,23 @@ export default function EventsDashboard() {
       }
     };
     fetchData();
-  }, []);
+  }, [activeTab]);
+
+  useEffect(() => {
+    const fetchGuilds = async () => {
+      try {
+        const guildsRes = await fetch(`${API_BASE}/guilds`);
+        if (guildsRes.ok) {
+          const guildsJson = await guildsRes.json();
+          setGuilds(guildsJson.data || []);
+        }
+      } catch {
+        // Ignore guild fetch failures; event cards still work without guild filter options.
+      }
+    }
+
+    fetchGuilds()
+  }, [])
 
   // Apply Filters
   const filteredEvents = events.filter(evt => {
@@ -346,7 +366,7 @@ export default function EventsDashboard() {
                           <Button 
                             variant="outlinePrimary" 
                             className="w-full" 
-                            onClick={() => navigate('/admin/create-event')}
+                            onClick={() => navigate(`/admin/create-event?id=${evt.id}`)}
                           >
                             Edit Event
                           </Button>
