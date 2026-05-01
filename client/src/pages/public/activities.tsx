@@ -82,7 +82,7 @@ function EventCard({
         >
           {/* goes to /activities/:eventId (e.g. /activities/1, /activities/2) */}
           <Link to={`/activities/${event.id}`}>
-            {event.userRegistered ? "✓ Registered" : ctaLabel}
+            {event.userRegistered ? "Registered" : ctaLabel}
           </Link>
         </Button>
       </CardFooter>
@@ -125,10 +125,10 @@ export default function Activities() {
 
 // main page layout
   return (
-    <div className="bg-background">
+    <div className="bg-background min-h-screen">
       <section className="section-container section-padding-md">
         <header className="text-center">
-          <h1 className={"text-3xl sm:text-4xl lg:text-5xl font-bold inline-block gradient-text"}>
+          <h1 className={"text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold inline-block gradient-text"}>
             EVENTS &amp; ACTIVITIES
           </h1>
           <p className="mt-2 text-sm text-muted-foreground md:text-base">
@@ -143,7 +143,7 @@ export default function Activities() {
           </TabsList>
 
           {/* filters row */}
-          <div className="mx-auto mt-6 grid w-full max-w-6xl grid-cols-1 gap-4 md:grid-cols-3">
+          <div className="mx-auto mt-6 grid w-full max-w-6xl grid-cols-1 gap-4 md:grid-cols-2">
             <DatePicker/>
 
             <div className="space-y-2">
@@ -161,7 +161,7 @@ export default function Activities() {
               </Select>
             </div>
 
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <Label>Event List</Label>
               <Select defaultValue="event">
                 <SelectTrigger>
@@ -173,7 +173,7 @@ export default function Activities() {
                   <SelectItem value="past">Past</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
+            </div> */}
           </div>
 
           <TabsContent value="upcoming" className="mt-8">

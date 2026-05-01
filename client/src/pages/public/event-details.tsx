@@ -435,7 +435,7 @@ export default function EventDetails() {
                   {isRegistering
                     ? "Registering..."
                     : event.userRegistered
-                      ? "✓ Registered"
+                      ? "Registered"
                       : event.registrationOpen === false
                         ? "Registration Closed"
                         : "Register Now"}

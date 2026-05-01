@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import mscLogoUrl from "@/assets/logos/msclogo.svg";
 import type { Member } from "@/types/member.types";
+import Mike from "@/assets/icons/mike.png";
 
 interface IDCardFrontProps {
   member: Member;
@@ -68,7 +69,7 @@ export default function IDCardFront({ member }: IDCardFrontProps) {
         {/* Photo + info */}
         <div className="flex gap-5 flex-1 items-start">
           <div className="shrink-0 z-20 w-25 h-25 md:w-45 md:h-45 lg:w-45 lg:h-45 overflow-hidden border-2 border-brand-blue/60">
-            <img src={member.photo} alt={member.fullName} className="w-full h-full object-cover object-top text-black" />
+            <img src={Mike} alt={member.fullName} className="w-full h-full object-cover object-top text-black" />
           </div>
 
           <div className="flex-1 min-w-0">

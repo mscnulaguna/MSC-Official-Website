@@ -62,6 +62,12 @@ function mapStatus(rawStatus?: string, dateValue?: string, endDateValue?: string
 function normalizeEvent(raw: ApiEvent): Event {
   const startsAt = raw.date || raw.startDate || raw.startsAt || ""
   const endDate = raw.endDate
+  const rawImage = raw.coverImage || raw.image || ""
+
+   // Prepend API base URL if it's a relative path
+  const image = rawImage && rawImage.startsWith("/")
+    ? `${API_BASE}${rawImage}`
+    : rawImage
 
   if (raw.userRegistered) {
     console.log(`[API] Event ${raw.id}: userRegistered=${raw.userRegistered}`)
@@ -75,7 +81,7 @@ function normalizeEvent(raw: ApiEvent): Event {
     location: raw.venue || raw.location || "Venue TBA",
     description: raw.description || "No description provided.",
     status: mapStatus(raw.status, startsAt, endDate),
-    image: raw.coverImage || raw.image || "",
+    image,
     registered: raw.registered ?? 0,
     capacity: raw.capacity ?? raw.maxParticipants ?? 0,
     organizers: raw.organizers,

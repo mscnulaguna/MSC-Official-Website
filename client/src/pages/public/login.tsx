@@ -97,7 +97,7 @@ export default function LoginPage(): JSX.Element {
             </h2>
 
             <div className="mb-6">
-              <p className="text-base font-medium text-foreground mt-7 mb-2">Welcome Back</p>
+              <p className="text-base font-medium text-foreground mt-7 mb-2">Welcome back</p>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Did you miss us? 'Cause we do. Come on and hop in to the young and beautiful you.
               </p>
