@@ -59,13 +59,13 @@ interface Partner {
 }
 
 // Activity type for carousel component compatibility
-interface Activity {
-  title: string;
-  description: string;
-  image: string;
-  date: string;
-  tag: string;
-}
+// interface Activity {
+//   title: string;
+//   description: string;
+//   image: string;
+//   date: string;
+//   tag: string;
+// }
 
 // Snowflake icon
 function SnowflakeIcon() {

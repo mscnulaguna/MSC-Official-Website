@@ -385,7 +385,7 @@ export default function PartnersPage(): JSX.Element {
 
                     {/* Stats */}
                     <div className="mt-8 flex justify-center gap-8 sm:gap-12 flex-wrap">
-                        <StatBadge iconColor="#00A2ED" count={partners.length || 0} label="Partners" />
+                        <StatBadge iconColor="#00A2ED" count={isFallback ? 12 : partners.length} label="Partners" />
                         <StatBadge iconColor="#6AAC0E" count={300} label="Members" />
                         <StatBadge iconColor="#FFBB00" count={5} label="Events" />
                     </div>
