@@ -53,10 +53,9 @@ jobs:
 
       # builds and pushes the React client, injecting the appropriate API URL as a build argument
       - name: Build and Push Client
-      # injects the staging URL as a build argument when building the client image
+      # client will use the relative /api/v1 path which is reverse-proxied by nginx
         run: | 
           docker build ./client \
-            --build-arg VITE_API_BASE_URL=${{ env.VITE_API_URL }} \
             -t ghcr.io/${{ env.REPO_LC }}/msc-client:${{ env.IMAGE_TAG }}
           docker push ghcr.io/${{ env.REPO_LC }}/msc-client:${{ env.IMAGE_TAG }}
 
