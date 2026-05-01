@@ -415,7 +415,9 @@ export default function EventDetails() {
                   <Clock className="mt-0.5 h-4 w-4 text-muted-foreground" />
                   <div>
                     <p className="font-semibold">Time</p>
-                    <p className="text-muted-foreground">{formatEventTime(event.startsAt)}</p>
+                    <p className="text-muted-foreground">{formatEventTime(event.startsAt)}
+                      {event.endsAt ? ` – ${formatEventTime(event.endsAt)}` : ""}
+                    </p>
                   </div>
                 </div>
               </CardContent>

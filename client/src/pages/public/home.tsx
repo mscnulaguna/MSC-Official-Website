@@ -339,7 +339,7 @@ export default function Home(): JSX.Element {
     navigate('/login')
   }
   const handleJoinEvent = () => {
-    navigate('/events')
+    navigate('/activities')
   }
   const handleExploreMore = () => {
     document.getElementById('explore')?.scrollIntoView({ behavior: 'smooth' });
