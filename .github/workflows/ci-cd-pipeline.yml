@@ -29,10 +29,10 @@ jobs:
       - name: Set Environment-Specific Variables
         run: |
           if [ "${{ github.ref }}" == "refs/heads/main" ]; then
-            echo "VITE_API_URL=msc-prod-server-gzgxacashugfbye8.southeastasia-01.azurewebsites.net" >> $GITHUB_ENV
+            echo "VITE_API_URL=https://msc-prod-server-gzgxacashugfbye8.southeastasia-01.azurewebsites.net" >> $GITHUB_ENV
             echo "IMAGE_TAG=prod" >> $GITHUB_ENV
           else
-            echo "VITE_API_URL=msc-server-duggfme6cgb0bzc4.southeastasia-01.azurewebsites.net" >> $GITHUB_ENV
+            echo "VITE_API_URL=https://msc-server-duggfme6cgb0bzc4.southeastasia-01.azurewebsites.net" >> $GITHUB_ENV
             echo "IMAGE_TAG=staging" >> $GITHUB_ENV
           fi
 
