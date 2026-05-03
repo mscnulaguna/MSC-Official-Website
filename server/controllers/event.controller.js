@@ -164,7 +164,7 @@ async function createNewEvent(req, res) {
       guildId,
       title,
       description,
-      image,
+      coverImage,
       date,
       endDate,
       venue,
@@ -198,14 +198,14 @@ async function createNewEvent(req, res) {
       guild_id: guildId || null,
       title,
       description,
-      image: coverImage || null,
+      coverImage: coverImage || null,
       start_date: date,
       end_date: endDate,
       location: venue,
       max_capacity: capacity,
       type,
-      agenda: agenda || null,
-      speakers: speakers || null,
+      agenda: agenda !== undefined ? JSON.stringify(agenda) : null,     // ✅ stringify if object
+      speakers: speakers !== undefined ? JSON.stringify(speakers) : null, 
       created_by: createdBy,
     };
 
