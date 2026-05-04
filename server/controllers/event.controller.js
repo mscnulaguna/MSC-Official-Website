@@ -23,40 +23,37 @@ if (!JWT_SECRET) {
 
 // Get paginated list of events with filtering
 async function getAllEventsHandler(req, res) {
+  console.log('[getAllEvents] req.user:', req.user)
   try {
     const page = parseInt(req.query.page) || 1;
     const pageSize = Math.min(parseInt(req.query.pageSize) || 50, 50);
     const filters = {
-      status: req.query.status || 'all', // upcoming, past, all
+      status: req.query.status || 'all',
       guild: req.query.guild,
       type: req.query.type,
     };
 
+    const userId = req.user?.id  // may be null if unauthenticated
+
     const result = await getAllEvents(page, pageSize, filters);
 
-    // Map database field names to contract field names
-    const mappedData = result.data.map(event => {
-      // Parse JSON fields if they're strings
+    // Check registration status for all events in parallel (only if authenticated)
+    const registrationChecks = userId
+      ? await Promise.all(result.data.map(event => isUserRegistered(event.id, userId)))
+      : result.data.map(() => false)
+
+    const mappedData = result.data.map((event, index) => {
       let speakers = event.speakers;
       let agenda = event.agenda;
-      
+
       if (speakers && typeof speakers === 'string') {
-        try {
-          speakers = JSON.parse(speakers);
-        } catch (e) {
-          speakers = [];
-        }
+        try { speakers = JSON.parse(speakers) } catch { speakers = [] }
       }
-      
       if (agenda && typeof agenda === 'string') {
-        try {
-          agenda = JSON.parse(agenda);
-        } catch (e) {
-          agenda = [];
-        }
+        try { agenda = JSON.parse(agenda) } catch { agenda = [] }
       }
 
-      const mapped = {
+      return {
         id: event.id,
         title: event.title,
         description: event.description,
@@ -66,18 +63,12 @@ async function getAllEventsHandler(req, res) {
         capacity: event.max_capacity,
         registered: event.registeredCount || 0,
         guild: event.guild_id ? { id: event.guild_id, name: event.guildName, slug: event.guildSlug } : null,
-        speakers: speakers,
-        agenda: agenda,
-        coverImage: event.coverImage,
+        speakers,
+        agenda,
+        image: event.coverImage,
         type: event.type,
+        userRegistered: registrationChecks[index],
       };
-      
-      // // Debug first event
-      // if (result.data[0] === event) {
-      //   console.log('DEBUG: First event after mapping:', JSON.stringify(mapped, null, 2));
-      // }
-      
-      return mapped;
     });
 
     res.status(200).json({
@@ -88,12 +79,7 @@ async function getAllEventsHandler(req, res) {
     });
   } catch (error) {
     console.error('Error fetching events:', error);
-    res.status(500).json({
-      error: {
-        code: 'INTERNAL_ERROR',
-        message: 'Failed to fetch events',
-      },
-    });
+    res.status(500).json({ error: { code: 'INTERNAL_ERROR', message: 'Failed to fetch events' } });
   }
 }
 
@@ -151,7 +137,7 @@ async function getEventByIdHandler(req, res) {
       guild: event.guild_id ? { id: event.guild_id, name: event.guildName, slug: event.guildSlug } : null,
       speakers: event.speakers,
       agenda: event.agenda,
-      coverImage: event.coverImage,
+      image: event.coverImage,
       registrationOpen: event.end_date
         ? new Date(event.end_date) > new Date() && (!event.max_capacity || (event.registeredCount || 0) < event.max_capacity)
         : true,
@@ -218,8 +204,8 @@ async function createNewEvent(req, res) {
       location: venue,
       max_capacity: capacity,
       type,
-      agenda: agenda || null,
-      speakers: speakers || null,
+      agenda: agenda !== undefined ? JSON.stringify(agenda) : null,     // ✅ stringify if object
+      speakers: speakers !== undefined ? JSON.stringify(speakers) : null, 
       created_by: createdBy,
     };
 
@@ -246,7 +232,7 @@ async function createNewEvent(req, res) {
       guild: newEvent.guild_id ? { id: newEvent.guild_id, name: newEvent.guildName, slug: newEvent.guildSlug } : null,
       speakers: parsedSpeakers,
       agenda: parsedAgenda,
-      coverImage: newEvent.coverImage,
+      image: newEvent.coverImage,
       type: newEvent.type,
       registrationOpen: true,
     };
@@ -527,11 +513,29 @@ async function uploadEventCoverImage(req, res) {
     });
   }
 }
+async function updateEventHandler(req, res) {
+  try {
+    const { id } = req.params;
+    const eventData = req.body;
+    
+    // This is where you call the function from your MODEL
+    const updatedEvent = await updateEvent(id, eventData); 
+
+    if (!updatedEvent) {
+      return res.status(404).json({ error: { message: 'Event not found' } });
+    }
+
+    res.status(200).json({ event: updatedEvent });
+  } catch (error) {
+    res.status(500).json({ error: { message: 'Update failed' } });
+  }
+}
 
 module.exports = {
   getAllEventsHandler,
   getEventByIdHandler,
   createNewEvent,
+  updateEventHandler,
   registerForEvent,
   markAttendanceHandler,
   getAttendanceHandler,

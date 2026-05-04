@@ -2,16 +2,30 @@ import { Button } from '@/components/ui/button';
 import { TetrisBlocksBackground } from '@/components/home/TetrisBlocksBackground';
 import { VideoPlayer } from '@/components/ui/custom/VideoPlayer';
 import { Card, CardHeader, CardContent, CardTitle, CardDescription} from '@/components/ui/card';
-import { PastActivitiesCarousel } from '@/components/ui/carousel';
+// import { PastActivitiesCarousel } from '@/components/ui/carousel';
 import { useTypingAnimation, type TypingWord } from '@/hooks/useTypingAnimation';
 import { useTheme } from '@/context/ThemeContext'; // dark mode support
-import mscLogo from '@/assets/logos/msclogo.svg';
+// import mscLogo from '@/assets/logos/msclogo.svg';
 import abstracticon from '@/assets/shapes/abstracticons.svg';
 import { getApiBaseUrl } from '@/lib/api';
 import '@/styles/home.css';
 import { useEffect, useState, type JSX } from 'react';
 import { useAuth } from '@/context/authContext';
 import { useNavigate } from 'react-router-dom';
+
+
+import BFC from "@/assets/logos/BFC Real.jpg";
+import CCC1 from "@/assets/logos/CCC Computer Science Society.png";
+import CCC2 from "@/assets/logos/CCC Information Technology Society.png";
+import COL from "@/assets/logos/Council of Leaders.png";
+import DA from "@/assets/logos/DataSense Analytics.jpg";
+import DEV from "@/assets/logos/DEVCON Laguna.png";
+import AZ from "@/assets/logos/Microsoft Azure Community PH.png";
+import MC from "@/assets/logos/Microsoft.png";
+import OT from "@/assets/logos/OpenText.png";
+import PUP from "@/assets/logos/PUP Microsoft Student Community.png";
+import SCS from "@/assets/logos/School of Computer Studies - Student Council.png";
+import TCB from "@/assets/logos/Techbayanihan.png";
 
 const API_BASE = getApiBaseUrl();
 
@@ -22,19 +36,19 @@ interface Perk {
   description: string;
 }
 
-interface Event {
-  id: string;
-  title: string;
-  description: string;
-  date: string;
-  endDate?: string;
-  venue: string;
-  capacity?: number;
-  registered?: number;
-  coverImage: string;
-  registrationOpen: boolean;
-  tag?: string;
-}
+// interface Event {
+//   id: string;
+//   title: string;
+//   description: string;
+//   date: string;
+//   endDate?: string;
+//   venue: string;
+//   capacity?: number;
+//   registered?: number;
+//   coverImage: string;
+//   registrationOpen: boolean;
+//   tag?: string;
+// }
 
 interface Partner {
   id: string;
@@ -42,17 +56,16 @@ interface Partner {
   logo: string;
   url: string;
   bio: string;
-  tier: string;
 }
 
 // Activity type for carousel component compatibility
-interface Activity {
-  title: string;
-  description: string;
-  image: string;
-  date: string;
-  tag: string;
-}
+// interface Activity {
+//   title: string;
+//   description: string;
+//   image: string;
+//   date: string;
+//   tag: string;
+// }
 
 // Snowflake icon
 function SnowflakeIcon() {
@@ -85,9 +98,9 @@ const PerkCardSkeleton = (): JSX.Element => (
 );
 
 // Activity card skeleton loader
-const ActivityCardSkeleton = (): JSX.Element => (
-  <div className="h-80 w-full bg-muted animate-pulse rounded-none" />
-);
+// const ActivityCardSkeleton = (): JSX.Element => (
+//   <div className="h-80 w-full bg-muted animate-pulse rounded-none" />
+// );
 
 // CUSTOMIZED: Member perk card component - Single-use for home page perks grid
 function MemberPerkCard({ title, description }: Perk) {
@@ -139,79 +152,156 @@ const FALLBACK_PERKS: Perk[] = [
 // Fallback partners data
 const FALLBACK_PARTNERS: Partner[] = [
   {
-    id: "1",
-    name: "MSC NU Laguna",
-    logo: mscLogo,
-    url: "https://www.facebook.com/mscnulaguna",
-    bio: "Microsoft Student Community",
-    tier: "gold"
-  }
+    id: "fallback-0",
+    name: "Microsoft",
+    logo: MC,
+    url: "",
+    bio: "The Microsoft Student Community chapter at NU Laguna, fostering tech innovation among students.",
+  },
+  {
+    id: "fallback-1",
+    name: "Techbayanihan",
+    logo: TCB,
+    url: "",
+    bio: "A student-led community at TIP Manila bridging the gap between theory and practice in software development.",
+  },
+  {
+    id: "fallback-2",
+    name: "OpenText",
+    logo: OT,
+    url: "",
+    bio: "Empowering PLM students with cloud computing skills and AWS certifications.",
+  },
+  {
+    id: "fallback-3",
+    name: "Microsoft Azure Community PH",
+    logo: AZ,
+    url: "",
+    bio: "The Association for Computing Machinery chapter at De La Salle University, promoting excellence in computing.",
+  },
+  {
+    id: "fallback-4",
+    name: "DEVCON Laguna.png",
+    logo: DEV,
+    url: "",
+    bio: "Uniting future IT professionals at UST through competitions, seminars, and community outreach.",
+  },
+  {
+    id: "fallback-5",
+    name: "DataSense Analytics",
+    logo: DA,
+    url: "",
+    bio: "A student organization at FEU Tech dedicated to ethical hacking, digital forensics, and cybersecurity awareness.",
+  },
+  {
+    id: "fallback-6",
+    name: "BFC Real",
+    logo: BFC,
+    url: "",
+    bio: "Cultivating data literacy and analytics skills among Ateneo students through workshops and research.",
+  },
+  {
+    id: "fallback-7",
+    name: "Council of Leaders",
+    logo: COL,
+    url: "",
+    bio: "A PUP organization championing open-source software contributions and collaborative development.",
+  },
+  {
+    id: "fallback-8",
+    name: "CCC Computer Science Society",
+    logo: CCC1,
+    url: "",
+    bio: "Inspiring Mapúa students to craft intuitive and beautiful digital experiences through design thinking.",
+  },
+  {
+    id: "fallback-9",
+    name: "CCC Information Technology Society",
+    logo: CCC2,
+    url: "",
+    bio: "A multidisciplinary org at UPLB exploring robotics, machine learning, and intelligent systems.",
+  },
+  {
+    id: "fallback-10",
+    name: "PUP Microsoft Student Community",
+    logo: PUP,
+    url: "",
+    bio: "Where Adamson students turn game ideas into reality — from pixel art to full game jam releases.",
+  },
+  {
+    id: "fallback-11",
+    name: "School of Computer Studies - Student Council",
+    logo: SCS,
+    url: "",
+    bio: "Exploring the intersection of finance and technology at CEU through projects, talks, and industry mentorship.",
+  },
 ];
 
-const FALLBACK_ACTIVITY_IMAGE = "";
+// const FALLBACK_ACTIVITY_IMAGE1 = "../../assets/activity-fallback/org.jpg";
+// const FALLBACK_ACTIVITY_IMAGE = "../../assets/activity-fallback/org.jpg";
 
-const FALLBACK_EVENTS: Event[] = [
-  {
-    id: "1",
-    coverImage: FALLBACK_ACTIVITY_IMAGE,
-    tag: "ASSEMBLY",
-    title: "General Assembly 2026",
-    date: "August 24, 2026",
-    description: "Kick-off the academic year with updates, officer introductions, and org plans.",
-    venue: "NU Laguna Campus",
-    registrationOpen: true
-  },
-  {
-    id: "2",
-    coverImage: FALLBACK_ACTIVITY_IMAGE,
-    tag: "WORKSHOP",
-    title: "Web Dev Workshop",
-    date: "March 10, 2026",
-    description: "Learn React and build modern web apps with hands-on coding sessions.",
-    venue: "Computer Lab",
-    registrationOpen: true
-  },
-  {
-    id: "3",
-    coverImage: FALLBACK_ACTIVITY_IMAGE,
-    tag: "PANEL",
-    title: "Career Session",
-    date: "March 8, 2026",
-    description: "Microsoft careers and internships panel with industry professionals.",
-    venue: "Auditorium",
-    registrationOpen: false
-  },
-  {
-    id: "4",
-    coverImage: FALLBACK_ACTIVITY_IMAGE,
-    tag: "MEETUP",
-    title: "Community Meetup",
-    date: "March 5, 2026",
-    description: "Networking and social gathering to connect with fellow community members.",
-    venue: "Student Center",
-    registrationOpen: true
-  },
-  {
-    id: "5",
-    coverImage: FALLBACK_ACTIVITY_IMAGE,
-    tag: "WORKSHOP",
-    title: "AI Workshop",
-    date: "March 1, 2026",
-    description: "Introduction to AI and machine learning with practical examples.",
-    venue: "Tech Lab",
-    registrationOpen: true
-  },
-  {
-    id: "6",
-    coverImage: FALLBACK_ACTIVITY_IMAGE,
-    tag: "HACKATHON",
-    title: "Hackathon",
-    date: "February 28, 2026",
-    description: "24-hour coding competition and collaboration to build amazing projects.",
-    venue: "Innovation Hub",
-    registrationOpen: false
-  }
-];
+// const FALLBACK_EVENTS: Event[] = [
+//   {
+//     id: "1",
+//     coverImage: FALLBACK_ACTIVITY_IMAGE1,
+//     tag: "Org Sign-Up",
+//     title: "Org Sign-Up",
+//     date: "July 17, 2025",
+//     description: "Org sign-up event for students to join MSC NU Laguna for the upcoming school year.",
+//     venue: "NU Laguna Campus",
+//     registrationOpen: false
+//   },
+//   {
+//     id: "2",
+//     coverImage: FALLBACK_ACTIVITY_IMAGE,
+//     tag: "WORKSHOP",
+//     title: "Web Dev Workshop",
+//     date: "March 10, 2026",
+//     description: "Learn React and build modern web apps with hands-on coding sessions.",
+//     venue: "Computer Lab",
+//     registrationOpen: true
+//   },
+//   {
+//     id: "3",
+//     coverImage: FALLBACK_ACTIVITY_IMAGE,
+//     tag: "PANEL",
+//     title: "Career Session",
+//     date: "March 8, 2026",
+//     description: "Microsoft careers and internships panel with industry professionals.",
+//     venue: "Auditorium",
+//     registrationOpen: false
+//   },
+//   {
+//     id: "4",
+//     coverImage: FALLBACK_ACTIVITY_IMAGE,
+//     tag: "MEETUP",
+//     title: "Community Meetup",
+//     date: "March 5, 2026",
+//     description: "Networking and social gathering to connect with fellow community members.",
+//     venue: "Student Center",
+//     registrationOpen: true
+//   },
+//   {
+//     id: "5",
+//     coverImage: FALLBACK_ACTIVITY_IMAGE,
+//     tag: "WORKSHOP",
+//     title: "AI Workshop",
+//     date: "March 1, 2026",
+//     description: "Introduction to AI and machine learning with practical examples.",
+//     venue: "Tech Lab",
+//     registrationOpen: true
+//   },
+//   {
+//     id: "6",
+//     coverImage: FALLBACK_ACTIVITY_IMAGE,
+//     tag: "HACKATHON",
+//     title: "Hackathon",
+//     date: "February 28, 2026",
+//     description: "24-hour coding competition and collaboration to build amazing projects.",
+//     venue: "Innovation Hub",
+//     registrationOpen: false
+//   }
+// ];
 
 // Typing animation words with design token colors
 const TYPING_WORDS: TypingWord[] = [
@@ -222,15 +312,15 @@ const TYPING_WORDS: TypingWord[] = [
 ];
 
 // Helper to convert Event API data to Activity component format
-function eventToActivity(event: Event): Activity {
-  return {
-    title: event.title,
-    description: event.description,
-    image: event.coverImage,
-    date: event.date,
-    tag: event.tag || 'EVENT'
-  };
-}
+// function eventToActivity(event: Event): Activity {
+//   return {
+//     title: event.title,
+//     description: event.description,
+//     image: event.coverImage,
+//     date: event.date,
+//     tag: event.tag || 'EVENT'
+//   };
+// }
 
 // Home page
 export default function Home(): JSX.Element {
@@ -240,7 +330,7 @@ export default function Home(): JSX.Element {
   const gridOpacity = isDarkMode ? 'opacity-10' : 'opacity-20';
 
   const [perks] = useState<Perk[]>(FALLBACK_PERKS);
-  const [events, setEvents] = useState<Event[]>(FALLBACK_EVENTS);
+  // const [events, setEvents] = useState<Event[]>(FALLBACK_EVENTS);
   const [partners, setPartners] = useState<Partner[]>(FALLBACK_PARTNERS);
   const [loading, setLoading] = useState(true);
 
@@ -249,7 +339,7 @@ export default function Home(): JSX.Element {
     navigate('/login')
   }
   const handleJoinEvent = () => {
-    navigate('/events')
+    navigate('/activities')
   }
   const handleExploreMore = () => {
     document.getElementById('explore')?.scrollIntoView({ behavior: 'smooth' });
@@ -274,10 +364,10 @@ export default function Home(): JSX.Element {
           throw new Error('API fetch failed');
         }
 
-        const eventsData = await eventsRes.json();
+        // const eventsData = await eventsRes.json();
         const partnersData = await partnersRes.json();
 
-        setEvents(eventsData.data);
+        // setEvents(eventsData.data);
         setPartners(partnersData.data);
       } catch {
         // Use fallback data
@@ -309,7 +399,7 @@ export default function Home(): JSX.Element {
           width: max-content;
           will-change: transform;
           backface-visibility: hidden;
-          animation: marquee 14s linear infinite;
+          animation: marquee 30s linear infinite;
         }
         @media (min-width: 1024px) {
           .marquee-track {
@@ -376,7 +466,7 @@ export default function Home(): JSX.Element {
       {/* Community introduction with video and mission description */}
       <section id="explore" className="w-full bg-secondary/50 section-padding-lg flex justify-center border-b border-border/30">
         <div className="section-container text-center">
-          <h1 className="text-4xl sm:text-4xl md:text-5xl lg:text-7xl font-bold inline-block gradient-text">
+          <h1 className="text-4xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold inline-block gradient-text">
             WHO WE ARE
           </h1>
           
@@ -426,7 +516,7 @@ export default function Home(): JSX.Element {
       {/* Member benefits grid with perks cards */}
       <section className="w-full section-padding-lg bg-secondary flex justify-center border-b border-border">
         <div className="section-container text-center">
-          <h1 className="text-4xl sm:text-4xl md:text-5xl lg:text-7xl font-bold inline-block gradient-text">
+          <h1 className="text-4xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold inline-block gradient-text">
             MEMBER PERKS
           </h1>
           <p className="mt-3 text-xs sm:text-sm md:text-base lg:text-lg text-muted-foreground max-w-2xl mx-auto text-center mb-16">
@@ -452,9 +542,9 @@ export default function Home(): JSX.Element {
       </section>
 
       {/* Past events carousel showcasing community activities */}
-      <section className="w-full section-padding-lg bg-background flex justify-center border-b border-border">
+      {/* <section className="w-full section-padding-lg bg-background flex justify-center border-b border-border">
         <div className="section-container text-center">
-          <h1 className="text-4xl sm:text-4xl md:text-5xl lg:text-7xl font-bold inline-block gradient-text">
+          <h1 className="text-4xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold inline-block gradient-text">
             PAST ACTIVITIES
           </h1>
           <p className="mt-3 text-xs sm:text-sm md:text-base lg:text-lg text-muted-foreground mb-16">
@@ -469,7 +559,7 @@ export default function Home(): JSX.Element {
 
           {!loading && <PastActivitiesCarousel activities={events.map(eventToActivity)} />}
         </div>
-      </section>
+      </section> */}
 
     </main>
     </>

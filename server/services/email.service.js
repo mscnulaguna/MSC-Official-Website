@@ -141,10 +141,22 @@ async function sendRegistrationConfirmation(user, event, registration) {
 
 // Fire-and-forget wrapper — never throws, logs errors only
 function sendRegistrationConfirmationSafe(user, event, registration) {
-  sendRegistrationConfirmation(user, event, registration).catch((err) => {
+  console.log(`[EMAIL] Queueing registration confirmation for ${user.email} (event: ${event.title})`);
+  
+  sendRegistrationConfirmation(user, event, registration).then(() => {
+    console.log(`[EMAIL] ✓ Registration confirmation sent to ${user.email}`);
+  }).catch((err) => {
     console.error(
-      `[EMAIL] Failed to send registration confirmation to ${user.email}: ${err.message}`
+      `[EMAIL] ✗ Failed to send registration confirmation to ${user.email}`
     );
+    console.error(`[EMAIL] Error details:`, err.message);
+    console.error(`[EMAIL] SMTP Config:`, {
+      host: process.env.SMTP_HOST,
+      port: process.env.SMTP_PORT,
+      user: process.env.SMTP_USER ? '***' : 'NOT SET',
+      pass: process.env.SMTP_PASS ? '***' : 'NOT SET',
+      from: process.env.SMTP_FROM,
+    });
   });
 }
 

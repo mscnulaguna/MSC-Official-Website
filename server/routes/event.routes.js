@@ -48,9 +48,9 @@ const upload = multer({
 const router = express.Router();
 
 // Public read endpoints
-router.get('/', getAllEventsHandler);
-router.get('/:id', getEventByIdHandler);
-
+router.get('/', authMiddleware, getAllEventsHandler);
+router.get('/:id', authMiddleware, getEventByIdHandler);
+  
 // Event creation (officers/admins only)
 router.post('/', authMiddleware, roleMiddleware(['officer', 'admin']), createNewEvent);
 

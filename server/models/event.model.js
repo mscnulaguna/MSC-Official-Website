@@ -163,18 +163,58 @@ async function createEvent(eventData) {
   }
 }
 
-// Check if user is already registered for event
-async function isUserRegistered(eventId, userId) {
+// Update an existing event
+async function updateEvent(eventId, eventData) {
   const connection = await pool.getConnection();
   try {
-    const [rows] = await connection.execute(
+    const {
+      guild_id,
+      title,
+      description,
+      coverImage,
+      start_date,
+      end_date,
+      location,
+      max_capacity,
+      type,
+      agenda,
+      speakers,
+    } = eventData;
+
+    await connection.execute(
       `
-      SELECT id FROM event_registrations 
-      WHERE event_id = ? AND user_id = ? AND status != 'cancelled'
+      UPDATE events
+      SET guild_id = ?,
+          title = ?,
+          description = ?,
+          coverImage = ?,
+          start_date = ?,
+          end_date = ?,
+          location = ?,
+          max_capacity = ?,
+          type = ?,
+          agenda = ?,
+          speakers = ?,
+          updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
       `,
-      [eventId, userId]
+      [
+        guild_id || null,
+        title,
+        description,
+        coverImage,
+        start_date,
+        end_date,
+        location,
+        max_capacity,
+        type,
+        agenda ? JSON.stringify(agenda) : null,
+        speakers ? JSON.stringify(speakers) : null,
+        eventId,
+      ]
     );
-    return rows.length > 0;
+
+    return await getEventById(eventId);
   } finally {
     connection.release();
   }
@@ -309,14 +349,59 @@ async function getEventCapacity(eventId) {
   }
 }
 
+// Get a list of event IDs that the given user is registered for
+async function getUserRegisteredEventIds(userId, eventIds = []) {
+  if (!Array.isArray(eventIds) || eventIds.length === 0) return [];
+
+  const connection = await pool.getConnection();
+  try {
+    // Build dynamic placeholders for IN clause
+    const placeholders = eventIds.map(() => '?').join(',');
+    
+    const sql = `
+      SELECT DISTINCT event_id
+      FROM event_registrations
+      WHERE user_id = ? 
+        AND status != 'cancelled' 
+        AND event_id IN (${placeholders})
+    `;
+    
+    const params = [userId, ...eventIds];
+    const [rows] = await connection.execute(sql, params);
+    
+    return rows.map((r) => r.event_id);
+  } finally {
+    connection.release();
+  }
+}
+
+// Check if single user is registered for single event
+async function isUserRegistered(eventId, userId) {
+  const connection = await pool.getConnection();
+  try {
+    const [rows] = await connection.execute(
+      `
+      SELECT id FROM event_registrations 
+      WHERE event_id = ? AND user_id = ? AND status != 'cancelled'
+      `,
+      [eventId, userId]
+    );
+    return rows.length > 0;
+  } finally {
+    connection.release();
+  }
+}
+
 // Export all event database functions
 module.exports = {
   getAllEvents,
   getEventById,
   createEvent,
+  updateEvent,
   isUserRegistered,
   registerUserForEvent,
   markAttendance,
   getEventAttendance,
   getEventCapacity,
+  getUserRegisteredEventIds,
 };

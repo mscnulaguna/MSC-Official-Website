@@ -1,16 +1,18 @@
-import { useMemo } from "react"
-import { Link, useParams } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import { Clock, MapPin, Flag, CalendarDays } from "lucide-react"
+import { toast } from "sonner"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
-import { getEventById } from "@/data/mockEvents"
 import { Carousel } from "@/components/ui/carousel"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { formatEventDate, formatEventTime } from "@/lib/event-datetime"
-import type { EventOrganizer, EventPhoto, EventSpeaker } from "@/types/events"
+import { fetchEventById, registerForEvent } from "@/lib/events-api"
+import { useEvents } from '@/context/eventsContext'
+import type { Event, EventOrganizer, EventPhoto, EventSpeaker } from "@/types/events"
 
 function getInitials(name: string) {
   return name
@@ -194,15 +196,95 @@ function PhotosSection({ photos }: Readonly<{ photos: EventPhoto[] }>) {
 
 // main event details page
 export default function EventDetails() {
+  const navigate = useNavigate()
   const params = useParams()
-  const eventId = Number(params.eventId)
+  const eventId = params.eventId
+  const [event, setEvent] = useState<Event | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState<string | null>(null)
+  const [isRegistering, setIsRegistering] = useState(false)
+  const [registerError, setRegisterError] = useState<string | null>(null)
+  const { updateEvent, refresh } = useEvents()
 
-  const event = useMemo(() => {
-    if (!Number.isFinite(eventId)) return undefined
-    // data currently comes from mock helpers.
-    // swap `getEventById` for a backend call later without changing the UI.
-    return getEventById(eventId)
+  useEffect(() => {
+    let isMounted = true
+
+    const loadEvent = async () => {
+      if (!eventId) {
+        setEvent(null)
+        setLoading(false)
+        return
+      }
+
+      setLoading(true)
+      setLoadError(null)
+
+      try {
+        const data = await fetchEventById(eventId)
+
+        if (!isMounted) return
+        setEvent(data)
+      } catch (error) {
+        if (!isMounted) return
+        setLoadError(error instanceof Error ? error.message : "Failed to load event")
+        setEvent(null)
+      } finally {
+        if (isMounted) {
+          setLoading(false)
+        }
+      }
+    }
+
+    loadEvent()
+
+    return () => {
+      isMounted = false
+    }
   }, [eventId])
+
+  const handleRegister = async () => {
+    if (!event || isRegistering) return
+
+    const token = localStorage.getItem("token")
+    if (!token) {
+      navigate("/login")
+      return
+    }
+
+    setIsRegistering(true)
+    setRegisterError(null)
+
+    try {
+      await registerForEvent(event.id, token)
+
+      const updatedRegistered = event.registered + 1
+      const hasCapacity = event.capacity > 0
+
+      const updatedEvent: Event = {
+        ...event,
+        registered: updatedRegistered,
+        userRegistered: true,
+        registrationOpen: hasCapacity ? updatedRegistered < event.capacity : true,
+      }
+
+      setEvent(updatedEvent)
+      updateEvent(updatedEvent)
+
+      console.log(`[EventDetails] Called updateEvent for event ${event.id}, userRegistered=true`)
+
+      toast.success("You're registered! Check your email for confirmation details.", {
+        duration: 5000,
+      })
+
+      refresh().catch(() => {
+        // ignore refresh errors; in-memory update keeps UI responsive
+      })
+    } catch (error) {
+      setRegisterError(error instanceof Error ? error.message : "Failed to register for event")
+    } finally {
+      setIsRegistering(false)
+    }
+  }
 
   const isCompleted = event?.status === "Past"
   const isUpcoming = event?.status === "Upcoming"
@@ -211,7 +293,34 @@ export default function EventDetails() {
   const speakers = event?.speakers ?? []
   const photos = event?.photos ?? []
 
-//   replace w fallback ui
+  if (loading) {
+    return (
+      <div className="bg-background">
+        <section className="section-container section-padding-md">
+          <div className="mx-auto max-w-3xl space-y-4">
+            <h1 className="text-2xl font-bold">Loading event...</h1>
+          </div>
+        </section>
+      </div>
+    )
+  }
+
+  if (loadError) {
+    return (
+      <div className="bg-background">
+        <section className="section-container section-padding-md">
+          <div className="mx-auto max-w-3xl space-y-4">
+            <h1 className="text-2xl font-bold">Unable to load event</h1>
+            <p className="text-sm text-destructive">{loadError}</p>
+            <Button asChild variant="outlinePrimary">
+              <Link to="/activities">Back to Activities</Link>
+            </Button>
+          </div>
+        </section>
+      </div>
+    )
+  }
+
   if (!event) {
     return (
       <div className="bg-background">
@@ -238,7 +347,7 @@ export default function EventDetails() {
             className="h-full w-full object-cover"
           />
           {/* gradient overlay */}
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-44 bg-gradient-to-l from-background to-transparent sm:w-72" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-44 bg-linear-to-l from-background to-transparent sm:w-72" />
         </div>
       </div>
 
@@ -282,7 +391,10 @@ export default function EventDetails() {
                   <Flag className="mt-0.5 h-4 w-4 text-muted-foreground" />
                   <div>
                     <p className="font-semibold">Event Type</p>
-                    <p className="text-muted-foreground">Microsoft Teams</p>
+                    <p className="text-muted-foreground">{event.type
+                      ? event.type.charAt(0).toUpperCase() + event.type.slice(1).toLowerCase()
+                      : ""}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
@@ -303,14 +415,38 @@ export default function EventDetails() {
                   <Clock className="mt-0.5 h-4 w-4 text-muted-foreground" />
                   <div>
                     <p className="font-semibold">Time</p>
-                    <p className="text-muted-foreground">{formatEventTime(event.startsAt)}</p>
+                    <p className="text-muted-foreground">{formatEventTime(event.startsAt)}
+                      {event.endsAt ? ` – ${formatEventTime(event.endsAt)}` : ""}
+                    </p>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             {isUpcoming ? (
-              <Button className="w-full">Register Now</Button>
+              <div className="space-y-2">
+                <Button
+                  variant={
+                    event.userRegistered
+                      ? "success"
+                      : event.registrationOpen === false
+                        ? "destructive"
+                        : "default"
+                  }
+                  className="w-full"
+                  onClick={handleRegister}
+                  disabled={isRegistering || event.userRegistered || event.registrationOpen === false}
+                >
+                  {isRegistering
+                    ? "Registering..."
+                    : event.userRegistered
+                      ? "Registered"
+                      : event.registrationOpen === false
+                        ? "Registration Closed"
+                        : "Register Now"}
+                </Button>
+                {registerError ? <p className="text-xs text-destructive">{registerError}</p> : null}
+              </div>
             ) : null}
 
             <Button asChild variant="outlinePrimary" className="w-full">

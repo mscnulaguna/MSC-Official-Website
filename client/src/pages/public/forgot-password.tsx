@@ -178,7 +178,7 @@ export default function ForgotPasswordPage(): JSX.Element {
               >
                 <Link to="/login">
                   <ArrowLeft className="w-3 h-3" />
-                  Back to Login
+                  Back to login
                 </Link>
               </Button>
             </div>

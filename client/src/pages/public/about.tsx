@@ -17,7 +17,7 @@ import facebookIcon from "@/assets/icons/facebook-brands-solid-full.svg"
 import linkedInIcon from "@/assets/icons/linkedin-svgrepo-com.svg"
 import microsoftLearnIcon from "@/assets/icons/microsoft.svg"
 
-import defaultPhoto from "@/assets/icons/sample.jpg"
+import defaultPhoto from "@/assets/icons/mike.png"
 import { TEAMS } from "@/data/team.data"
 import type { TeamMember } from "@/types/teams.type"
 
@@ -314,7 +314,7 @@ export default function AboutPage() {
       <section id="perks" className="w-full bg-secondary section-padding-md">
         <div className="section-container">
           <div className="mx-auto w-full max-w-5xl text-center">
-          <h1 className={`pb-8 text-5xl sm:text-6xl lg:text-7xl font-bold inline-block gradient-text`}>
+          <h1 className={`pb-8 text-5xl sm:text-6xl lg:text-7xl font-extrabold inline-block gradient-text`}>
             WHAT WE DO
           </h1>
           <p className="sm:text-sm lg:text-lg max-w-6xl mx-auto text-sm font-medium -mt-2 text-foreground">We're not just doing things to fill up our calendar</p>
@@ -338,7 +338,7 @@ export default function AboutPage() {
       <section id="team" className="w-full section-padding-md">
         <div className="section-container">
           <div className="mx-auto w-full max-w-7xl text-center">
-          <h1 className={`pb-8 text-5xl sm:text-6xl lg:text-7xl font-bold inline-block gradient-text`}>
+          <h1 className={`pb-8 text-5xl sm:text-6xl lg:text-7xl font-extrabold inline-block gradient-text`}>
             MEET THE TEAM
           </h1>
           <Tabs

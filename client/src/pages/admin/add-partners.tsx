@@ -100,7 +100,7 @@ function LogoUploadField({
         </div>
       ) : (
         <label
-          htmlFor="logo-upload"
+          htmlFor={uploadId}
           className="flex flex-col items-center justify-center space-y-2 py-4 cursor-pointer"
         >
           <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center">

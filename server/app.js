@@ -68,6 +68,8 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
+app.use('/event-covers', express.static(path.join(__dirname, 'uploads/event-covers')))
+
 // Serve static files only from the dedicated public directory
 app.use(express.static(path.join(__dirname, 'public')));
 

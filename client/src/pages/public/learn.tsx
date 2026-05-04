@@ -198,7 +198,7 @@ export default function LearnPage(): JSX.Element {
       {/* ── HERO SECTION ── */}
       <section className="section-padding pt-8 sm:pt-12 md:pt-16 lg:pt-20 pb-4 flex justify-center border-b border-border/10">
         <div className="section-container text-center">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold inline-block gradient-text">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold inline-block gradient-text">
             LEARN
           </h1>
 

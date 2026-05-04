@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Mail, Hash, CalendarDays, ShieldCheck, Camera, Loader2 } from "lucide-react";
 import type { Member } from "@/types/member.types";
+import Mike from "@/assets/icons/mike.png";
 
 interface ProfileSidebarProps {
   member: Member;
@@ -53,7 +54,7 @@ export default function ProfileSidebar({ member, onPhotoChange }: ProfileSidebar
         {/* Avatar */}
         <div className="relative mt-2">
           <Avatar className="w-28 h-28 ring-2 ring-gray-200">
-            <AvatarImage src={member.photo} alt={member.fullName} className="object-cover" />
+            <AvatarImage src={Mike} alt={member.fullName} className="object-cover" />
             <AvatarFallback className="text-2xl font-bold">{initials}</AvatarFallback>
           </Avatar>
 

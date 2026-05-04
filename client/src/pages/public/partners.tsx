@@ -4,9 +4,22 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { useEffect, useState, type JSX, type ChangeEvent, type CSSProperties, type SyntheticEvent } from "react";
-import mscLogo from "@/assets/logos/msclogo.svg";
+// import mscLogo from "@/assets/logos/msclogo.svg";
 import { getApiBaseUrl } from "@/lib/api";
 import { useLocation } from "react-router-dom";
+
+import BFC from "@/assets/logos/BFC Real.jpg";
+import CCC1 from "@/assets/logos/CCC Computer Science Society.png";
+import CCC2 from "@/assets/logos/CCC Information Technology Society.png";
+import COL from "@/assets/logos/Council of Leaders.png";
+import DA from "@/assets/logos/DataSense Analytics.jpg";
+import DEV from "@/assets/logos/DEVCON Laguna.png";
+import AZ from "@/assets/logos/Microsoft Azure Community PH.png";
+import MC from "@/assets/logos/Microsoft.png";
+import OT from "@/assets/logos/OpenText.png";
+import PUP from "@/assets/logos/PUP Microsoft Student Community.png";
+import SCS from "@/assets/logos/School of Computer Studies - Student Council.png";
+import TCB from "@/assets/logos/Techbayanihan.png";
 
 const API_BASE = getApiBaseUrl();
 
@@ -20,13 +33,92 @@ interface Partner {
 }
 
 // Fallback data 
-const FALLBACK_PARTNERS: Partner[] = Array(12).fill(null).map((_, i) => ({
-    id: `fallback-${i}`,
+const FALLBACK_PARTNERS: Partner[] = [
+  {
+    id: "fallback-0",
     name: "MSC NU Laguna",
-    logo: mscLogo,
-    url: "https://www.facebook.com/mscnulaguna",
-    bio: "",
-}));
+    logo: MC,
+    url: "",
+    bio: "The Microsoft Student Community chapter at NU Laguna, fostering tech innovation among students.",
+  },
+  {
+    id: "fallback-1",
+    name: "Google Developer Student Club – TIP Manila",
+    logo: TCB,
+    url: "",
+    bio: "A student-led community at TIP Manila bridging the gap between theory and practice in software development.",
+  },
+  {
+    id: "fallback-2",
+    name: "",
+    logo: OT,
+    url: "",
+    bio: "Empowering PLM students with cloud computing skills and AWS certifications.",
+  },
+  {
+    id: "fallback-3",
+    name: "ACM Student Chapter – DLSU",
+    logo: AZ,
+    url: "",
+    bio: "The Association for Computing Machinery chapter at De La Salle University, promoting excellence in computing.",
+  },
+  {
+    id: "fallback-4",
+    name: "Junior Philippine Computer Society – UST",
+    logo: DEV,
+    url: "",
+    bio: "Uniting future IT professionals at UST through competitions, seminars, and community outreach.",
+  },
+  {
+    id: "fallback-5",
+    name: "Cybersecurity Guild – FEU Tech",
+    logo: DA,
+    url: "",
+    bio: "A student organization at FEU Tech dedicated to ethical hacking, digital forensics, and cybersecurity awareness.",
+  },
+  {
+    id: "fallback-6",
+    name: "Data Science Society – Ateneo",
+    logo: BFC,
+    url: "",
+    bio: "Cultivating data literacy and analytics skills among Ateneo students through workshops and research.",
+  },
+  {
+    id: "fallback-7",
+    name: "Open Source Collective – PUP",
+    logo: COL,
+    url: "",
+    bio: "A PUP organization championing open-source software contributions and collaborative development.",
+  },
+  {
+    id: "fallback-8",
+    name: "UI/UX Design Club – Mapúa",
+    logo: CCC1,
+    url: "",
+    bio: "Inspiring Mapúa students to craft intuitive and beautiful digital experiences through design thinking.",
+  },
+  {
+    id: "fallback-9",
+    name: "Robotics & AI League – UPLB",
+    logo: CCC2,
+    url: "",
+    bio: "A multidisciplinary org at UPLB exploring robotics, machine learning, and intelligent systems.",
+  },
+  {
+    id: "fallback-10",
+    name: "Game Dev Guild – Adamson University",
+    logo: PUP,
+    url: "",
+    bio: "Where Adamson students turn game ideas into reality — from pixel art to full game jam releases.",
+  },
+  {
+    id: "fallback-11",
+    name: "FinTech Innovators Club – CEU",
+    logo: SCS,
+    url: "",
+    bio: "Exploring the intersection of finance and technology at CEU through projects, talks, and industry mentorship.",
+  },
+];
 
 // Partner logo 
 const PartnerLogo = ({ partner }: { partner: Partner }): JSX.Element => (
@@ -77,23 +169,25 @@ const StatBadge = ({ iconColor, count, label }: {
 );
 
 // Testimonial card 
-const TestimonialCard = (): JSX.Element => (
-    <Card className="rounded-none p-4 sm:p-6 shadow-sm border border-gray-200">
-        <CardContent className="p-0 space-y-3">
-            <svg width="28" height="21" viewBox="0 0 32 24" fill="none">
-                <path d="M0 24V14.4C0 10.08 1.12 6.56 3.36 3.84C5.6 1.12 8.64 0 12.48 0V4.8C10.56 4.8 9.04 5.44 7.92 6.72C6.8 8 6.24 9.76 6.24 12H12V24H0ZM20 24V14.4C20 10.08 21.12 6.56 23.36 3.84C25.6 1.12 28.64 0 32.48 0V4.8C30.56 4.8 29.04 5.44 27.92 6.72C26.8 8 26.24 9.76 26.24 12H32V24H20Z"
-                    fill="#CBD5E1" />
-            </svg>
-            <p className="text-xs sm:text-sm">
-                IJBOL? ano kaya meaning non, diba korean yon? tae i just burst out laughing kasi, how about rofl? ano yun? edi rolling on the floor? pano mo isspell yon?? R-U-F-L? NUYAN?! rolling un the floor? ifukuk talaga.
-            </p>
-            <div className="pt-2">
-                <p className="text-sm font-bold ">Julie, Keith, and Jompi Conversation</p>
-                <p className="text-xs">Sa Loob ng SDAO, NU Laguna</p>
-            </div>
-        </CardContent>
-    </Card>
-);
+// const TestimonialCard = (): JSX.Element => (
+//     <Card className="rounded-none p-4 sm:p-6 shadow-sm border border-gray-200">
+//         <CardContent className="p-0 space-y-3">
+//             <svg width="28" height="21" viewBox="0 0 32 24" fill="none">
+//                 <path d="M0 24V14.4C0 10.08 1.12 6.56 3.36 3.84C5.6 1.12 8.64 0 12.48 0V4.8C10.56 4.8 9.04 5.44 7.92 6.72C6.8 8 6.24 9.76 6.24 12H12V24H0ZM20 24V14.4C20 10.08 21.12 6.56 23.36 3.84C25.6 1.12 28.64 0 32.48 0V4.8C30.56 4.8 29.04 5.44 27.92 6.72C26.8 8 26.24 9.76 26.24 12H32V24H20Z"
+//                     fill="#CBD5E1" />
+//             </svg>
+//             <p className="text-xs sm:text-sm">
+//                 IJBOL? ano kaya meaning non, diba korean yon? tae i just burst out laughing kasi, how about rofl? ano yun? edi rolling on the floor? pano mo isspell yon?? R-U-F-L? NUYAN?! rolling un the floor? ifukuk talaga.
+//             </p>
+//             <div className="pt-2">
+//                 <p className="text-sm font-bold ">Julie, Keith, and Jompi Conversation</p>
+//                 <p className="text-xs">Sa Loob ng SDAO, NU Laguna</p>
+//             </div>
+//         </CardContent>
+//     </Card>
+// );
+
+
 
 // Contact form 
 const ContactForm = (): JSX.Element => {
@@ -199,6 +293,7 @@ export default function PartnersPage(): JSX.Element {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const location = useLocation();
+    const [isFallback, setIsFallback] = useState(false);
 
     useEffect(() => {
         const fetchPartners = async () => {
@@ -211,9 +306,16 @@ export default function PartnersPage(): JSX.Element {
                     throw new Error(err?.error?.message || "Failed to load partners.");
                 }
                 const json = await res.json();
-                setPartners(json.data);
-            } catch (error: unknown) {
-                setError(error instanceof Error ? error.message : "Something went wrong.");
+                const data : Partner[] = json.data;
+
+                if (!data || data.length === 0) {
+                    setPartners(FALLBACK_PARTNERS);
+                    setIsFallback(true);
+                } else {
+                    setPartners(data);
+                }
+            } catch {
+                setIsFallback(true);
                 setPartners(FALLBACK_PARTNERS);
             } finally {
                 setLoading(false);
@@ -239,7 +341,7 @@ export default function PartnersPage(): JSX.Element {
             {/* ── Section 1: Our Partners ── */}
             <section className="py-16 sm:py-20 text-center mb-40">
                 <div className="w-4/5 mx-auto px-4 sm:px-6 lg:px-8">
-                    <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold inline-block gradient-text">
+                    <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold inline-block gradient-text">
                         OUR PARTNERS
                     </h1>
                     <p className="mt-3 text-sm sm:text-sm lg:text-lg max-w-4xl mx-auto">
@@ -283,17 +385,17 @@ export default function PartnersPage(): JSX.Element {
 
                     {/* Stats */}
                     <div className="mt-8 flex justify-center gap-8 sm:gap-12 flex-wrap">
-                        <StatBadge iconColor="#00A2ED" count={partners.length || 0} label="Partners" />
+                        <StatBadge iconColor="#00A2ED" count={isFallback ? 12 : partners.length} label="Partners" />
                         <StatBadge iconColor="#6AAC0E" count={300} label="Members" />
-                        <StatBadge iconColor="#FFBB00" count={10} label="Events" />
+                        <StatBadge iconColor="#FFBB00" count={5} label="Events" />
                     </div>
 
-                    {/* Testimonials */}
+                    {/* Testimonials
                     <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 text-left">
                         <TestimonialCard />
                         <TestimonialCard />
                         <TestimonialCard />
-                    </div>
+                    </div> */}
                 </div>
             </section>
 

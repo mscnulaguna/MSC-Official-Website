@@ -31,6 +31,7 @@ const mscButtonVariants = cva(baseButtonStyles, {
           "border-input bg-transparent text-muted-foreground hover:bg-input hover:text-foreground",
       
       secondary: "bg-secondary text-secondary-foreground hover:brightness-90",
+      success: "bg-green-600 text-white hover:bg-green-700 disabled:bg-green-600",
       ghost: "hover:bg-muted hover:text-foreground dark:hover:bg-muted/50",
       link: "text-primary underline-offset-4 hover:underline",
       
