@@ -13,7 +13,7 @@ import LearnPage from '@/pages/public/learn'
 import GuildJoin from '@/pages/public/guild-join'
 import Activities from './pages/public/activities'
 import EventDetails from '@/pages/public/event-details'
-import Login from '@/pages/public/login'
+// import Login from '@/pages/public/login'
 import ForgotPasswordPage from '@/pages/public/forgot-password'
 import ResetPasswordPage from '@/pages/public/reset-password'
 import ProfilePage from "@/pages/public/profile"
@@ -90,7 +90,7 @@ export default function App() {
   return (
     <div className="min-h-screen w-full overflow-x-hidden">
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<FallbackPage type="maintenance" />} />
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/learn" element={<LearnPage />} />
