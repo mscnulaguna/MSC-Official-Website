@@ -29,10 +29,10 @@ jobs:
       - name: Set Environment-Specific Variables
         run: |
           if [ "${{ github.ref }}" == "refs/heads/main" ]; then
-            echo "VITE_API_URL=msc-prod-server-gzgxacashugfbye8.southeastasia-01.azurewebsites.net" >> $GITHUB_ENV
+            echo "VITE_API_URL=https://msc-prod-server-gzgxacashugfbye8.southeastasia-01.azurewebsites.net" >> $GITHUB_ENV
             echo "IMAGE_TAG=prod" >> $GITHUB_ENV
           else
-            echo "VITE_API_URL=msc-server-duggfme6cgb0bzc4.southeastasia-01.azurewebsites.net" >> $GITHUB_ENV
+            echo "VITE_API_URL=https://msc-server-duggfme6cgb0bzc4.southeastasia-01.azurewebsites.net" >> $GITHUB_ENV
             echo "IMAGE_TAG=staging" >> $GITHUB_ENV
           fi
 
@@ -53,10 +53,9 @@ jobs:
 
       # builds and pushes the React client, injecting the appropriate API URL as a build argument
       - name: Build and Push Client
-      # injects the staging URL as a build argument when building the client image
+      # client will use the relative /api/v1 path which is reverse-proxied by nginx
         run: | 
           docker build ./client \
-            --build-arg VITE_API_BASE_URL=${{ env.VITE_API_URL }} \
             -t ghcr.io/${{ env.REPO_LC }}/msc-client:${{ env.IMAGE_TAG }}
           docker push ghcr.io/${{ env.REPO_LC }}/msc-client:${{ env.IMAGE_TAG }}
 
@@ -95,11 +94,3 @@ jobs:
           app-name: msc-prod-client
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_CLIENT_PROD }}
           images: ghcr.io/${{ env.REPO_LC }}/msc-client:prod
-
-      - name: Set Environment-Specific Variables
-        run: |
-          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
-            echo "VITE_API_URL=msc-prod-server-gzgxacashugfbye8.southeastasia-01.azurewebsites.net" >> $GITHUB_ENV
-          else
-            echo "VITE_API_URL=msc-server-duggfme6cgb0bzc4.southeastasia-01.azurewebsites.net" >> $GITHUB_ENV
-          fi
