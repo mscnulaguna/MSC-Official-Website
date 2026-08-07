@@ -4,24 +4,19 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { useEffect, useState, type JSX, type ChangeEvent, type CSSProperties, type SyntheticEvent } from "react";
-// import mscLogo from "@/assets/logos/msclogo.svg";
 import { getApiBaseUrl } from "@/lib/api";
 import { useLocation } from "react-router-dom";
-
-import BFC from "@/assets/logos/BFC Real.jpg";
-import CCC1 from "@/assets/logos/CCC Computer Science Society.png";
-import CCC2 from "@/assets/logos/CCC Information Technology Society.png";
-import COL from "@/assets/logos/Council of Leaders.png";
-import DA from "@/assets/logos/DataSense Analytics.jpg";
-import DEV from "@/assets/logos/DEVCON Laguna.png";
-import AZ from "@/assets/logos/Microsoft Azure Community PH.png";
-import MC from "@/assets/logos/Microsoft.png";
-import OT from "@/assets/logos/OpenText.png";
-import PUP from "@/assets/logos/PUP Microsoft Student Community.png";
-import SCS from "@/assets/logos/School of Computer Studies - Student Council.png";
-import TCB from "@/assets/logos/Techbayanihan.png";
+import { useTheme } from "@/context/ThemeContext";
 
 const API_BASE = getApiBaseUrl();
+const logoModules = import.meta.glob('/src/assets/logos/*.svg', {
+  eager: true,
+  query: '?url',
+  import: 'default',
+}) as Record<string, string>;
+
+const getLogoAsset = (fileName: string) => logoModules[`/src/assets/logos/${fileName}.svg`] ?? '';
+const getLogoBaseName = (name: string) => name.replace(/\.(png|jpe?g|svg)$/i, '');
 
 // Types 
 interface Partner {
@@ -32,107 +27,143 @@ interface Partner {
     bio: string;
 }
 
+const normalizePartnerLogo = (partner: Partner): Partner => ({
+  ...partner,
+  name: getLogoBaseName(partner.name),
+  logo: getLogoAsset(getLogoBaseName(partner.name)) || partner.logo,
+});
+
 // Fallback data 
 const FALLBACK_PARTNERS: Partner[] = [
   {
     id: "fallback-0",
     name: "MSC NU Laguna",
-    logo: MC,
+    logo: getLogoAsset("Microsoft"),
     url: "",
     bio: "The Microsoft Student Community chapter at NU Laguna, fostering tech innovation among students.",
   },
   {
     id: "fallback-1",
+    name: "DataCamp Donates",
+    logo: getLogoAsset("DataCamp Donates"),
+    url: "",
+    bio: "Supporting student learning through access to data and AI education resources.",
+  },
+  {
+    id: "fallback-2",
     name: "Google Developer Student Club – TIP Manila",
-    logo: TCB,
+    logo: getLogoAsset("Techbayanihan"),
     url: "",
     bio: "A student-led community at TIP Manila bridging the gap between theory and practice in software development.",
   },
   {
-    id: "fallback-2",
+    id: "fallback-3",
     name: "",
-    logo: OT,
+    logo: getLogoAsset("OpenText"),
     url: "",
     bio: "Empowering PLM students with cloud computing skills and AWS certifications.",
   },
   {
-    id: "fallback-3",
+    id: "fallback-4",
     name: "ACM Student Chapter – DLSU",
-    logo: AZ,
+    logo: getLogoAsset("Microsoft Azure Community PH"),
     url: "",
     bio: "The Association for Computing Machinery chapter at De La Salle University, promoting excellence in computing.",
   },
   {
-    id: "fallback-4",
+    id: "fallback-5",
     name: "Junior Philippine Computer Society – UST",
-    logo: DEV,
+    logo: getLogoAsset("DEVCON Laguna"),
     url: "",
     bio: "Uniting future IT professionals at UST through competitions, seminars, and community outreach.",
   },
   {
-    id: "fallback-5",
+    id: "fallback-6",
     name: "Cybersecurity Guild – FEU Tech",
-    logo: DA,
+    logo: getLogoAsset("DataSense Analytics"),
     url: "",
     bio: "A student organization at FEU Tech dedicated to ethical hacking, digital forensics, and cybersecurity awareness.",
   },
   {
-    id: "fallback-6",
+    id: "fallback-7",
     name: "Data Science Society – Ateneo",
-    logo: BFC,
+    logo: getLogoAsset("BFC Real"),
     url: "",
     bio: "Cultivating data literacy and analytics skills among Ateneo students through workshops and research.",
   },
   {
-    id: "fallback-7",
+    id: "fallback-8",
     name: "Open Source Collective – PUP",
-    logo: COL,
+    logo: getLogoAsset("Council of Leaders"),
     url: "",
     bio: "A PUP organization championing open-source software contributions and collaborative development.",
   },
   {
-    id: "fallback-8",
+    id: "fallback-9",
     name: "UI/UX Design Club – Mapúa",
-    logo: CCC1,
+    logo: getLogoAsset("CCC Computer Science Society"),
     url: "",
     bio: "Inspiring Mapúa students to craft intuitive and beautiful digital experiences through design thinking.",
   },
   {
-    id: "fallback-9",
+    id: "fallback-10",
     name: "Robotics & AI League – UPLB",
-    logo: CCC2,
+    logo: getLogoAsset("CCC Information Technology Society"),
     url: "",
     bio: "A multidisciplinary org at UPLB exploring robotics, machine learning, and intelligent systems.",
   },
   {
-    id: "fallback-10",
+    id: "fallback-11",
     name: "Game Dev Guild – Adamson University",
-    logo: PUP,
+    logo: getLogoAsset("PUP Microsoft Student Community"),
     url: "",
     bio: "Where Adamson students turn game ideas into reality — from pixel art to full game jam releases.",
   },
   {
-    id: "fallback-11",
+    id: "fallback-12",
     name: "FinTech Innovators Club – CEU",
-    logo: SCS,
+    logo: getLogoAsset("School of Computer Studies - Student Council"),
     url: "",
     bio: "Exploring the intersection of finance and technology at CEU through projects, talks, and industry mentorship.",
   },
 ];
 
 // Partner logo 
-const PartnerLogo = ({ partner }: { partner: Partner }): JSX.Element => (
+const getPartnerLogoSrc = (partner: Partner, isDarkMode: boolean) => {
+    if (!isDarkMode) return partner.logo;
+
+    const assetPath = Object.keys(logoModules).find((path) => logoModules[path] === partner.logo);
+
+    if (assetPath) {
+        const darkAssetPath = assetPath.replace(/(\.[a-z0-9]+)$/i, '-dark$1');
+        return logoModules[darkAssetPath] ?? partner.logo;
+    }
+
+    if (/\.[a-z0-9]+(\?.*)?$/i.test(partner.logo)) {
+        return partner.logo.replace(/\.[a-z0-9]+(\?.*)?$/i, '-dark.svg$1');
+    }
+
+    return `${partner.logo}-dark.svg`;
+};
+
+const PartnerLogo = ({ partner, isDarkMode }: { partner: Partner; isDarkMode: boolean }): JSX.Element => (
     <a
         href={partner.url}
         target="_blank"
         rel="noopener noreferrer"
         title={partner.name}
-        className="group flex items-center justify-center p-2 sm:p-4 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
+        className="group flex min-h-28 items-center justify-center overflow-visible p-3 sm:min-h-36 sm:p-5 md:min-h-40 lg:min-h-44 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
     >
         <img
-            src={partner.logo}
+            src={getPartnerLogoSrc(partner, isDarkMode)}
             alt={`${partner.name} logo`}
-            className="h-20 w-auto sm:h-30 md:h-34 lg:h-38 object-contain transition-transform duration-200 hover:scale-110 pointer-events-none"
+            className="block max-h-24 max-w-full w-auto h-auto sm:max-h-30 md:max-h-34 lg:max-h-38 object-contain object-center transition-transform duration-200 hover:scale-105 pointer-events-none"
+            onError={(event) => {
+                if (event.currentTarget.dataset.fallbackLogo !== 'true') {
+                    event.currentTarget.dataset.fallbackLogo = 'true';
+                    event.currentTarget.src = partner.logo;
+                }
+            }}
         />
     </a>
 );
@@ -146,7 +177,7 @@ const StarIcon = ({ style }: { style?: CSSProperties }): JSX.Element => (
 
 // Logo skeleton 
 const LogoSkeleton = (): JSX.Element => (
-  <div className="flex mt-10 items-center justify-center p-2 sm:p-4">
+  <div className="flex mt-10 min-h-28 items-center justify-center p-3 sm:min-h-36 sm:p-5 md:min-h-40 lg:min-h-44">
     <div className="h-20 w-20 sm:h-30 sm:w-30 md:h-34 md:w-34 lg:h-38 lg:w-38 rounded bg-gray-500 animate-pulse" />
   </div>
 )
@@ -289,6 +320,7 @@ const ContactForm = (): JSX.Element => {
 
 // Page 
 export default function PartnersPage(): JSX.Element {
+    const { isDarkMode } = useTheme();
     const [partners, setPartners] = useState<Partner[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -312,7 +344,7 @@ export default function PartnersPage(): JSX.Element {
                     setPartners(FALLBACK_PARTNERS);
                     setIsFallback(true);
                 } else {
-                    setPartners(data);
+                    setPartners(data.map(normalizePartnerLogo));
                 }
             } catch {
                 setIsFallback(true);
@@ -365,7 +397,7 @@ export default function PartnersPage(): JSX.Element {
                     {!loading && (
                         <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2 sm:gap-4">
                             {partners.map((partner) => (
-                                <PartnerLogo key={partner.id} partner={partner} />
+                                <PartnerLogo key={partner.id} partner={partner} isDarkMode={isDarkMode} />
                             ))}
                         </div>
                     )}
@@ -385,7 +417,7 @@ export default function PartnersPage(): JSX.Element {
 
                     {/* Stats */}
                     <div className="mt-8 flex justify-center gap-8 sm:gap-12 flex-wrap">
-                        <StatBadge iconColor="#00A2ED" count={isFallback ? 12 : partners.length} label="Partners" />
+                        <StatBadge iconColor="#00A2ED" count={isFallback ? FALLBACK_PARTNERS.length : partners.length} label="Partners" />
                         <StatBadge iconColor="#6AAC0E" count={300} label="Members" />
                         <StatBadge iconColor="#FFBB00" count={5} label="Events" />
                     </div>
