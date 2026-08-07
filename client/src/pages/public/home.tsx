@@ -5,7 +5,8 @@ import { Card, CardHeader, CardContent, CardTitle, CardDescription} from '@/comp
 // import { PastActivitiesCarousel } from '@/components/ui/carousel';
 import { useTypingAnimation, type TypingWord } from '@/hooks/useTypingAnimation';
 import { useTheme } from '@/context/ThemeContext'; // dark mode support
-// import mscLogo from '@/assets/logos/msclogo.svg';
+import mscLogoFooterBlack from '@/assets/logos/msclogofooterblack.svg';
+import mscLogoFooterWhite from '@/assets/logos/msclogofooterwhite.svg';
 import abstracticon from '@/assets/shapes/abstracticons.svg';
 import { getApiBaseUrl } from '@/lib/api';
 import '@/styles/home.css';
@@ -14,20 +15,20 @@ import { useAuth } from '@/context/authContext';
 import { useNavigate } from 'react-router-dom';
 
 
-import BFC from "@/assets/logos/BFC Real.jpg";
-import CCC1 from "@/assets/logos/CCC Computer Science Society.png";
-import CCC2 from "@/assets/logos/CCC Information Technology Society.png";
-import COL from "@/assets/logos/Council of Leaders.png";
-import DA from "@/assets/logos/DataSense Analytics.jpg";
-import DEV from "@/assets/logos/DEVCON Laguna.png";
-import AZ from "@/assets/logos/Microsoft Azure Community PH.png";
-import MC from "@/assets/logos/Microsoft.png";
-import OT from "@/assets/logos/OpenText.png";
-import PUP from "@/assets/logos/PUP Microsoft Student Community.png";
-import SCS from "@/assets/logos/School of Computer Studies - Student Council.png";
-import TCB from "@/assets/logos/Techbayanihan.png";
-
 const API_BASE = getApiBaseUrl();
+const logoModules = import.meta.glob('/src/assets/logos/*.svg', {
+  eager: true,
+  query: '?url',
+  import: 'default',
+}) as Record<string, string>;
+
+const getLogoAsset = (fileName: string) => logoModules[`/src/assets/logos/${fileName}.svg`] ?? '';
+const getLogoBaseName = (name: string) => name.replace(/\.(png|jpe?g|svg)$/i, '');
+const normalizePartnerLogo = (partner: Partner): Partner => ({
+  ...partner,
+  name: getLogoBaseName(partner.name),
+  logo: getLogoAsset(getLogoBaseName(partner.name)) || partner.logo,
+});
 
 // Types for API data
 interface Perk {
@@ -154,84 +155,91 @@ const FALLBACK_PARTNERS: Partner[] = [
   {
     id: "fallback-0",
     name: "Microsoft",
-    logo: MC,
+    logo: getLogoAsset("Microsoft"),
     url: "",
     bio: "The Microsoft Student Community chapter at NU Laguna, fostering tech innovation among students.",
   },
   {
     id: "fallback-1",
+    name: "DataCamp Donates",
+    logo: getLogoAsset("DataCamp Donates"),
+    url: "",
+    bio: "Supporting student learning through access to data and AI education resources.",
+  },
+  {
+    id: "fallback-2",
     name: "Techbayanihan",
-    logo: TCB,
+    logo: getLogoAsset("Techbayanihan"),
     url: "",
     bio: "A student-led community at TIP Manila bridging the gap between theory and practice in software development.",
   },
   {
-    id: "fallback-2",
+    id: "fallback-3",
     name: "OpenText",
-    logo: OT,
+    logo: getLogoAsset("OpenText"),
     url: "",
     bio: "Empowering PLM students with cloud computing skills and AWS certifications.",
   },
   {
-    id: "fallback-3",
+    id: "fallback-4",
     name: "Microsoft Azure Community PH",
-    logo: AZ,
+    logo: getLogoAsset("Microsoft Azure Community PH"),
     url: "",
     bio: "The Association for Computing Machinery chapter at De La Salle University, promoting excellence in computing.",
   },
   {
-    id: "fallback-4",
-    name: "DEVCON Laguna.png",
-    logo: DEV,
+    id: "fallback-5",
+    name: "DEVCON Laguna",
+    logo: getLogoAsset("DEVCON Laguna"),
     url: "",
     bio: "Uniting future IT professionals at UST through competitions, seminars, and community outreach.",
   },
   {
-    id: "fallback-5",
+    id: "fallback-6",
     name: "DataSense Analytics",
-    logo: DA,
+    logo: getLogoAsset("DataSense Analytics"),
     url: "",
     bio: "A student organization at FEU Tech dedicated to ethical hacking, digital forensics, and cybersecurity awareness.",
   },
   {
-    id: "fallback-6",
+    id: "fallback-7",
     name: "BFC Real",
-    logo: BFC,
+    logo: getLogoAsset("BFC Real"),
     url: "",
     bio: "Cultivating data literacy and analytics skills among Ateneo students through workshops and research.",
   },
   {
-    id: "fallback-7",
+    id: "fallback-8",
     name: "Council of Leaders",
-    logo: COL,
+    logo: getLogoAsset("Council of Leaders"),
     url: "",
     bio: "A PUP organization championing open-source software contributions and collaborative development.",
   },
   {
-    id: "fallback-8",
+    id: "fallback-9",
     name: "CCC Computer Science Society",
-    logo: CCC1,
+    logo: getLogoAsset("CCC Computer Science Society"),
     url: "",
     bio: "Inspiring Mapúa students to craft intuitive and beautiful digital experiences through design thinking.",
   },
   {
-    id: "fallback-9",
+    id: "fallback-10",
     name: "CCC Information Technology Society",
-    logo: CCC2,
+    logo: getLogoAsset("CCC Information Technology Society"),
     url: "",
     bio: "A multidisciplinary org at UPLB exploring robotics, machine learning, and intelligent systems.",
   },
   {
-    id: "fallback-10",
+    id: "fallback-11",
     name: "PUP Microsoft Student Community",
-    logo: PUP,
+    logo: getLogoAsset("PUP Microsoft Student Community"),
     url: "",
     bio: "Where Adamson students turn game ideas into reality — from pixel art to full game jam releases.",
   },
   {
-    id: "fallback-11",
+    id: "fallback-12",
     name: "School of Computer Studies - Student Council",
-    logo: SCS,
+    logo: getLogoAsset("School of Computer Studies - Student Council"),
     url: "",
     bio: "Exploring the intersection of finance and technology at CEU through projects, talks, and industry mentorship.",
   },
@@ -350,6 +358,25 @@ export default function Home(): JSX.Element {
   const viewPerks = () => {
     navigate('/about#perks')
   }
+  const visiblePartners = partners.length > 0 ? partners : FALLBACK_PARTNERS;
+  const logoRepeats = Math.max(2, Math.ceil(12 / visiblePartners.length));
+  const logoSet = Array.from({ length: logoRepeats }, () => visiblePartners).flat();
+  const getPartnerLogoSrc = (logo: string) => {
+    if (!isDarkMode) return logo;
+
+    const assetPath = Object.keys(logoModules).find((path) => logoModules[path] === logo);
+
+    if (assetPath) {
+      const darkAssetPath = assetPath.replace(/(\.[a-z0-9]+)$/i, '-dark$1');
+      return logoModules[darkAssetPath] ?? logo;
+    }
+
+    if (/\.[a-z0-9]+(\?.*)?$/i.test(logo)) {
+      return logo.replace(/\.[a-z0-9]+(\?.*)?$/i, '-dark.svg$1');
+    }
+
+    return `${logo}-dark.svg`;
+  };
   
 
   useEffect(() => {
@@ -368,7 +395,7 @@ export default function Home(): JSX.Element {
         const partnersData = await partnersRes.json();
 
         // setEvents(eventsData.data);
-        setPartners(partnersData.data);
+        setPartners(partnersData.data.map(normalizePartnerLogo));
       } catch {
         // Use fallback data
       } finally {
@@ -382,34 +409,77 @@ export default function Home(): JSX.Element {
   return (
     <>
       <style>{`
-        /* Marquee Animation - 12x duplication for visual fullness */
-        /* With 12x partners, the marquee fills more horizontal space and looks less sparse */
-        /* Scroll by 1/12th of track width so seamless loop is imperceptible */
         @keyframes marquee {
           0% {
             transform: translate3d(0, 0, 0);
           }
           100% {
-            transform: translate3d(calc(-100% / 12), 0, 0);
+            transform: translate3d(-50%, 0, 0);
           }
+        }
+        .marquee {
+          position: relative;
+          overflow-x: clip;
+          overflow-y: visible;
+          padding-block: clamp(1.5rem, 3vw, 2.5rem);
+        }
+        .marquee::before,
+        .marquee::after {
+          content: "";
+          position: absolute;
+          top: 0;
+          z-index: 1;
+          width: clamp(2rem, 8vw, 8rem);
+          height: 100%;
+          pointer-events: none;
+        }
+        .marquee::before {
+          left: 0;
+          background: linear-gradient(to right, var(--background), transparent);
+        }
+        .marquee::after {
+          right: 0;
+          background: linear-gradient(to left, var(--background), transparent);
         }
         .marquee-track {
           display: flex;
-          gap: 7rem;
+          align-items: center;
+          gap: 0;
           width: max-content;
           will-change: transform;
           backface-visibility: hidden;
-          animation: marquee 30s linear infinite;
+          animation: marquee 80s linear infinite;
         }
-        @media (min-width: 1024px) {
-          .marquee-track {
-            gap: 9rem;
-          }
+        .marquee-group {
+          display: flex;
+          align-items: center;
+          gap: clamp(2.5rem, 7vw, 7rem);
+          padding-right: clamp(2.5rem, 7vw, 7rem);
+          flex: 0 0 auto;
+        }
+        .partner-logo-frame {
+          display: grid;
+          place-items: center;
+          width: clamp(7rem, 13vw, 10.5rem);
+          height: clamp(5.75rem, 9vw, 7.75rem);
+          padding: 0.4rem;
+          flex: 0 0 auto;
+          overflow: visible;
+        }
+        .partner-logo {
+          display: block;
+          max-width: 100%;
+          max-height: calc(100% - 0.5rem);
+          width: auto;
+          height: auto;
+          object-fit: contain;
+          object-position: center;
+          opacity: 0.95;
         }
       `}</style>
       <main className="bg-background">
       {/* SECTION 1: Hero - typing animation + Tetris background */}
-      <section className="relative w-full overflow-hidden flex justify-center border-b border-border/10">
+      <section className="relative flex min-h-[calc(100svh-4rem)] w-full items-center justify-center overflow-hidden border-b border-border/10">
         <div 
           className={`absolute inset-0 z-0 pointer-events-none ${gridOpacity}`}
           style={{
@@ -422,22 +492,26 @@ export default function Home(): JSX.Element {
           <TetrisBlocksBackground />
         </div>
         
-        <div className="relative section-container flex flex-col items-center text-center z-10 py-16 sm:py-20 md:py-28 lg:py-36">
+        <div className="relative section-container z-10 flex flex-col items-center text-center py-10 sm:py-12 md:py-16 lg:py-20">
           <div className="relative z-10 max-w-4xl mx-auto space-y-6">
-            <p className="text-xs sm:text-sm md:text-base font-semibold">MICROSOFT STUDENT COMMUNITY - NU LAGUNA</p>
+            <img
+              src={isDarkMode ? mscLogoFooterWhite : mscLogoFooterBlack}
+              alt="Microsoft Student Community - NU Laguna"
+              className="mx-auto h-14 w-auto sm:h-16 md:h-20 lg:h-24"
+            />
             
             <h1 className="text-5xl sm:text-5xl md:text-6xl lg:text-8xl font-bold tracking-tight">Helping You<br /><span className="inline-flex items-center text-left"><span className={`${TYPING_WORDS[currentWordIndex].color}`}>#</span><span className={`inline-block ${TYPING_WORDS[currentWordIndex].color}`}>{displayText}</span><span className="inline-block h-[0.8em] w-[2px] animate-blink bg-foreground ml-1" /><span className="text-foreground ml-1">More
             </span></span></h1>
             
-            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto mt-6 px-4 sm:px-0">The Microsoft Student Community at NU Laguna empowers students to learn, connect, and build the future.</p>
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto mt-6 px-4 sm:px-0">We bring together passionate Nationalians to learn, innovate, and make a difference using Microsoft tools and technology.</p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
               {isLoggedIn ? (
-                <Button size="lg" className="min-w-[150px] btn-primary" onClick={handleJoinEvent}>Join an Event</Button>
+                <Button size="lg" className="min-w-[150px] btn-primary" onClick={handleJoinEvent}>Join an event</Button>
               ):(
-                <Button size="lg" className="min-w-[150px] btn-primary" onClick={handleSignIn}>Sign In</Button>
+                <Button size="lg" className="min-w-[150px] btn-primary" onClick={handleSignIn}>Sign in</Button>
               )}
-              <Button size="lg" variant="outlineInfo" className="min-w-[150px]" onClick={handleExploreMore}>Explore More</Button>
+              <Button size="lg" variant="outlineInfo" className="min-w-[150px]" onClick={handleExploreMore}>Explore more</Button>
             </div>
           </div>
         </div>
@@ -445,17 +519,28 @@ export default function Home(): JSX.Element {
 
       {/* Brand logo scroller - plain marquee infinite loop */}
       <section className="py-8 sm:py-12 md:py-16 border-b border-border">
-        <div className="section-container overflow-hidden">
+        <div className="section-container">
           
           <div className="marquee">
-            <div className="marquee-track">
-              {[...partners, ...partners, ...partners, ...partners, ...partners, ...partners, ...partners, ...partners, ...partners, ...partners, ...partners, ...partners].map((p, i) => (
-                <img
-                  key={`${p.id}-${i}`}
-                  src={p.logo}
-                  alt={p.name}
-                  className="h-16 sm:h-25 md:h-30 lg:h-34 lg:min-w-[150px] xl:min-w-[180px] object-contain opacity-80 hover:opacity-100 transition"
-                />
+            <div className="marquee-track" aria-label="Partner logos">
+              {[0, 1].map((groupIndex) => (
+                <div className="marquee-group" key={groupIndex} aria-hidden={groupIndex === 1}>
+                  {logoSet.map((p, i) => (
+                    <div className="partner-logo-frame" key={`${p.id}-${groupIndex}-${i}`}>
+                      <img
+                        src={getPartnerLogoSrc(p.logo)}
+                        alt={p.name}
+                        className="partner-logo"
+                        onError={(event) => {
+                          if (event.currentTarget.dataset.fallbackLogo !== 'true') {
+                            event.currentTarget.dataset.fallbackLogo = 'true';
+                            event.currentTarget.src = p.logo;
+                          }
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
               ))}
             </div>
           </div>
@@ -472,7 +557,7 @@ export default function Home(): JSX.Element {
           
           <div className="w-full mt-8 mb-12">
             <VideoPlayer 
-              src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+              src="https://youtu.be/1hsi0cIN-fo"
               title="MSC NU Laguna - Who We Are"
             />
           </div>
