@@ -154,15 +154,12 @@ const getPartnerLogoSrc = (partner: Partner, isDarkMode: boolean) => {
     }
 
     return partner.logo;
+};
 
-const PartnerLogo = ({ partner, isDarkMode }: { partner: Partner; isDarkMode: boolean }): JSX.Element => (
-    <a
-        href={partner.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        title={partner.name}
-        className="group flex min-h-28 items-center justify-center overflow-visible p-3 sm:min-h-36 sm:p-5 md:min-h-40 lg:min-h-44 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
-    >
+const PartnerLogo = ({ partner, isDarkMode }: { partner: Partner; isDarkMode: boolean }): JSX.Element => {
+    const partnerUrl = partner.url.trim();
+
+    const logoImage = (
         <img
             src={getPartnerLogoSrc(partner, isDarkMode)}
             alt={`${partner.name} logo`}
@@ -174,8 +171,31 @@ const PartnerLogo = ({ partner, isDarkMode }: { partner: Partner; isDarkMode: bo
                 }
             }}
         />
-    </a>
-);
+    );
+
+    if (!partnerUrl) {
+        return (
+            <div
+                title={partner.name}
+                className="group flex min-h-28 items-center justify-center overflow-visible p-3 sm:min-h-36 sm:p-5 md:min-h-40 lg:min-h-44 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
+            >
+                {logoImage}
+            </div>
+        );
+    }
+
+    return (
+        <a
+            href={partnerUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={partner.name}
+            className="group flex min-h-28 items-center justify-center overflow-visible p-3 sm:min-h-36 sm:p-5 md:min-h-40 lg:min-h-44 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
+        >
+            {logoImage}
+        </a>
+    );
+};
 
 // Star icon 
 const StarIcon = ({ style }: { style?: CSSProperties }): JSX.Element => (
