@@ -132,7 +132,13 @@ const FALLBACK_PARTNERS: Partner[] = [
 const getPartnerLogoSrc = (partner: Partner, isDarkMode: boolean) => {
     if (!isDarkMode) return partner.logo;
 
-    const assetPath = Object.keys(logoModules).find((path) => logoModules[path] === partner.logo);
+    let assetPath: string | undefined;
+    for (const path in logoModules) {
+        if (logoModules[path] === partner.logo) {
+            assetPath = path;
+            break;
+        }
+    }
 
     if (assetPath) {
         const darkAssetPath = assetPath.replace(/(\.[a-z0-9]+)$/i, '-dark$1');
