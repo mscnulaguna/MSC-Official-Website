@@ -139,12 +139,15 @@ const getPartnerLogoSrc = (partner: Partner, isDarkMode: boolean) => {
         return logoModules[darkAssetPath] ?? partner.logo;
     }
 
+    if (partner.logo.startsWith('data:')) {
+        return partner.logo;
+    }
+
     if (/\.[a-z0-9]+(\?.*)?$/i.test(partner.logo)) {
         return partner.logo.replace(/\.[a-z0-9]+(\?.*)?$/i, '-dark.svg$1');
     }
 
-    return `${partner.logo}-dark.svg`;
-};
+    return partner.logo;
 
 const PartnerLogo = ({ partner, isDarkMode }: { partner: Partner; isDarkMode: boolean }): JSX.Element => (
     <a
