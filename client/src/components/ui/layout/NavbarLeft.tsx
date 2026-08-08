@@ -14,25 +14,29 @@ interface NavbarLeftProps {
   logoSrc?: string
   logoAlt?: string
   href?: string
+  className?: string
+  imageClassName?: string
 }
 
 export function NavbarLeft({
   logoSrc = mscLogo,
   logoAlt = 'Logo',
   href = '/',
+  className = '',
+  imageClassName = '',
 }: NavbarLeftProps) {
   return (
     // Logo container - Links to home
     <a
       href={href}
-      className="flex items-center gap-2 transition-all duration-200 hover:-translate-y-0.5"
+      className={`flex items-center transition-all duration-200 hover:-translate-y-0.5 ${className}`.trim()}
     >
-      {/* Logo image - Responsive sizing (h-8 mobile, h-10 tablet+) */}
-      <div className="relative h-13 sm:h-16">
+      {/* Logo image - Responsive sizing for both mobile and desktop */}
+      <div className="relative h-8 w-auto sm:h-9 md:h-10 lg:h-11">
         <img
           src={logoSrc}
           alt={logoAlt}
-          className="object-contain h-full w-full"
+          className={`h-full w-auto max-w-full object-contain ${imageClassName}`.trim()}
         />
       </div>
     </a>
