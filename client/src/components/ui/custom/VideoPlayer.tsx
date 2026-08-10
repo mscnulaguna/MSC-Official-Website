@@ -101,7 +101,7 @@ export function VideoPlayer({
   const videoContent = isEmbed ? (
     // YouTube/Vimeo embed
     <iframe
-      className="w-full h-full rounded-none"
+      className="absolute inset-0 h-full w-full rounded-none border-0"
       src={embedSrc}
       title={title}
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -110,7 +110,7 @@ export function VideoPlayer({
   ) : (
     // Direct video file
     <video
-      className="w-full h-full rounded-none"
+      className="absolute inset-0 h-full w-full rounded-none object-contain"
       controls
       controlsList="nodownload"
     >
@@ -120,8 +120,8 @@ export function VideoPlayer({
   )
 
   return (
-    <Card className={`dark:bg-card border-border dark:border-border overflow-hidden ${className}`}>
-      <CardContent className="p-0 aspect-video">
+    <Card className={`dark:bg-card border-border dark:border-border overflow-hidden rounded-none py-0 ${className}`}>
+      <CardContent className="relative aspect-video w-full overflow-hidden p-0">
         {videoContent}
       </CardContent>
     </Card>
