@@ -1,19 +1,27 @@
 import { Button } from '@/components/ui/button';
 import { TetrisBlocksBackground } from '@/components/home/TetrisBlocksBackground';
 import { VideoPlayer } from '@/components/ui/custom/VideoPlayer';
-import { Card, CardHeader, CardContent, CardTitle, CardDescription} from '@/components/ui/card';
-// import { PastActivitiesCarousel } from '@/components/ui/carousel';
+import { Card, CardHeader, CardContent, CardTitle, CardDescription } from '@/components/ui/card';
 import { useTypingAnimation, type TypingWord } from '@/hooks/useTypingAnimation';
-import { useTheme } from '@/context/ThemeContext'; // dark mode support
+import { useTheme } from '@/context/ThemeContext';
 import mscLogoFooterBlack from '@/assets/logos/msclogofooterblack.svg';
 import mscLogoFooterWhite from '@/assets/logos/msclogofooterwhite.svg';
-import abstracticon from '@/assets/shapes/abstracticons.svg';
+import mikeMascot from '@/assets/mascot/Mike - Mascot.png';
 import { getApiBaseUrl } from '@/lib/api';
 import '@/styles/home.css';
-import { useEffect, useState, type JSX } from 'react';
+import { useEffect, useState, type JSX, type ComponentType } from 'react';
 import { useAuth } from '@/context/authContext';
 import { useNavigate } from 'react-router-dom';
 
+// Google Material-style icons via Lucide
+import { 
+  GraduationCap, 
+  Briefcase, 
+  Award, 
+  Users, 
+  FolderKanban, 
+  BookOpen
+} from 'lucide-react';
 
 const API_BASE = getApiBaseUrl();
 const logoModules = import.meta.glob('/src/assets/logos/*.svg', {
@@ -30,26 +38,12 @@ const normalizePartnerLogo = (partner: Partner): Partner => ({
   logo: getLogoAsset(getLogoBaseName(partner.name)) || partner.logo,
 });
 
-// Types for API data
 interface Perk {
   id?: string;
   title: string;
   description: string;
+  icon?: ComponentType<{ className?: string }>;
 }
-
-// interface Event {
-//   id: string;
-//   title: string;
-//   description: string;
-//   date: string;
-//   endDate?: string;
-//   venue: string;
-//   capacity?: number;
-//   registered?: number;
-//   coverImage: string;
-//   registrationOpen: boolean;
-//   tag?: string;
-// }
 
 interface Partner {
   id: string;
@@ -59,62 +53,33 @@ interface Partner {
   bio: string;
 }
 
-// Activity type for carousel component compatibility
-// interface Activity {
-//   title: string;
-//   description: string;
-//   image: string;
-//   date: string;
-//   tag: string;
-// }
-
-// Snowflake icon
-function SnowflakeIcon() {
-  return (
-    <svg width="40" height="40" viewBox="0 0 151 151" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <mask id="mask0_479_1074" style={{ maskType: 'luminance' }} maskUnits="userSpaceOnUse" x="0" y="0" width="151" height="151">
-        <path d="M0 0H150.805V150.458H0V0Z" fill="white"/>
-      </mask>
-      <g mask="url(#mask0_479_1074)">
-        <path fillRule="evenodd" clipRule="evenodd" d="M69.2002 0C73.334 0 77.4715 0 81.6054 0C81.5545 14.3731 81.6054 28.748 81.7616 43.1212C87.3074 29.6293 92.9421 16.1866 98.6659 2.79285C102.077 4.18837 105.489 5.58389 108.902 6.97941C109.421 7.08843 109.732 7.39734 109.832 7.91157C104.333 21.2126 98.904 34.5009 93.5472 47.7747C103.783 37.5373 114.018 27.2998 124.254 17.0624C127.35 19.7971 130.298 22.6935 133.094 25.748C122.915 36.0854 112.679 46.3737 102.387 56.6148C115.794 51.3362 129.184 45.9067 142.554 40.3283C143.012 40.6227 143.323 41.0352 143.484 41.5694C144.665 44.593 145.905 47.593 147.206 50.5657C147.429 51.0673 147.378 51.5324 147.051 51.9631C133.483 57.4852 119.939 63.0691 106.419 68.7148C121.203 68.8692 135.989 68.9219 150.773 68.8692C150.773 72.9031 150.773 76.9352 150.773 80.9673C136.196 80.9165 121.618 80.9673 107.039 81.1236C120.485 86.6384 133.874 92.275 147.206 98.0297C146.066 101.971 144.567 105.796 142.708 109.508C129.269 103.87 115.828 98.3386 102.387 92.911C112.743 103.167 122.978 113.506 133.094 123.934C130.303 126.725 127.51 129.518 124.719 132.311C124.409 132.516 124.1 132.516 123.789 132.311C113.804 122.322 103.826 112.345 93.8579 102.373C99.033 115.575 104.357 128.76 109.832 141.927C109.786 142.167 109.683 142.374 109.521 142.546C105.891 144.016 102.271 145.516 98.6659 147.046C92.9421 133.652 87.3074 120.207 81.7616 106.717C81.6054 121.297 81.5545 135.878 81.6054 150.458C77.4715 150.458 73.334 150.458 69.2002 150.458C69.251 135.878 69.2002 121.297 69.0439 106.717C63.4945 120.198 57.8598 133.641 52.1396 147.046C48.5345 145.516 44.9149 144.016 41.2843 142.546C41.1117 142.323 41.0081 142.063 40.9736 141.772C46.563 128.457 51.9906 115.118 57.2583 101.753C47.0027 112.01 36.7671 122.248 26.5514 132.465C23.5151 129.738 20.5678 126.894 17.7113 123.934C27.758 113.577 37.89 103.339 48.1075 93.2217C34.7483 98.4894 21.4109 103.917 8.09717 109.508C6.569 106.119 5.06991 102.707 3.59989 99.2708C3.30189 98.1151 3.76706 97.4428 4.99541 97.2557C18.0221 91.8771 31.0487 86.5003 44.0754 81.1236C29.3952 80.9673 14.7132 80.9165 0.032959 80.9673C0.032959 76.9352 0.032959 72.9031 0.032959 68.8692C14.8167 68.9219 29.6023 68.8692 44.3861 68.7148C30.8179 63.1908 17.2734 57.6069 3.75434 51.9631C3.42727 51.5324 3.37639 51.0673 3.59989 50.5657C4.91727 47.0188 6.46724 43.6063 8.25162 40.3283C21.4146 45.8032 34.5975 51.129 47.7986 56.3059C37.9591 46.1539 27.9815 36.0709 17.8676 26.0588C17.6605 25.8516 17.6605 25.6445 17.8676 25.4391C20.6677 22.5336 23.5623 19.7408 26.5514 17.0624C36.6835 27.1963 46.8155 37.3301 56.9476 47.464C51.7725 34.2611 46.4485 21.0763 40.9736 7.91157C41.0736 7.39734 41.3843 7.08843 41.904 6.97941C45.3164 5.58389 48.7289 4.18837 52.1396 2.79285C57.9234 16.2647 63.5581 29.811 69.0439 43.4319C69.2002 28.9552 69.251 14.4767 69.2002 0Z" fill="currentColor"/>
-      </g>
-    </svg>
-  );
-}
-
 // Perk card skeleton loader
 const PerkCardSkeleton = (): JSX.Element => (
   <Card className="rounded-none border-border animate-pulse">
     <CardHeader>
-      <div className="w-10 h-10 bg-muted rounded mb-4" />
-      <div className="h-6 w-32 bg-muted rounded" />
+      <div className="w-10 h-10 bg-muted rounded-none mb-4" />
+      <div className="h-6 w-32 bg-muted rounded-none" />
     </CardHeader>
     <CardContent>
       <div className="space-y-2">
-        <div className="h-4 w-full bg-muted rounded" />
-        <div className="h-4 w-3/4 bg-muted rounded" />
+        <div className="h-4 w-full bg-muted rounded-none" />
+        <div className="h-4 w-3/4 bg-muted rounded-none" />
       </div>
     </CardContent>
   </Card>
 );
 
-// Activity card skeleton loader
-// const ActivityCardSkeleton = (): JSX.Element => (
-//   <div className="h-80 w-full bg-muted animate-pulse rounded-none" />
-// );
-
-// CUSTOMIZED: Member perk card component - Single-use for home page perks grid
-function MemberPerkCard({ title, description }: Perk) {
+function MemberPerkCard({ title, description, icon: Icon }: Perk) {
   return (
-    <Card className="border-border text-left">
-      <CardHeader>
-        <div className="text-primary mb-3">
-          <SnowflakeIcon />
+    <Card className="h-full border-border rounded-none text-left bg-background py-0">
+      <CardHeader className="px-5 pt-5 pb-3">
+        <div className="mb-3 flex size-10 items-center justify-center border border-border text-primary">
+          {Icon ? <Icon className="size-5 stroke-[1.75]" /> : <Award className="size-5 stroke-[1.75]" />}
         </div>
-        <CardTitle className="text-lg font-semibold">{title}</CardTitle>
+        <CardTitle className="text-base sm:text-lg font-black tracking-tight">{title}</CardTitle>
       </CardHeader>
-      <CardContent className="-mt-3">
-        <CardDescription className="text-xs sm:text-sm">
+      <CardContent className="px-5 pb-5 pt-0">
+        <CardDescription className="text-sm text-muted-foreground leading-relaxed">
           {description}
         </CardDescription>
       </CardContent>
@@ -122,35 +87,39 @@ function MemberPerkCard({ title, description }: Perk) {
   );
 }
 
-// Fallback data
 const FALLBACK_PERKS: Perk[] = [
   {
     title: "Exclusive Workshops",
-    description: "Learn cutting-edge skills and technologies through hands-on sessions led by industry experts and community mentors."
+    description: "Learn cutting-edge skills and technologies through hands-on sessions led by industry experts and community mentors.",
+    icon: GraduationCap
   },
   {
     title: "Career Opportunities",
-    description: "Connect with Microsoft recruiters, internship programs, and exclusive job opportunities for MSC members."
+    description: "Connect with Microsoft recruiters, internship programs, and exclusive job opportunities for MSC members.",
+    icon: Briefcase
   },
   {
     title: "Certifications",
-    description: "Earn industry-recognized certifications through Microsoft Learn paths and exam vouchers provided to members."
+    description: "Earn industry-recognized certifications through Microsoft Learn paths and exam vouchers provided to members.",
+    icon: Award
   },
   {
     title: "Networking Events",
-    description: "Build meaningful connections with peers, mentors, and professionals in tech at our exclusive networking events."
+    description: "Build meaningful connections with peers, mentors, and professionals in tech at our exclusive networking events.",
+    icon: Users
   },
   {
     title: "Project Showcase",
-    description: "Display your portfolio projects and get feedback from experienced developers and potential employers."
+    description: "Display your portfolio projects and get feedback from experienced developers and potential employers.",
+    icon: FolderKanban
   },
   {
     title: "Resource Library",
-    description: "Access exclusive learning materials, tutorials, and documentation curated for our community members."
+    description: "Access exclusive learning materials, tutorials, and documentation curated for our community members.",
+    icon: BookOpen
   }
 ];
 
-// Fallback partners data
 const FALLBACK_PARTNERS: Partner[] = [
   {
     id: "fallback-0",
@@ -245,73 +214,6 @@ const FALLBACK_PARTNERS: Partner[] = [
   },
 ];
 
-// const FALLBACK_ACTIVITY_IMAGE1 = "../../assets/activity-fallback/org.jpg";
-// const FALLBACK_ACTIVITY_IMAGE = "../../assets/activity-fallback/org.jpg";
-
-// const FALLBACK_EVENTS: Event[] = [
-//   {
-//     id: "1",
-//     coverImage: FALLBACK_ACTIVITY_IMAGE1,
-//     tag: "Org Sign-Up",
-//     title: "Org Sign-Up",
-//     date: "July 17, 2025",
-//     description: "Org sign-up event for students to join MSC NU Laguna for the upcoming school year.",
-//     venue: "NU Laguna Campus",
-//     registrationOpen: false
-//   },
-//   {
-//     id: "2",
-//     coverImage: FALLBACK_ACTIVITY_IMAGE,
-//     tag: "WORKSHOP",
-//     title: "Web Dev Workshop",
-//     date: "March 10, 2026",
-//     description: "Learn React and build modern web apps with hands-on coding sessions.",
-//     venue: "Computer Lab",
-//     registrationOpen: true
-//   },
-//   {
-//     id: "3",
-//     coverImage: FALLBACK_ACTIVITY_IMAGE,
-//     tag: "PANEL",
-//     title: "Career Session",
-//     date: "March 8, 2026",
-//     description: "Microsoft careers and internships panel with industry professionals.",
-//     venue: "Auditorium",
-//     registrationOpen: false
-//   },
-//   {
-//     id: "4",
-//     coverImage: FALLBACK_ACTIVITY_IMAGE,
-//     tag: "MEETUP",
-//     title: "Community Meetup",
-//     date: "March 5, 2026",
-//     description: "Networking and social gathering to connect with fellow community members.",
-//     venue: "Student Center",
-//     registrationOpen: true
-//   },
-//   {
-//     id: "5",
-//     coverImage: FALLBACK_ACTIVITY_IMAGE,
-//     tag: "WORKSHOP",
-//     title: "AI Workshop",
-//     date: "March 1, 2026",
-//     description: "Introduction to AI and machine learning with practical examples.",
-//     venue: "Tech Lab",
-//     registrationOpen: true
-//   },
-//   {
-//     id: "6",
-//     coverImage: FALLBACK_ACTIVITY_IMAGE,
-//     tag: "HACKATHON",
-//     title: "Hackathon",
-//     date: "February 28, 2026",
-//     description: "24-hour coding competition and collaboration to build amazing projects.",
-//     venue: "Innovation Hub",
-//     registrationOpen: false
-//   }
-// ];
-
-// Typing animation words with design token colors
 const TYPING_WORDS: TypingWord[] = [
   { text: 'Achieve', color: 'text-primary' },    
   { text: 'Build', color: 'text-success' },     
@@ -319,18 +221,6 @@ const TYPING_WORDS: TypingWord[] = [
   { text: 'Create', color: 'text-warning' },   
 ];
 
-// Helper to convert Event API data to Activity component format
-// function eventToActivity(event: Event): Activity {
-//   return {
-//     title: event.title,
-//     description: event.description,
-//     image: event.coverImage,
-//     date: event.date,
-//     tag: event.tag || 'EVENT'
-//   };
-// }
-
-// Home page
 export default function Home(): JSX.Element {
   const { currentWordIndex, displayText } = useTypingAnimation(TYPING_WORDS);
   const { isDarkMode } = useTheme();
@@ -338,7 +228,6 @@ export default function Home(): JSX.Element {
   const gridOpacity = isDarkMode ? 'opacity-10' : 'opacity-20';
 
   const [perks] = useState<Perk[]>(FALLBACK_PERKS);
-  // const [events, setEvents] = useState<Event[]>(FALLBACK_EVENTS);
   const [partners, setPartners] = useState<Partner[]>(FALLBACK_PARTNERS);
   const [loading, setLoading] = useState(true);
 
@@ -377,7 +266,6 @@ export default function Home(): JSX.Element {
 
     return `${logo}-dark.svg`;
   };
-  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -391,10 +279,7 @@ export default function Home(): JSX.Element {
           throw new Error('API fetch failed');
         }
 
-        // const eventsData = await eventsRes.json();
         const partnersData = await partnersRes.json();
-
-        // setEvents(eventsData.data);
         setPartners(partnersData.data.map(normalizePartnerLogo));
       } catch {
         // Use fallback data
@@ -477,176 +362,189 @@ export default function Home(): JSX.Element {
           opacity: 0.95;
         }
       `}</style>
+
       <main className="bg-background">
-      {/* SECTION 1: Hero - typing animation + Tetris background */}
-      <section className="relative flex min-h-[calc(100svh-4rem)] w-full items-center justify-center overflow-hidden border-b border-border/10">
-        <div 
-          className={`absolute inset-0 z-0 pointer-events-none ${gridOpacity}`}
-          style={{
-            backgroundImage: 'linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px)',
-            backgroundSize: '40px 40px'
-          }}
-        />
-        
-        <div className="opacity-40 sm:opacity-50 md:opacity-100">
-          <TetrisBlocksBackground />
-        </div>
-        
-        <div className="relative section-container z-10 flex flex-col items-center text-center py-10 sm:py-12 md:py-16 lg:py-20">
-          <div className="relative z-10 max-w-4xl mx-auto space-y-6">
-            <img
-              src={isDarkMode ? mscLogoFooterWhite : mscLogoFooterBlack}
-              alt="Microsoft Student Community - NU Laguna"
-              className="mx-auto h-14 w-auto sm:h-16 md:h-20 lg:h-24"
-            />
-            
-            <h1 className="text-5xl sm:text-5xl md:text-6xl lg:text-8xl font-bold tracking-tight">Helping You<br /><span className="inline-flex items-center text-left"><span className={`${TYPING_WORDS[currentWordIndex].color}`}>#</span><span className={`inline-block ${TYPING_WORDS[currentWordIndex].color}`}>{displayText}</span><span className="inline-block h-[0.8em] w-[2px] animate-blink bg-foreground ml-1" /><span className="text-foreground ml-1">More
-            </span></span></h1>
-            
-            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto mt-6 px-4 sm:px-0">We bring together passionate Nationalians to learn, innovate, and make a difference using Microsoft tools and technology.</p>
-            
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
-              {isLoggedIn ? (
-                <Button size="lg" className="min-w-[150px] btn-primary" onClick={handleJoinEvent}>Join an event</Button>
-              ):(
-                <Button size="lg" className="min-w-[150px] btn-primary" onClick={handleSignIn}>Sign in</Button>
-              )}
-              <Button size="lg" variant="outlineInfo" className="min-w-[150px]" onClick={handleExploreMore}>Explore more</Button>
+        {/* SECTION 1: Hero */}
+        <section className="relative flex min-h-[calc(100svh-4rem)] w-full items-center justify-center overflow-hidden border-b border-border/10">
+          <div 
+            className={`absolute inset-0 z-0 pointer-events-none ${gridOpacity}`}
+            style={{
+              backgroundImage: 'linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px)',
+              backgroundSize: '40px 40px'
+            }}
+          />
+          
+          <div className="opacity-40 sm:opacity-50 md:opacity-100">
+            <TetrisBlocksBackground />
+          </div>
+          
+          <div className="relative section-container z-10 flex flex-col items-center text-center py-10 sm:py-12 md:py-16 lg:py-20">
+            <div className="relative z-10 max-w-4xl mx-auto space-y-6">
+              <img
+                src={isDarkMode ? mscLogoFooterWhite : mscLogoFooterBlack}
+                alt="Microsoft Student Community - NU Laguna"
+                className="mx-auto h-14 w-auto sm:h-16 md:h-20 lg:h-24"
+              />
+              
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-black tracking-tight leading-none">
+                Helping You<br />
+                <span className="inline-flex items-center text-left">
+                  <span className={`${TYPING_WORDS[currentWordIndex].color}`}>#</span>
+                  <span className={`inline-block ${TYPING_WORDS[currentWordIndex].color}`}>{displayText}</span>
+                  <span className="inline-block h-[0.8em] w-[3px] animate-blink bg-foreground ml-1" />
+                  <span className="text-foreground ml-1">More</span>
+                </span>
+              </h1>
+              
+              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto mt-6 px-4 sm:px-0">
+                We bring together passionate Nationalians to learn, innovate, and make a difference using Microsoft tools and technology.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
+                {isLoggedIn ? (
+                  <Button size="lg" className="min-w-[150px] rounded-none btn-primary font-bold" onClick={handleJoinEvent}>Join an event</Button>
+                ) : (
+                  <Button size="lg" className="min-w-[150px] rounded-none btn-primary font-bold" onClick={handleSignIn}>Sign in</Button>
+                )}
+                <Button size="lg" variant="outlineInfo" className="min-w-[150px] rounded-none font-bold" onClick={handleExploreMore}>Explore more</Button>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Brand logo scroller - plain marquee infinite loop */}
-      <section className="py-8 sm:py-12 md:py-16 border-b border-border">
-        <div className="section-container">
-          
-          <div className="marquee">
-            <div className="marquee-track" aria-label="Partner logos">
-              {[0, 1].map((groupIndex) => (
-                <div className="marquee-group" key={groupIndex} aria-hidden={groupIndex === 1}>
-                  {logoSet.map((p, i) => (
-                    <div className="partner-logo-frame" key={`${p.id}-${groupIndex}-${i}`}>
-                      <img
-                        src={getPartnerLogoSrc(p.logo)}
-                        alt={p.name}
-                        className="partner-logo"
-                        onError={(event) => {
-                          if (event.currentTarget.dataset.fallbackLogo !== 'true') {
-                            event.currentTarget.dataset.fallbackLogo = 'true';
-                            event.currentTarget.src = p.logo;
-                          }
-                        }}
-                      />
-                    </div>
-                  ))}
-                </div>
-              ))}
+        {/* Brand logo scroller */}
+        <section className="py-8 sm:py-12 md:py-16 border-b border-border">
+          <div className="section-container">
+            <div className="marquee">
+              <div className="marquee-track" aria-label="Partner logos">
+                {[0, 1].map((groupIndex) => (
+                  <div className="marquee-group" key={groupIndex} aria-hidden={groupIndex === 1}>
+                    {logoSet.map((p, i) => (
+                      <div className="partner-logo-frame" key={`${p.id}-${groupIndex}-${i}`}>
+                        <img
+                          src={getPartnerLogoSrc(p.logo)}
+                          alt={p.name}
+                          className="partner-logo"
+                          onError={(event) => {
+                            if (event.currentTarget.dataset.fallbackLogo !== 'true') {
+                              event.currentTarget.dataset.fallbackLogo = 'true';
+                              event.currentTarget.src = p.logo;
+                            }
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
+        </section>
 
-        </div>
-      </section>
-
-      {/* Community introduction with video and mission description */}
-      <section id="explore" className="w-full bg-secondary/50 section-padding-lg flex justify-center border-b border-border/30">
-        <div className="section-container text-center">
-          <h1 className="text-4xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold inline-block gradient-text">
-            WHO WE ARE
-          </h1>
-          
-          <div className="w-full mt-8 mb-12">
-            <VideoPlayer 
-              src="https://youtu.be/1hsi0cIN-fo"
-              title="MSC NU Laguna - Who We Are"
-            />
-          </div>
-
-          <div className="section-container text-center space-y-6">
-            <CardDescription className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed">
-              We're a community of curious, creative, and ambitious students pushing ourselves to learn, build, and actually do something with what we know. So we made something. MSC – NU Laguna is for students who want to learn more, try more, build more, achieve more, and figure stuff out together.
-            </CardDescription>
-            <CardDescription className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed">
-              We run workshops, teach each other new things, throw events we actually care about, and work on projects we'd want in our own portfolios — all while using the tools (yes, our Microsoft 365 accounts) we already have.
-            </CardDescription>
-            <CardDescription className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed">
-              We're also part of a global student movement supported by Microsoft, but we're not boxed in. Microsoft tools are just the start.
-            </CardDescription>
-          </div>
-        </div>
-      </section>
-
-      {/* Member community highlight with branded call-to-action */}
-      <section className="w-full section-padding-md bg-background flex justify-center border-b border-border">
-        <div className="section-container grid grid-cols-1 md:grid-cols-2 md:gap-6 lg:gap-8 items-center">
-          <div className="aspect-square md:aspect-[4/3] rounded-2xl overflow-hidden relative flex items-center justify-center">
-            <img src={abstracticon} alt="Abstract Icon" className="w-full h-full object-contain" />
-          </div>
-          <div className="space-y-1 sm:space-y-3 md:space-y-5 lg:pl-6">
-            <Card className="border-0 bg-transparent p-0">
-              <CardContent className="p-0">
-                <CardTitle className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-primary leading-tight">
-                  We're here to help curious, creative, and ambitious students
-                </CardTitle>
-                <CardDescription className="text-lg sm:text-xl md:text-2xl font-semibold text-primary mt-4">
-                  #AchieveMore
+        {/* Community introduction - Side-by-Side (Text Left, Video Right) */}
+        <section id="explore" className="w-full bg-secondary/50 section-padding-lg flex justify-center border-b border-border">
+          <div className="section-container">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+              
+              {/* Left Side: Text Content */}
+              <div className="space-y-6 text-left">
+                <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-none gradient-text uppercase">
+                  WHO WE ARE
+                </h1>
+                
+                <CardDescription className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed">
+                  We're a community of curious, creative, and ambitious students pushing ourselves to learn, build, and actually do something with what we know. So we made something. MSC – NU Laguna is for students who want to learn more, try more, build more, achieve more, and figure stuff out together.
                 </CardDescription>
-              </CardContent>
-            </Card>
-            <Button size="lg" variant="outlineSuccess" className="mt-1 sm:mt-2 md:mt-3" onClick={handleMeetMembers}>Meet Our Members</Button>
+                <CardDescription className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed">
+                  We run workshops, teach each other new things, throw events we actually care about, and work on projects we'd want in our own portfolios — all while using the tools (yes, our Microsoft 365 accounts) we already have.
+                </CardDescription>
+                <CardDescription className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed">
+                  We're also part of a global student movement supported by Microsoft, but we're not boxed in. Microsoft tools are just the start.
+                </CardDescription>
+              </div>
+
+              {/* Right Side: Video Player */}
+              <div className="w-full">
+                <VideoPlayer 
+                  src="https://youtu.be/1hsi0cIN-fo"
+                  title="MSC NU Laguna - Who We Are"
+                />
+              </div>
+
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Member benefits grid with perks cards */}
-      <section className="w-full section-padding-lg bg-secondary flex justify-center border-b border-border">
-        <div className="section-container text-center">
-          <h1 className="text-4xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold inline-block gradient-text">
-            MEMBER PERKS
-          </h1>
-          <p className="mt-3 text-xs sm:text-sm md:text-base lg:text-lg text-muted-foreground max-w-2xl mx-auto text-center mb-16">
-            From certifications to career connections, being part of MSC opens doors you didn't know existed.
-          </p>
+        {/* Mascot section - Tight Max Width Container to fix wide stretching */}
+        <section className="relative z-10 w-full bg-background flex justify-center border-b border-border overflow-hidden py-8 sm:py-10">
+          <div className="max-w-4xl w-full mx-auto px-4 sm:px-6">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10">
+              
+              {/* Mascot Image */}
+              <div className="shrink-0 flex justify-center items-end">
+                <img
+                  src={mikeMascot}
+                  alt="Mike, MSC - NU Laguna's official mascot"
+                  className="h-52 sm:h-64 md:h-72 lg:h-80 w-auto object-contain object-bottom pointer-events-none"
+                />
+              </div>
 
-          {loading && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-              {Array(6).fill(null).map((_, i) => <PerkCardSkeleton key={i} />)}
+              {/* Text Content */}
+              <div className="flex flex-col items-center sm:items-start text-center sm:text-left space-y-4 max-w-xl">
+                <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-none text-primary">
+                  Hi! I&apos;m <span className="underline decoration-4 underline-offset-4 decoration-sky-500">Mike</span>
+                </h1>
+                <p className="text-sm sm:text-base md:text-lg leading-relaxed text-muted-foreground">
+                  I am MSC - NU Laguna&apos;s official mascot and I represent the curiosity, creativity, and ambition of every Nationalian growing with the community.
+                </p>
+                <div className="pt-1">
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="w-auto h-9 px-4 rounded-none border border-input bg-transparent font-bold text-foreground hover:bg-sky-500 hover:text-white hover:border-sky-500 text-xs sm:text-sm transition-colors" 
+                    onClick={handleMeetMembers}
+                  >
+                    Meet the team
+                  </Button>
+                </div>
+              </div>
+
             </div>
-          )}
+          </div>
+        </section>
 
-          {!loading && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-              {perks.map((perk, i) => (
-                <MemberPerkCard key={i} {...perk} />
-              ))}
+        {/* Member benefits grid */}
+        <section className="w-full section-padding-lg bg-secondary flex justify-center border-b border-border">
+          <div className="section-container text-center">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-none inline-block gradient-text uppercase">
+              MEMBER PERKS
+            </h1>
+            <p className="mt-3 text-xs sm:text-sm md:text-base lg:text-lg text-muted-foreground max-w-2xl mx-auto text-center mb-12">
+              From certifications to career connections, being part of MSC opens doors you didn't know existed.
+            </p>
+
+            {loading && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-12">
+                {Array(6).fill(null).map((_, i) => <PerkCardSkeleton key={i} />)}
+              </div>
+            )}
+
+            {!loading && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-12">
+                {perks.map((perk, i) => (
+                  <MemberPerkCard key={i} {...perk} />
+                ))}
+              </div>
+            )}
+
+            <div className="text-center">
+              <Button size="lg" variant="outline" className="rounded-none border-primary text-primary font-bold hover:bg-primary hover:text-primary-foreground" onClick={viewPerks}>
+                View all perks
+              </Button>
             </div>
-          )}
-
-          <div className="text-center"><Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground" onClick={viewPerks}>View All Perks</Button></div>
-        </div>
-      </section>
-
-      {/* Past events carousel showcasing community activities */}
-      {/* <section className="w-full section-padding-lg bg-background flex justify-center border-b border-border">
-        <div className="section-container text-center">
-          <h1 className="text-4xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold inline-block gradient-text">
-            PAST ACTIVITIES
-          </h1>
-          <p className="mt-3 text-xs sm:text-sm md:text-base lg:text-lg text-muted-foreground mb-16">
-            A look at some of the events that brought our community together.
-          </p>
-
-          {loading && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {Array(6).fill(null).map((_, i) => <ActivityCardSkeleton key={i} />)}
-            </div>
-          )}
-
-          {!loading && <PastActivitiesCarousel activities={events.map(eventToActivity)} />}
-        </div>
-      </section> */}
-
-    </main>
+          </div>
+        </section>
+      </main>
     </>
   );
 }

@@ -112,23 +112,23 @@ export function Navbar({
             </div>
           </div>
 
-          {/* MOBILE/TABLET: User Avatar in Center when logged in */}
-          <div className="lg:hidden flex-1 flex justify-center z-10">
+          {/* MOBILE/TABLET: Logo centered independently of the menu and avatar */}
+          <div className="lg:hidden absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
+            <div className="block dark:hidden">
+              <NavbarLeft logoSrc={logoSrc} logoAlt={logoAlt} className="max-w-[120px] sm:max-w-[150px]" />
+            </div>
+            <div className="hidden dark:block">
+              <NavbarLeft logoSrc={darkLogoSrc} logoAlt={logoAlt} className="max-w-[120px] sm:max-w-[150px]" />
+            </div>
+          </div>
+
+          {/* MOBILE/TABLET: User Avatar on the right when logged in */}
+          <div className="lg:hidden flex-shrink-0 z-10 pr-2 ml-auto">
             {isLoggedIn && (
               <Avatar className="h-10 w-10 border-2 border-primary cursor-pointer">
                 <AvatarFallback className="font-semibold">{getInitials(user?.fullName ?? '')}</AvatarFallback>
               </Avatar>
             )}
-          </div>
-
-          {/* MOBILE/TABLET: Logo on Right */}
-          <div className="lg:hidden flex-shrink-0 z-10 pr-2">
-            <div className="block dark:hidden">
-              <NavbarLeft logoSrc={logoSrc} logoAlt={logoAlt} />
-            </div>
-            <div className="hidden dark:block">
-              <NavbarLeft logoSrc={darkLogoSrc} logoAlt={logoAlt} />
-            </div>
           </div>
 
           {/* CENTER: Navigation Menu (Desktop Only) - Exactly centered */}

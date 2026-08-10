@@ -1,17 +1,16 @@
-
-import msclogoFooterBlack from '@/assets/logos/msclogofooterblack.svg'
-import msclogoFooterLight from '@/assets/logos/msclogofooterwhite.svg'
-import locationIcon from '@/assets/icons/locationicon.svg'
-import emailIcon from '@/assets/icons/emailicon.svg'
+import nuLagunaLogo from '@/assets/logos/NU Laguna.png'
+import nuLagunaLogoDark from '@/assets/logos/NU Laguna-dark.png'
+import mscLogo from '@/assets/logos/msclogofooterblack.svg'
+import mscLogoWhite from '@/assets/logos/msclogofooterwhite.svg'
 import fbIcon from '@/assets/icons/fb-icon.svg'
-import linkedinIcon from '@/assets/icons/linkedin-icon.svg'
 import githubIcon from '@/assets/icons/github-icon.svg'
 import igIcon from '@/assets/icons/ig-icon.svg'
+import linkedinIcon from '@/assets/icons/linkedin-icon.svg'
 import tiktokIcon from '@/assets/icons/tiktok-icon.svg'
 import { Button } from '@/components/ui/button'
 import { useTheme } from '@/context/ThemeContext'
+import { Mail, MapPin } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-
 
 const CONTACT = {
   addressHref:
@@ -30,223 +29,141 @@ const SOCIALS = [
   { label: 'TikTok', href: 'https://tiktok.com', iconSrc: tiktokIcon },
 ] as const
 
-function FooterIcon({
+const DESCRIPTION =
+  'Microsoft Student Community - NU Laguna is a student-led organization helping Nationalians learn, build, and collaborate through technology, design, and community-driven projects.'
+
+function SocialIcon({
   src,
-  alt,
-  size,
-  className,
-}: Readonly<{ src: string; alt: string; size: number; className?: string }>) {
+}: Readonly<{ src: string }>) {
   return (
     <img
       src={src}
-      alt={alt}
-      width={size}
-      height={size}
-      className={
-        'shrink-0 object-contain dark:[filter:brightness(0)_invert(1)] ' +
-        (className ?? '')
-      }
+      alt=""
+      width={18}
+      height={18}
+      className="h-[18px] w-[18px] object-contain opacity-75 transition-opacity group-hover:opacity-100 dark:[filter:brightness(0)_invert(1)]"
+      aria-hidden="true"
     />
   )
 }
 
 export function Footer() {
   const { isDarkMode } = useTheme()
-  const footerLogo = isDarkMode ? msclogoFooterLight : msclogoFooterBlack
   const navigate = useNavigate()
+  const currentYear = new Date().getFullYear()
 
   const handlePartnerClick = () => {
     navigate('/partners#contactForm')
   }
-  
+
   return (
-    <footer className="w-full bg-background border-t border-border">
-      <style>{`
-        /* Default: Below 860px - show mobile, hide desktop */
-        .footer-mobile { display: block; }
-        .footer-desktop { display: none; }
-        
-        /* 860px and above - hide mobile, show desktop */
-        @media (min-width: 860px) {
-          .footer-mobile { display: none; }
-          .footer-desktop { display: grid; }
-        }
-        
-        /* Below 1000px - logo height h-30 */
-        @media (max-width: 1000px) {
-          .footer-logo { height: 7.5rem !important; }
-        }
-        
-        /* Address text: wrap below 1190px, no-wrap above */
-        .address-text { white-space: normal; }
-        @media (min-width: 1190px) {
-          .address-text { white-space: nowrap; }
-        }
-      `}</style>
-      {/* Main Footer Content - Compact spacing */}
-      <div className="section-container px-2 sm:px-3 md:px-4 lg:px-6 py-6 sm:py-8">
-        {/* Mobile/Tablet Layout (< 860px) */}
-        <div className="footer-mobile space-y-4">
-          {/* MSC Logo - Top, Left */}
-          <div className="flex justify-start items-center mb-4">
-            <div className="relative w-48">
+    <footer className="w-full border-t border-border bg-white text-foreground dark:bg-background">
+      <div className="section-container section-padding py-10 sm:py-12 lg:py-14">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(250px,0.55fr)_minmax(250px,0.55fr)] lg:gap-12">
+          <section aria-label="Microsoft Student Community" className="max-w-3xl">
+            <div className="flex max-w-full items-center gap-3 sm:gap-5">
               <img
-                src={footerLogo}
-                alt="MSC Logo"
-                className="object-contain h-full w-full"
+                src={isDarkMode ? nuLagunaLogoDark : nuLagunaLogo}
+                alt="NU Laguna"
+                className="h-12 w-auto max-w-[32%] shrink-0 object-contain sm:h-20 sm:max-w-none lg:h-24"
+              />
+              <span className="h-10 w-px shrink-0 bg-border sm:h-16 lg:h-20" aria-hidden="true" />
+              <img
+                src={isDarkMode ? mscLogoWhite : mscLogo}
+                alt="Microsoft Student Community - NU Laguna"
+                className="h-11 min-w-0 flex-1 object-contain object-left sm:h-[4.5rem] sm:flex-none lg:h-20"
               />
             </div>
-          </div>
 
-          {/* Contact Us and Follow Us - Centered with padding */}
-          <div className="space-y-4">
-            {/* Contact Us Section */}
-            <div className="flex flex-col items-start text-left px-4">
-              <h3 className="text-base font-semibold mb-3 text-foreground">Contact Us</h3>
-              <div className="w-full max-w-md space-y-2">
-                {/* Address */}
-                <a
-                  href={CONTACT.addressHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-start justify-start gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  aria-label="MSC Office Address"
-                >
-                  <FooterIcon
-                    src={locationIcon}
-                    alt="Location icon"
-                    size={20}
-                    className="mt-0.5"
-                  />
-                  <span className="break-words sm:whitespace-nowrap">{CONTACT.addressText}</span>
-                </a>
+            <p className="mt-5 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
+              {DESCRIPTION}
+            </p>
 
-                {/* Email */}
-                <a
-                  href={CONTACT.emailHref}
-                  className="flex items-center justify-start gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  aria-label="Contact email"
-                >
-                  <FooterIcon src={emailIcon} alt="Email icon" size={18} />
-                  <span>{CONTACT.emailText}</span>
-                </a>
-              </div>
-            </div>
-
-            {/* Follow Us Section - Left Aligned */}
-            <div className="flex flex-col items-start px-4">
-              <h3 className="text-base font-semibold mb-3 text-foreground">Follow Us</h3>
-              <div className="flex flex-wrap gap-3 justify-start">
-                {SOCIALS.map((social) => (
-                  <a
-                    key={social.label}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 hover:opacity-75 transition-opacity"
-                    aria-label={social.label}
-                  >
-                    <FooterIcon
-                      src={social.iconSrc}
-                      alt={`${social.label} icon`}
-                      size={20}
-                    />
-                  </a>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Partner with Us Button - Centered with padding */}
-            <Button className="w-[calc(100%-1rem)] mx-2" variant={'destructive'} onClick={handlePartnerClick}  >
-              Partner with us
-            </Button>
-        </div>
-
-        {/* Desktop Layout: Logo | Contact | Follow | Partner Button */}
-        <div className="footer-desktop hidden md:grid md:grid-cols-[auto_auto_auto_auto] gap-6 md:gap-8 mb-0">
-          {/* Logo Section */}
-          <div className="flex flex-col items-center self-center md:items-start md:self-start">
-            <div>
-              <img
-                src={footerLogo}
-                alt="MSC Logo"
-                className="footer-logo object-contain h-[7.5rem] md:h-[6.25rem] w-56"
-              />
-            </div>
-          </div>
-
-          {/* Contact Us Section */}
-          <div className="text-left">
-            <h3 className="text-base font-semibold mb-3 text-foreground">Contact Us</h3>
-            <div className="space-y-2">
-              {/* Address */}
-              <a
-                href={CONTACT.addressHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="grid grid-cols-[16px_minmax(0,1fr)] items-start gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                aria-label="MSC Office Address"
-              >
-                <FooterIcon
-                  src={locationIcon}
-                  alt="Location icon"
-                  size={16}
-                  className="mt-0.5"
-                />
-                <span className="min-w-0 leading-snug address-text">{CONTACT.addressText}</span>
-              </a>
-
-              {/* Email */}
-              <a
-                href={CONTACT.emailHref}
-                className="grid grid-cols-[16px_minmax(0,1fr)] items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                aria-label="Contact email"
-              >
-                <FooterIcon src={emailIcon} alt="Email icon" size={16} />
-                <span className="min-w-0">{CONTACT.emailText}</span>
-              </a>
-            </div>
-          </div>
-
-          {/* Follow Us Section */}
-          <div className="text-left">
-            <h3 className="text-base font-semibold mb-3 text-foreground">Follow Us</h3>
-            <div className="flex flex-wrap gap-2">
+            <div className="mt-6 flex flex-wrap gap-3">
               {SOCIALS.map((social) => (
                 <a
                   key={social.label}
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 hover:-translate-y-0.5 hover:opacity-75 transition-opacity"
                   aria-label={social.label}
+                  className="group grid h-10 w-10 place-items-center rounded-full border border-border bg-background text-muted-foreground transition-colors hover:border-primary hover:text-foreground hover:bg-muted dark:bg-muted/20 dark:hover:bg-muted/40"
                 >
-                  <FooterIcon
-                    src={social.iconSrc}
-                    alt={`${social.label} icon`}
-                    size={20}
-                  />
+                  <SocialIcon src={social.iconSrc} />
                 </a>
               ))}
             </div>
-          </div>
-          
-          {/* Partner with Us Section */}
-          <div className="flex items-center justify-center">
-              <Button variant={'destructive'} onClick={handlePartnerClick}>
-                Partner with us
-              </Button>
-          </div>
-        </div>
-      </div>
+          </section>
 
-      {/* Bottom Copyright Section */}
-      <div className="w-full bg-primary text-primary-foreground py-4 sm:py-6 md:py-7">
-        <div className="section-container px-2 sm:px-3 md:px-4 lg:px-6">
-          <p className="text-center text-xs">
-            © 2026 Microsoft Student Community - NU Laguna | All rights reserved.
+          <section aria-labelledby="footer-contact-heading">
+            <h2
+              id="footer-contact-heading"
+              className="text-sm font-semibold uppercase tracking-wide text-foreground"
+            >
+              Contact
+            </h2>
+
+            <div className="mt-4 space-y-4 text-sm leading-6 text-muted-foreground">
+              <a
+                href={CONTACT.addressHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="grid grid-cols-[20px_minmax(0,1fr)] gap-3 transition-colors hover:text-foreground"
+              >
+                <MapPin className="mt-0.5 h-5 w-5 text-primary" aria-hidden="true" />
+                <span>{CONTACT.addressText}</span>
+              </a>
+
+              <a
+                href={CONTACT.emailHref}
+                className="grid grid-cols-[20px_minmax(0,1fr)] gap-3 transition-colors hover:text-foreground"
+              >
+                <Mail className="mt-0.5 h-5 w-5 text-primary" aria-hidden="true" />
+                <span>{CONTACT.emailText}</span>
+              </a>
+            </div>
+          </section>
+
+          <section aria-labelledby="footer-partner-heading">
+            <h2
+              id="footer-partner-heading"
+              className="text-sm font-semibold uppercase tracking-wide text-foreground"
+            >
+              Collaborate
+            </h2>
+
+            <p className="mt-4 text-sm leading-6 text-muted-foreground">
+              For partnerships, sponsorships, talks, workshops, and campus tech
+              initiatives, reach out to the MSC - NU Laguna team.
+            </p>
+
+            <Button
+              type="button"
+              onClick={handlePartnerClick}
+              className="mt-5 w-full sm:w-auto"
+            >
+              Partner with us
+            </Button>
+          </section>
+        </div>
+
+        <div className="mt-10 flex flex-col gap-3 border-t border-border pt-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            &copy; {currentYear} Microsoft Student Community - NU Laguna. All rights
+            reserved.
           </p>
+
+          <div className="flex flex-wrap gap-x-5 gap-y-2">
+            <a href="mailto:msc@nu-laguna.edu.ph" className="hover:text-foreground">
+              Support
+            </a>
+            <a href="/privacy-policy" className="hover:text-foreground">
+              Privacy Policy
+            </a>
+            <a href="/terms-of-service" className="hover:text-foreground">
+              Terms of Service
+            </a>
+          </div>
         </div>
       </div>
     </footer>
